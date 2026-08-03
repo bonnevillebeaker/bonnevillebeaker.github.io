@@ -24,6 +24,27 @@
       templateId: "pubchem-periodic-table-pane-template",
       defaultWidth: 1120,
       defaultHeight: 800
+    },
+    "pubchem-structure-sketcher": {
+      templateId: "pubchem-structure-sketcher-pane-template",
+      defaultWidth: 1120,
+      defaultHeight: 800
+    },
+    "circuitjs": {
+      templateId: "circuitjs-pane-template",
+      defaultWidth: 1120,
+      defaultHeight: 800
+    },
+    "stellarium": {
+      templateId: "stellarium-pane-template",
+      defaultWidth: 1120,
+      defaultHeight: 800
+    },
+    "custom-html": {
+      templateId: "custom-html-pane-template",
+      defaultWidth: 960,
+      defaultHeight: 720,
+      transient: true
     }
   };
 
@@ -181,7 +202,10 @@
   }
 
   function saveLayout() {
-    var panes = Array.prototype.slice.call(workspace.querySelectorAll(".sme-pane")).map(function (pane) {
+    var panes = Array.prototype.slice.call(workspace.querySelectorAll(".sme-pane")).filter(function (pane) {
+      var definition = moduleDefinitions[pane.dataset.paneId];
+      return !(definition && definition.transient);
+    }).map(function (pane) {
       return {
         id: pane.dataset.paneId,
         left: pane.style.left || pane.offsetLeft + "px",
@@ -525,6 +549,30 @@
         closeMenus();
       });
     });
+
+    var customEmbedButton = document.getElementById("sme-open-custom-embed");
+    var customEmbedInput = document.getElementById("sme-custom-html");
+    if (customEmbedButton && customEmbedInput) {
+      customEmbedButton.addEventListener("click", function () {
+        var source = customEmbedInput.value.trim();
+        if (!source) {
+          customEmbedInput.focus();
+          customEmbedInput.setCustomValidity("Paste a complete HTML document or embed snippet first.");
+          customEmbedInput.reportValidity();
+          return;
+        }
+        customEmbedInput.setCustomValidity("");
+        var existing = workspace.querySelector('[data-pane-id="custom-html"]');
+        if (existing) existing.remove();
+        var pane = createModulePane("custom-html");
+        var iframe = pane && pane.querySelector("iframe");
+        if (iframe) iframe.srcdoc = source;
+        closeMenus();
+      });
+      customEmbedInput.addEventListener("input", function () {
+        customEmbedInput.setCustomValidity("");
+      });
+    }
 
     window.addEventListener("message", function (event) {
       var data = event.data || {};

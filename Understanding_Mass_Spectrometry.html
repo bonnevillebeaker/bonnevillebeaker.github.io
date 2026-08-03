@@ -10,6 +10,11 @@
   <link rel="icon" type="image/svg+xml" href="logo.svg">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <script>
+    if (new URLSearchParams(window.location.search).get("embed") === "1") {
+      document.documentElement.classList.add("ums-embedded");
+    }
+  </script>
   <script src="device.js"></script>
 </head>
 <body class="ums-page">
@@ -51,8 +56,8 @@
     </section>
 
     <div class="ums-invite">
-      <p>And the best way to understand how it works is to run one. You already can. Open the Smart Turtle simulator in a new tab and keep it beside this page. Every step below is something for you to try yourself. Do the clicking, watch what moves, and the ideas will stick better than any diagram could. Leave each result on the graph as you go, since later steps are easier to see when your earlier ones are still there to compare against.</p>
-      <a class="ums-cta" href="Smart_Turtle.html" target="_blank" rel="noopener">Open the Smart Turtle simulator <span class="ums-cta__arrow" aria-hidden="true">&#8599;</span></a>
+      <p>And the best way to understand how it works is to run one. You already can. Open the Smart Turtle simulator and keep it beside this lesson. Every step below is something for you to try yourself. Do the clicking, watch what moves, and the ideas will stick better than any diagram could. Leave each result on the graph as you go, since later steps are easier to see when your earlier ones are still there to compare against.</p>
+      <a class="ums-cta" data-open-smart-turtle href="Smart_Turtle.html" target="_blank" rel="noopener">Open the Smart Turtle simulator <span class="ums-cta__arrow" aria-hidden="true">&#8599;</span></a>
     </div>
 
     <h2 class="ums-h2">Six things to try yourself</h2>
@@ -117,7 +122,7 @@
 
     <div class="ums-endcta">
       <p>Everything above is yours to try.</p>
-      <a class="ums-cta" href="Smart_Turtle.html" target="_blank" rel="noopener">Open the Smart Turtle simulator <span class="ums-cta__arrow" aria-hidden="true">&#8599;</span></a>
+      <a class="ums-cta" data-open-smart-turtle href="Smart_Turtle.html" target="_blank" rel="noopener">Open the Smart Turtle simulator <span class="ums-cta__arrow" aria-hidden="true">&#8599;</span></a>
     </div>
   </main>
 
@@ -126,6 +131,20 @@
     <p><a href="#" onclick="BB.openYouTube();return false;">YouTube</a> · <a href="#" onclick="BB.openInstagram();return false;">Instagram</a></p>
   </footer>
 
+
+  <script>
+    (function () {
+      "use strict";
+      var embedded = new URLSearchParams(window.location.search).get("embed") === "1" && window.parent !== window;
+      document.querySelectorAll("[data-open-smart-turtle]").forEach(function (link) {
+        link.addEventListener("click", function (event) {
+          if (!embedded) return;
+          event.preventDefault();
+          window.parent.postMessage({ type: "sme-open-pane", moduleId: "smart-turtle" }, "*");
+        });
+      });
+    }());
+  </script>
   <script src="script.js"></script>
 </body>
 </html>

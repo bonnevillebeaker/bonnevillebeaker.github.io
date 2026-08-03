@@ -40,7 +40,12 @@
     "+2I":      { composition: {I: 2}, charge: 2, label: "+2I²⁻" },
     "+2F":      { composition: {F: 2}, charge: 2, label: "+2F²⁻" },
     "+2HCOO":   { composition: {H: 2, C: 2, O: 4}, charge: 2, label: "+2HCOO²⁻" },
-    "+2CH3COO": { composition: {H: 6, C: 4, O: 4}, charge: 2, label: "+2CH₃COO²⁻" }
+    "+2CH3COO": { composition: {H: 6, C: 4, O: 4}, charge: 2, label: "+2CH₃COO²⁻" },
+    "EI_M":     { composition: {}, charge: 1, label: "M⁺• (EI)", mode: "ei" },
+    "ICP_M+":   { composition: {}, charge: 1, label: "M⁺ (ICP-MS)", mode: "icp-ms" },
+    "ICP_M2+":  { composition: {}, charge: 2, label: "M²⁺ (ICP-MS)", mode: "icp-ms" },
+    "ICP_MO+":  { composition: {O: 1}, charge: 1, label: "MO⁺ (ICP-MS)", mode: "icp-ms" },
+    "ICP_MH+":  { composition: {H: 1}, charge: 1, label: "MH⁺ (ICP-MS)", mode: "icp-ms" }
   };
 
   var state = {
@@ -196,7 +201,7 @@
       }
       if (adjusted[element] === 0) delete adjusted[element];
     });
-    return { composition: adjusted, charge: adduct.charge, label: adduct.label };
+    return { composition: adjusted, charge: adduct.charge, label: adduct.label, mode: adduct.mode || "esi" };
   }
 
   function pruneDistribution(map, relativeThreshold) {
@@ -314,6 +319,15 @@
       O: Math.trunc(adducted.composition.O || 0)
     };
     var warnings = [];
+    if (adducted.mode === "ei") {
+      warnings.push("EI mode shows the intact molecular radical cation only; fragmentation is not simulated.");
+    }
+    if (adducted.mode === "icp-ms") {
+      var originalAtomCount = Object.keys(parsed).reduce(function (sum, atom) { return sum + parsed[atom]; }, 0);
+      if (originalAtomCount > 1) {
+        warnings.push("ICP-MS normally atomizes the sample; for an elemental isotope pattern, enter one element such as Fe, Pb, or U.");
+      }
+    }
 
     function readLabelableCount(input, atom, total) {
       var raw = input.value.trim();

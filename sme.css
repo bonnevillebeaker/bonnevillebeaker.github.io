@@ -298,3 +298,12 @@
   .sme-resize-handle,
   .sme-snap-preview { display: none !important; }
 }
+
+
+/* Custom HTML embed tool */
+.sme-custom-embed-card { align-items: flex-start; }
+.sme-custom-embed-label { margin-top: 6px; color: #32484b; font: 700 0.78rem Arial, sans-serif; }
+.sme-custom-embed-input { width: 100%; min-height: 116px; resize: vertical; border: 1px solid #b9c9cb; border-radius: 8px; padding: 8px 9px; background: #fbfdfd; color: #1f3033; font: 0.78rem/1.4 ui-monospace, SFMono-Regular, Consolas, monospace; box-sizing: border-box; }
+.sme-custom-embed-input:focus { outline: 3px solid rgba(45,171,186,.2); border-color: #2dabba; }
+.sme-pane__body--custom { background: #fff; }
+.sme-pane__body--custom iframe { background: #fff; }

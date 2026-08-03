@@ -193,3 +193,24 @@
   .ums-steps::before { left: 17px; }
   .ums-step__num { width: 36px; height: 36px; font-size: 1rem; }
 }
+
+/* Embedded mode used by the SME workspace pane. */
+.ums-embedded,
+.ums-embedded body {
+  min-height: 100%;
+  background: #f2f8f8;
+}
+
+.ums-embedded .header,
+.ums-embedded body > footer {
+  display: none !important;
+}
+
+.ums-embedded body {
+  margin: 0;
+  overflow: auto;
+}
+
+.ums-embedded main.ums-main {
+  margin-top: 0;
+}

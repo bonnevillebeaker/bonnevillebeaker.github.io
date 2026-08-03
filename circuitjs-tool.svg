@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Circuit simulator">
+  <rect width="128" height="128" rx="24" fill="#102a43"/>
+  <path d="M22 64h20m44 0h20M42 64c0-18 10-30 22-30s22 12 22 30-10 30-22 30-22-12-22-30Z" fill="none" stroke="#54d2d2" stroke-width="8" stroke-linecap="round"/>
+  <path d="M54 64h20M64 54v20" stroke="#fff" stroke-width="7" stroke-linecap="round"/>
+  <circle cx="22" cy="64" r="7" fill="#f5b942"/><circle cx="106" cy="64" r="7" fill="#f5b942"/>
+</svg>

@@ -85,12 +85,64 @@
 <div class="sme-module-card" role="none">
 <img alt="" aria-hidden="true" src="pubchem-periodic-table.svg"/>
 <div class="sme-module-card__body">
+<strong>PubChem Chemical Structure Sketcher</strong>
+<span>Draw, edit, import, and export chemical structures with PubChem's official browser-based structure editor.</span>
+<small class="sme-module-source">Official NIH and National Library of Medicine resource</small>
+<div class="sme-module-actions">
+<button class="sme-action-button" data-open-pane="pubchem-structure-sketcher" type="button">Open as pane</button>
+<a class="sme-action-link" href="https://pubchem.ncbi.nlm.nih.gov/edit/" rel="noopener noreferrer" target="_blank">Open in new tab</a>
+</div>
+</div>
+</div>
+<div class="sme-module-card" role="none">
+<img alt="" aria-hidden="true" src="pubchem-periodic-table.svg"/>
+<div class="sme-module-card__body">
 <strong>PubChem Periodic Table</strong>
 <span>Explore elements, chemical properties, periodic trends, and PubChem's educational table views.</span>
 <small class="sme-module-source">Official NIH and National Library of Medicine resource</small>
 <div class="sme-module-actions">
 <button class="sme-action-button" data-open-pane="pubchem-periodic-table" type="button">Open as pane</button>
 <a class="sme-action-link" href="https://pubchem.ncbi.nlm.nih.gov/periodic-table/" rel="noopener noreferrer" target="_blank">Open in new tab</a>
+</div>
+</div>
+</div>
+<div class="sme-module-card" role="none">
+<img alt="" aria-hidden="true" src="circuitjs-tool.svg"/>
+<div class="sme-module-card__body">
+<strong>CircuitJS Electronic Circuit Simulator</strong>
+<span>Build and test interactive electronic circuits, visualize current flow, and inspect signals with virtual instruments.</span>
+<small class="sme-module-source">Open-source browser simulator, GPL-2.0-or-later</small>
+<div class="sme-module-actions">
+<button class="sme-action-button" data-open-pane="circuitjs" type="button">Open as pane</button>
+<a class="sme-action-link" href="https://www.falstad.com/circuit/circuitjs.html" rel="noopener noreferrer" target="_blank">Open in new tab</a>
+</div>
+</div>
+</div>
+<div class="sme-module-card" role="none">
+<img alt="" aria-hidden="true" src="stellarium-tool.svg"/>
+<div class="sme-module-card__body">
+<strong>Stellarium Sky Explorer</strong>
+<span>Explore stars, planets, constellations, and the night sky for different locations, dates, and times.</span>
+<small class="sme-module-source">Based on the open-source Stellarium Web project</small>
+<div class="sme-module-actions">
+<button class="sme-action-button" data-open-pane="stellarium" type="button">Open as pane</button>
+<a class="sme-action-link" href="https://stellarium-web.org/" rel="noopener noreferrer" target="_blank">Open in new tab</a>
+</div>
+</div>
+</div>
+<div class="sme-module-card sme-custom-embed-card" role="none">
+<img alt="" aria-hidden="true" src="logo.svg"/>
+<div class="sme-module-card__body">
+<strong>Custom HTML Embed</strong>
+<span>Paste a complete HTML document or embed snippet and open it inside a sandboxed workspace pane.</span>
+<label class="sme-custom-embed-label" for="sme-custom-html">Full HTML</label>
+<textarea id="sme-custom-html" class="sme-custom-embed-input" rows="6" spellcheck="false" placeholder="<!doctype html>
+<html>
+  <body>...</body>
+</html>"></textarea>
+<small class="sme-module-source">Runs in a restricted sandbox and is not saved after the page is closed.</small>
+<div class="sme-module-actions">
+<button class="sme-action-button" id="sme-open-custom-embed" type="button">Open custom pane</button>
 </div>
 </div>
 </div>
@@ -124,7 +176,7 @@
 </div>
 </header>
 <div class="sme-pane__body">
-<iframe loading="eager" src="Understanding_Mass_Spectrometry.html" title="Understanding Mass Spectrometry"></iframe>
+<iframe loading="eager" src="Understanding_Mass_Spectrometry.html?embed=1" title="Understanding Mass Spectrometry"></iframe>
 </div>
 </article>
 </template>
@@ -161,6 +213,77 @@
 </header>
 <div class="sme-pane__body sme-pane__body--pubchem">
 <iframe class="pubchem-widget" loading="eager" referrerpolicy="strict-origin-when-cross-origin" src="https://pubchem.ncbi.nlm.nih.gov/periodic-table/#view=table&amp;embed=true" title="PubChem Periodic Table"></iframe>
+</div>
+</article>
+</template>
+<template id="pubchem-structure-sketcher-pane-template">
+<article aria-label="PubChem Chemical Structure Sketcher pane" class="sme-pane" data-pane-id="pubchem-structure-sketcher">
+<header class="sme-pane__header">
+<div class="sme-pane__identity">
+<img alt="" src="pubchem-periodic-table.svg"/>
+<span>PubChem Chemical Structure Sketcher</span>
+</div>
+<div class="sme-pane__controls">
+<a aria-label="Open PubChem Chemical Structure Sketcher in a new tab" href="https://pubchem.ncbi.nlm.nih.gov/edit/" rel="noopener noreferrer" target="_blank" title="Open in new tab">↗</a>
+<button aria-label="Maximize PubChem Chemical Structure Sketcher pane" data-pane-action="maximize" title="Maximize pane" type="button">□</button>
+<button aria-label="Close PubChem Chemical Structure Sketcher pane" data-pane-action="close" title="Close pane" type="button">×</button>
+</div>
+</header>
+<div class="sme-pane__body sme-pane__body--pubchem">
+<iframe class="pubchem-widget" loading="eager" referrerpolicy="strict-origin-when-cross-origin" src="https://pubchem.ncbi.nlm.nih.gov/edit/" title="PubChem Chemical Structure Sketcher"></iframe>
+</div>
+</article>
+</template>
+<template id="circuitjs-pane-template">
+<article aria-label="CircuitJS Electronic Circuit Simulator pane" class="sme-pane" data-pane-id="circuitjs">
+<header class="sme-pane__header">
+<div class="sme-pane__identity">
+<img alt="" src="circuitjs-tool.svg"/>
+<span>CircuitJS Electronic Circuit Simulator</span>
+</div>
+<div class="sme-pane__controls">
+<a aria-label="Open CircuitJS in a new tab" href="https://www.falstad.com/circuit/circuitjs.html" rel="noopener noreferrer" target="_blank" title="Open in new tab">↗</a>
+<button aria-label="Maximize CircuitJS pane" data-pane-action="maximize" title="Maximize pane" type="button">□</button>
+<button aria-label="Close CircuitJS pane" data-pane-action="close" title="Close pane" type="button">×</button>
+</div>
+</header>
+<div class="sme-pane__body">
+<iframe loading="eager" referrerpolicy="strict-origin-when-cross-origin" src="https://www.falstad.com/circuit/circuitjs.html" title="CircuitJS Electronic Circuit Simulator"></iframe>
+</div>
+</article>
+</template>
+<template id="stellarium-pane-template">
+<article aria-label="Stellarium Sky Explorer pane" class="sme-pane" data-pane-id="stellarium">
+<header class="sme-pane__header">
+<div class="sme-pane__identity">
+<img alt="" src="stellarium-tool.svg"/>
+<span>Stellarium Sky Explorer</span>
+</div>
+<div class="sme-pane__controls">
+<a aria-label="Open Stellarium Sky Explorer in a new tab" href="https://stellarium-web.org/" rel="noopener noreferrer" target="_blank" title="Open in new tab">↗</a>
+<button aria-label="Maximize Stellarium Sky Explorer pane" data-pane-action="maximize" title="Maximize pane" type="button">□</button>
+<button aria-label="Close Stellarium Sky Explorer pane" data-pane-action="close" title="Close pane" type="button">×</button>
+</div>
+</header>
+<div class="sme-pane__body">
+<iframe allow="fullscreen; geolocation" loading="eager" referrerpolicy="strict-origin-when-cross-origin" src="https://stellarium-web.org/" title="Stellarium Sky Explorer"></iframe>
+</div>
+</article>
+</template>
+<template id="custom-html-pane-template">
+<article aria-label="Custom HTML Embed pane" class="sme-pane" data-pane-id="custom-html">
+<header class="sme-pane__header">
+<div class="sme-pane__identity">
+<img alt="" src="logo.svg"/>
+<span>Custom HTML Embed</span>
+</div>
+<div class="sme-pane__controls">
+<button aria-label="Maximize Custom HTML Embed pane" data-pane-action="maximize" title="Maximize pane" type="button">□</button>
+<button aria-label="Close Custom HTML Embed pane" data-pane-action="close" title="Close pane" type="button">×</button>
+</div>
+</header>
+<div class="sme-pane__body sme-pane__body--custom">
+<iframe sandbox="allow-downloads allow-forms allow-modals allow-popups allow-scripts" title="Custom HTML Embed"></iframe>
 </div>
 </article>
 </template>

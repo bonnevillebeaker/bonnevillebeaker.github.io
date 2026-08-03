@@ -124,28 +124,41 @@
               <label class="field field--wide">
                 <span>Adduct</span>
                 <select id="adduct-type">
-                  <option value="+H">+H⁺</option>
-                  <option value="+Na">+Na⁺</option>
-                  <option value="+K">+K⁺</option>
-                  <option value="+NH4">+NH₄⁺</option>
-                  <option value="+2H">+2H²⁺</option>
-                  <option value="+2Na">+2Na²⁺</option>
-                  <option value="+2K">+2K²⁺</option>
-                  <option value="+2NH4">+2NH₄²⁺</option>
-                  <option value="-H">−H⁻</option>
-                  <option value="+Cl">+Cl⁻</option>
-                  <option value="+Br">+Br⁻</option>
-                  <option value="+I">+I⁻</option>
-                  <option value="+F">+F⁻</option>
-                  <option value="+HCOO">+HCOO⁻</option>
-                  <option value="+CH3COO">+CH₃COO⁻</option>
-                  <option value="-2H">−2H²⁻</option>
-                  <option value="+2Cl">+2Cl²⁻</option>
-                  <option value="+2Br">+2Br²⁻</option>
-                  <option value="+2I">+2I²⁻</option>
-                  <option value="+2F">+2F²⁻</option>
-                  <option value="+2HCOO">+2HCOO²⁻</option>
-                  <option value="+2CH3COO">+2CH₃COO²⁻</option>
+                  <optgroup label="ESI positive ions">
+                    <option value="+H">+H⁺</option>
+                    <option value="+Na">+Na⁺</option>
+                    <option value="+K">+K⁺</option>
+                    <option value="+NH4">+NH₄⁺</option>
+                    <option value="+2H">+2H²⁺</option>
+                    <option value="+2Na">+2Na²⁺</option>
+                    <option value="+2K">+2K²⁺</option>
+                    <option value="+2NH4">+2NH₄²⁺</option>
+                  </optgroup>
+                  <optgroup label="ESI negative ions">
+                    <option value="-H">−H⁻</option>
+                    <option value="+Cl">+Cl⁻</option>
+                    <option value="+Br">+Br⁻</option>
+                    <option value="+I">+I⁻</option>
+                    <option value="+F">+F⁻</option>
+                    <option value="+HCOO">+HCOO⁻</option>
+                    <option value="+CH3COO">+CH₃COO⁻</option>
+                    <option value="-2H">−2H²⁻</option>
+                    <option value="+2Cl">+2Cl²⁻</option>
+                    <option value="+2Br">+2Br²⁻</option>
+                    <option value="+2I">+2I²⁻</option>
+                    <option value="+2F">+2F²⁻</option>
+                    <option value="+2HCOO">+2HCOO²⁻</option>
+                    <option value="+2CH3COO">+2CH₃COO²⁻</option>
+                  </optgroup>
+                  <optgroup label="Electron ionization (EI)">
+                    <option value="EI_M">M⁺• molecular ion</option>
+                  </optgroup>
+                  <optgroup label="ICP-MS ions">
+                    <option value="ICP_M+">M⁺ elemental ion</option>
+                    <option value="ICP_M2+">M²⁺ doubly charged ion</option>
+                    <option value="ICP_MO+">MO⁺ oxide ion</option>
+                    <option value="ICP_MH+">MH⁺ hydride ion</option>
+                  </optgroup>
                 </select>
               </label>
               <label class="check-field field--wide">

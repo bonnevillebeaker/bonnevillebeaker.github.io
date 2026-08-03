@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Sky explorer">
+  <rect width="128" height="128" rx="24" fill="#111a3a"/>
+  <circle cx="68" cy="61" r="31" fill="#f7e6a7"/>
+  <circle cx="82" cy="49" r="31" fill="#111a3a"/>
+  <path d="m30 28 3 8 8 3-8 3-3 8-3-8-8-3 8-3 3-8Zm72 54 2.5 6.5L111 91l-6.5 2.5L102 100l-2.5-6.5L93 91l6.5-2.5L102 82Z" fill="#fff"/>
+  <circle cx="29" cy="91" r="3" fill="#54d2d2"/><circle cx="99" cy="29" r="3" fill="#54d2d2"/>
+</svg>

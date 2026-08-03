@@ -370,7 +370,7 @@ footer a:hover { color: var(--teal); }
 /* Brand mark in the header */
 .brand { display: flex; align-items: center; gap: 10px; }
 .brand-logo {
-  width: 38px; height: 38px;
+  width: 48px; height: 48px;
   border-radius: 50%;
   background: #fff;
   flex: 0 0 auto;

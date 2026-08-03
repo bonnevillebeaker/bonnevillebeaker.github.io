@@ -4,7 +4,7 @@
   overflow: hidden;
   background: #dfe8e9;
 }
-.sme-workspace-page .brand-logo { width: 34px; height: 34px; vertical-align: middle; margin-right: 8px; }
+.sme-workspace-page .brand-logo { width: 48px; height: 48px; vertical-align: middle; margin-right: 8px; }
 .sme-main {
   max-width: none;
   height: calc(100vh - var(--header-h));

@@ -5,7 +5,7 @@
  *
  * The scientific engine follows the uploaded Python v1.21 implementation:
  * exact per-element isotope distributions, exponentiation-by-squaring,
- * mass-keyed convolution, enrichment controls, adducts, nL, profile and
+ * mass-keyed convolution, enrichment controls, adducts, element-specific nL, profile and
  * centroid rendering.
  */
 (function () {
@@ -244,10 +244,9 @@
     return result;
   }
 
-  function computeDistribution(composition, isotopeTables, charge, nL) {
+  function computeDistribution(composition, isotopeTables, charge, labelableCounts) {
     var dist = new Map([[0, 1]]);
-    var h1 = (isotopeTables.H && isotopeTables.H.masses[0]);
-    if (!Number.isFinite(h1)) throw new Error("Hydrogen-1 mass is missing from the isotope table.");
+    labelableCounts = labelableCounts || {};
 
     var elements = Object.keys(composition);
     for (var e = 0; e < elements.length; e += 1) {
@@ -256,17 +255,21 @@
       if (count <= 0) continue;
       if (!isotopeTables[atom]) throw new Error("No isotope data are available for element '" + atom + "'.");
 
-      if (atom === "H") {
-        var labelable = Math.min(nL, count);
-        var fixed = count - labelable;
-        if (labelable > 0) {
-          dist = convolve(dist, elementDistribution(isotopeTables.H.masses, isotopeTables.H.probs, labelable, INTERNAL_PRUNE), INTERNAL_PRUNE);
-        }
-        if (fixed > 0) {
-          dist = convolve(dist, new Map([[roundMass(fixed * h1), 1]]), INTERNAL_PRUNE);
-        }
-      } else {
-        dist = convolve(dist, elementDistribution(isotopeTables[atom].masses, isotopeTables[atom].probs, count, INTERNAL_PRUNE), INTERNAL_PRUNE);
+      var hasExplicitLimit = Object.prototype.hasOwnProperty.call(labelableCounts, atom);
+      var labelable = hasExplicitLimit ? Math.min(Math.max(0, Math.trunc(labelableCounts[atom])), count) : count;
+      var fixed = count - labelable;
+
+      if (labelable > 0) {
+        dist = convolve(
+          dist,
+          elementDistribution(isotopeTables[atom].masses, isotopeTables[atom].probs, labelable, INTERNAL_PRUNE),
+          INTERNAL_PRUNE
+        );
+      }
+      if (fixed > 0) {
+        var lightMass = Math.min.apply(null, isotopeTables[atom].masses);
+        if (!Number.isFinite(lightMass)) throw new Error("The light-isotope mass is missing for element '" + atom + "'.");
+        dist = convolve(dist, new Map([[roundMass(fixed * lightMass), 1]]), INTERNAL_PRUNE);
       }
     }
 
@@ -304,18 +307,35 @@
     var noise = Number(els.baselineNoise.value);
     if (!Number.isFinite(noise) || noise < 0 || noise > 100) throw new Error("Baseline noise must be between 0 and 100%.");
 
-    var totalH = Math.trunc(adducted.composition.H || 0);
-    var nLRaw = els.labelableHydrogens.value.trim();
-    var nL = totalH;
-    var warning = "";
-    if (nLRaw !== "") {
-      nL = Number(nLRaw);
-      if (!Number.isInteger(nL) || nL < 0) throw new Error("Labelable hydrogens (nL) must be a non-negative whole number.");
-      if (nL > totalH) {
-        warning = "nL exceeded the total hydrogen count and was limited to " + totalH + ".";
-        nL = totalH;
+    var elementTotals = {
+      H: Math.trunc(adducted.composition.H || 0),
+      C: Math.trunc(adducted.composition.C || 0),
+      N: Math.trunc(adducted.composition.N || 0),
+      O: Math.trunc(adducted.composition.O || 0)
+    };
+    var warnings = [];
+
+    function readLabelableCount(input, atom, total) {
+      var raw = input.value.trim();
+      if (raw === "") return total;
+      var value = Number(raw);
+      var notation = "nL," + atom;
+      if (!Number.isInteger(value) || value < 0) {
+        throw new Error(notation + " must be a non-negative whole number.");
       }
+      if (value > total) {
+        warnings.push(notation + " exceeded the total " + atom + " count and was limited to " + total + ".");
+        return total;
+      }
+      return value;
     }
+
+    var labelableCounts = {
+      H: readLabelableCount(els.labelableHydrogens, "H", elementTotals.H),
+      C: readLabelableCount(els.labelableCarbons, "C", elementTotals.C),
+      N: readLabelableCount(els.labelableNitrogens, "N", elementTotals.N),
+      O: readLabelableCount(els.labelableOxygens, "O", elementTotals.O)
+    };
 
     var fixedRange = null;
     if (els.fixGraph.checked) fixedRange = positiveNumber(els.mzRange, "m/z range", 0.1);
@@ -327,9 +347,10 @@
       adductLabel: adducted.label,
       resolvingPower: rp,
       noise: noise,
-      nL: nL,
-      totalH: totalH,
-      warning: warning,
+      nL: labelableCounts.H,
+      labelableCounts: labelableCounts,
+      elementTotals: elementTotals,
+      warning: warnings.join(" "),
       showProfile: els.showProfile.checked,
       showCentroid: els.showCentroid.checked,
       collapseNeutromers: els.collapseNeutromers.checked,
@@ -413,6 +434,10 @@
     var lines = [
       "Normalized Isotopic Distribution:",
       "Formula: " + run.formula + "    Adduct: " + run.adductLabel + "    Charge: " + run.charge,
+      "Labelable sites: nL,H=" + run.labelableCounts.H + "/" + run.elementTotals.H
+        + "    nL,C=" + run.labelableCounts.C + "/" + run.elementTotals.C
+        + "    nL,N=" + run.labelableCounts.N + "/" + run.elementTotals.N
+        + "    nL,O=" + run.labelableCounts.O + "/" + run.elementTotals.O,
       "Representation: " + (run.collapseNeutromers ? "neutromers (grouped by additional-neutron count)" : "resolved isotope fine structure"),
       ""
     ];
@@ -662,7 +687,7 @@
         var tables = cloneTables();
         applyEnrichment(tables, input.enrichment);
         var normalizedTables = normalizeTables(tables);
-        var rawPeaks = computeDistribution(input.composition, normalizedTables, input.charge, input.nL);
+        var rawPeaks = computeDistribution(input.composition, normalizedTables, input.charge, input.labelableCounts);
         var rawCollapsedPeaks = aggregateByNeutronCount(rawPeaks, input.charge);
         var normalizationPeaks = input.collapseNeutromers ? rawCollapsedPeaks : rawPeaks;
         var peakMax = normalizationPeaks.reduce(function (m, p) { return Math.max(m, p.probability); }, 0);
@@ -679,7 +704,8 @@
           resolvingPower: input.resolvingPower,
           noise: input.noise,
           nL: input.nL,
-          totalH: input.totalH,
+          labelableCounts: input.labelableCounts,
+          elementTotals: input.elementTotals,
           warning: input.warning,
           showProfile: input.showProfile,
           showCentroid: input.showCentroid,
@@ -689,7 +715,7 @@
           collapsedPeaks: collapsedPeaks,
           labels: generateLabels(peaks, input.charge),
           color: COLORS[state.runs.length % COLORS.length],
-          noiseSeed: hashString(input.formula + input.adductLabel + JSON.stringify(input.enrichment) + state.runs.length)
+          noiseSeed: hashString(input.formula + input.adductLabel + JSON.stringify(input.enrichment) + JSON.stringify(input.labelableCounts) + state.runs.length)
         };
         run.output = formatOutput(run);
         state.runs.push(run);
@@ -886,6 +912,9 @@
     els.nitrogen15 = $("nitrogen15-enrichment");
     els.oxygen18 = $("oxygen18-enrichment");
     els.labelableHydrogens = $("labelable-hydrogens");
+    els.labelableCarbons = $("labelable-carbons");
+    els.labelableNitrogens = $("labelable-nitrogens");
+    els.labelableOxygens = $("labelable-oxygens");
     els.simulate = $("simulate");
     els.reset = $("reset-graph");
     els.save = $("save-graph");
@@ -933,14 +962,33 @@
       var tables = cloneTables();
       applyEnrichment(tables, Object.assign({D: null, C13: null, N15: null, O18: null}, options.enrichment || {}));
       var normalizedTables = normalizeTables(tables);
-      var totalH = Math.trunc(adducted.composition.H || 0);
-      var nL = options.nL === undefined || options.nL === null ? totalH : Math.max(0, Math.min(totalH, Math.trunc(options.nL)));
+      var elementTotals = {
+        H: Math.trunc(adducted.composition.H || 0),
+        C: Math.trunc(adducted.composition.C || 0),
+        N: Math.trunc(adducted.composition.N || 0),
+        O: Math.trunc(adducted.composition.O || 0)
+      };
+      var requested = Object.assign({}, options.nLByElement || {}, options.labelableCounts || {});
+      if (requested.H === undefined && options.nL !== undefined && options.nL !== null) requested.H = options.nL;
+      if (requested.H === undefined && options.nLH !== undefined) requested.H = options.nLH;
+      if (requested.C === undefined && options.nLC !== undefined) requested.C = options.nLC;
+      if (requested.N === undefined && options.nLN !== undefined) requested.N = options.nLN;
+      if (requested.O === undefined && options.nLO !== undefined) requested.O = options.nLO;
+      var labelableCounts = {};
+      ["H", "C", "N", "O"].forEach(function (atom) {
+        var raw = requested[atom];
+        labelableCounts[atom] = raw === undefined || raw === null
+          ? elementTotals[atom]
+          : Math.max(0, Math.min(elementTotals[atom], Math.trunc(Number(raw) || 0)));
+      });
       return {
         composition: adducted.composition,
         charge: adducted.charge,
         adductLabel: adducted.label,
-        nL: nL,
-        peaks: computeDistribution(adducted.composition, normalizedTables, adducted.charge, nL)
+        nL: labelableCounts.H,
+        labelableCounts: labelableCounts,
+        elementTotals: elementTotals,
+        peaks: computeDistribution(adducted.composition, normalizedTables, adducted.charge, labelableCounts)
       };
     }
   };

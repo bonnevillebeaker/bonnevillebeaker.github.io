@@ -115,7 +115,7 @@
             <div class="field-grid">
               <label class="field">
                 <span>Resolving power</span>
-                <input id="resolving-power" type="number" min="100" max="1000000" step="100" value="10000">
+                <input id="resolving-power" type="number" min="100" max="1000000" step="100" value="3000">
                 <small>R = m/Δm</small>
               </label>
               <label class="field">
@@ -178,11 +178,27 @@
                 <span>Oxygen-18 (%)</span>
                 <input id="oxygen18-enrichment" type="number" min="0" max="100" step="0.01" placeholder="Natural abundance">
               </label>
-              <label class="field field--wide">
-                <span>Labelable hydrogens (n<sub>L</sub>)</span>
-                <input id="labelable-hydrogens" type="number" min="0" step="1" placeholder="Blank = all hydrogens">
-                <small>Limits deuterium enrichment to the specified number of eligible hydrogen positions.</small>
+              <label class="field">
+                <span>Labelable H sites (n<sub>L,H</sub>)</span>
+                <input id="labelable-hydrogens" type="number" min="0" step="1" placeholder="Blank = all H">
+                <small>Limits deuterium enrichment to eligible hydrogen positions.</small>
               </label>
+              <label class="field">
+                <span>Labelable C sites (n<sub>L,C</sub>)</span>
+                <input id="labelable-carbons" type="number" min="0" step="1" placeholder="Blank = all C">
+                <small>Limits carbon-13 enrichment to eligible carbon positions.</small>
+              </label>
+              <label class="field">
+                <span>Labelable N sites (n<sub>L,N</sub>)</span>
+                <input id="labelable-nitrogens" type="number" min="0" step="1" placeholder="Blank = all N">
+                <small>Limits nitrogen-15 enrichment to eligible nitrogen positions.</small>
+              </label>
+              <label class="field">
+                <span>Labelable O sites (n<sub>L,O</sub>)</span>
+                <input id="labelable-oxygens" type="number" min="0" step="1" placeholder="Blank = all O">
+                <small>Limits oxygen-18 enrichment to eligible oxygen positions.</small>
+              </label>
+              <p class="control-note field--wide">Each n<sub>L,element</sub> value is the number of atoms allowed to draw from that element's enriched isotope pool. Blank means every atom of that element is eligible; 0 means none are eligible.</p>
             </div>
           </div>
 

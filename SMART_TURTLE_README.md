@@ -15,7 +15,7 @@ This version runs entirely in the browser and does not require Python on the vis
 - Exact analytic isotope distributions using mass-keyed convolution
 - Chemical formulas with nested parentheses
 - Natural abundance or user-defined 2H, 13C, 15N, and 18O enrichment
-- Labelable-hydrogen (`nL`) control
+- Element-specific labelable-site controls (`nL,H`, `nL,C`, `nL,N`, and `nL,O`)
 - Positive and negative adducts, including singly and doubly charged ions
 - Profile and centroid spectrum rendering
 - Optional centroid/text aggregation by additional-neutron count (M0, M+1, M+2, …)
@@ -35,3 +35,5 @@ Isotope masses and natural-abundance data are attributed to Scientific Instrumen
 ## Neutromers
 
 The optional neutromer view combines isotope fine-structure peaks that share the same additional-neutron count (M0, M+1, M+2, …). Their exact masses can differ slightly because nuclear binding energy produces isotope-specific mass defects.
+
+- Default resolving power: 3000

@@ -3,8 +3,12 @@
 
   var workspace;
   var emptyState;
+  var snapPreview;
   var topZ = 10;
   var storageKey = "bonneville-sme-workspace-v2";
+  var mobileQuery = "(max-width: 820px)";
+  var minPaneWidth = 360;
+  var minPaneHeight = 300;
   var moduleDefinitions = {
     "understanding-mass-spectrometry": {
       templateId: "understanding-mass-spectrometry-pane-template",
@@ -17,6 +21,10 @@
       defaultHeight: 720
     }
   };
+
+  function isMobile() {
+    return window.matchMedia(mobileQuery).matches;
+  }
 
   function closeMenus(exceptName) {
     document.querySelectorAll("[data-menu]").forEach(function (menu) {
@@ -44,7 +52,10 @@
       if (!event.target.closest(".sme-menu-group")) closeMenus();
     });
     document.addEventListener("keydown", function (event) {
-      if (event.key === "Escape") closeMenus();
+      if (event.key === "Escape") {
+        closeMenus();
+        hideSnapPreview();
+      }
     });
   }
 
@@ -60,16 +71,108 @@
     });
   }
 
+  function numberFromStyle(value, fallback) {
+    var parsed = parseFloat(value);
+    return Number.isFinite(parsed) ? parsed : fallback;
+  }
+
+  function getPaneRect(pane) {
+    return {
+      left: numberFromStyle(pane.style.left, pane.offsetLeft),
+      top: numberFromStyle(pane.style.top, pane.offsetTop),
+      width: numberFromStyle(pane.style.width, pane.offsetWidth),
+      height: numberFromStyle(pane.style.height, pane.offsetHeight)
+    };
+  }
+
+  function setPaneRect(pane, rect) {
+    pane.style.left = Math.round(rect.left) + "px";
+    pane.style.top = Math.round(rect.top) + "px";
+    pane.style.width = Math.round(rect.width) + "px";
+    pane.style.height = Math.round(rect.height) + "px";
+  }
+
+  function readStoredRect(value) {
+    if (!value) return null;
+    try {
+      var parsed = JSON.parse(value);
+      if ([parsed.left, parsed.top, parsed.width, parsed.height].every(Number.isFinite)) return parsed;
+    } catch (error) {}
+    return null;
+  }
+
+  function storeFloatingRect(pane, rect) {
+    var value = rect || getPaneRect(pane);
+    pane.dataset.floatingRect = JSON.stringify(value);
+  }
+
+  function getFloatingRect(pane) {
+    return readStoredRect(pane.dataset.floatingRect);
+  }
+
+  function snapRect(target) {
+    var width = workspace.clientWidth;
+    var height = workspace.clientHeight;
+    var leftWidth = Math.floor(width / 2);
+    var rightWidth = width - leftWidth;
+    var topHeight = Math.floor(height / 2);
+    var bottomHeight = height - topHeight;
+
+    switch (target) {
+      case "left": return { left: 0, top: 0, width: leftWidth, height: height };
+      case "right": return { left: leftWidth, top: 0, width: rightWidth, height: height };
+      case "top": return { left: 0, top: 0, width: width, height: topHeight };
+      case "bottom": return { left: 0, top: topHeight, width: width, height: bottomHeight };
+      case "top-left": return { left: 0, top: 0, width: leftWidth, height: topHeight };
+      case "top-right": return { left: leftWidth, top: 0, width: rightWidth, height: topHeight };
+      case "bottom-left": return { left: 0, top: topHeight, width: leftWidth, height: bottomHeight };
+      case "bottom-right": return { left: leftWidth, top: topHeight, width: rightWidth, height: bottomHeight };
+      default: return null;
+    }
+  }
+
+  function clearSnap(pane) {
+    pane.classList.remove("is-snapped");
+    delete pane.dataset.snapTarget;
+  }
+
+  function layoutSnappedPane(pane) {
+    var target = pane.dataset.snapTarget;
+    if (!target || pane.classList.contains("is-maximized") || isMobile()) return;
+    var rect = snapRect(target);
+    if (rect) setPaneRect(pane, rect);
+  }
+
+  function applySnap(pane, target, preserveFloating) {
+    if (!target || isMobile()) return;
+    if (preserveFloating !== false && !pane.dataset.snapTarget && !pane.classList.contains("is-maximized")) {
+      storeFloatingRect(pane);
+    }
+    pane.classList.remove("is-maximized");
+    pane.dataset.snapTarget = target;
+    pane.classList.add("is-snapped");
+    layoutSnappedPane(pane);
+    bringToFront(pane);
+  }
+
   function clampPane(pane) {
-    if (window.matchMedia("(max-width: 820px)").matches || pane.classList.contains("is-maximized")) return;
-    var maxLeft = Math.max(0, workspace.clientWidth - Math.min(pane.offsetWidth, workspace.clientWidth));
-    var maxTop = Math.max(0, workspace.clientHeight - 42);
-    var left = Math.max(0, Math.min(parseFloat(pane.style.left) || pane.offsetLeft, maxLeft));
-    var top = Math.max(0, Math.min(parseFloat(pane.style.top) || pane.offsetTop, maxTop));
-    pane.style.left = left + "px";
-    pane.style.top = top + "px";
-    pane.style.width = Math.max(360, Math.min(pane.offsetWidth, workspace.clientWidth - left)) + "px";
-    pane.style.height = Math.max(300, Math.min(pane.offsetHeight, workspace.clientHeight - top)) + "px";
+    if (isMobile() || pane.classList.contains("is-maximized")) return;
+    if (pane.dataset.snapTarget) {
+      layoutSnappedPane(pane);
+      return;
+    }
+
+    var availableWidth = workspace.clientWidth;
+    var availableHeight = workspace.clientHeight;
+    var minimumWidth = Math.min(minPaneWidth, availableWidth);
+    var minimumHeight = Math.min(minPaneHeight, availableHeight);
+    var rect = getPaneRect(pane);
+
+    rect.width = Math.min(Math.max(minimumWidth, rect.width), availableWidth);
+    rect.height = Math.min(Math.max(minimumHeight, rect.height), availableHeight);
+    rect.left = Math.max(0, Math.min(rect.left, availableWidth - rect.width));
+    rect.top = Math.max(0, Math.min(rect.top, availableHeight - rect.height));
+    setPaneRect(pane, rect);
   }
 
   function saveLayout() {
@@ -80,7 +183,9 @@
         top: pane.style.top || pane.offsetTop + "px",
         width: pane.style.width || pane.offsetWidth + "px",
         height: pane.style.height || pane.offsetHeight + "px",
-        maximized: pane.classList.contains("is-maximized")
+        maximized: pane.classList.contains("is-maximized"),
+        snapTarget: pane.dataset.snapTarget || null,
+        floatingRect: getFloatingRect(pane)
       };
     });
     try { localStorage.setItem(storageKey, JSON.stringify(panes)); } catch (error) {}
@@ -89,34 +194,237 @@
   function toggleMaximize(pane) {
     if (pane.classList.contains("is-maximized")) {
       pane.classList.remove("is-maximized");
-      var old = pane.dataset.restoreRect ? JSON.parse(pane.dataset.restoreRect) : null;
-      if (old) {
-        pane.style.left = old.left;
-        pane.style.top = old.top;
-        pane.style.width = old.width;
-        pane.style.height = old.height;
+      if (pane.dataset.snapTarget) {
+        pane.classList.add("is-snapped");
+        layoutSnappedPane(pane);
+      } else {
+        var floating = getFloatingRect(pane);
+        if (floating) setPaneRect(pane, floating);
+        clampPane(pane);
       }
     } else {
-      pane.dataset.restoreRect = JSON.stringify({
-        left: pane.style.left || pane.offsetLeft + "px",
-        top: pane.style.top || pane.offsetTop + "px",
-        width: pane.style.width || pane.offsetWidth + "px",
-        height: pane.style.height || pane.offsetHeight + "px"
-      });
+      if (!pane.dataset.snapTarget) storeFloatingRect(pane);
+      pane.classList.remove("is-snapped");
       pane.classList.add("is-maximized");
     }
     bringToFront(pane);
     saveLayout();
   }
 
+  function ensureSnapPreview() {
+    if (snapPreview) return snapPreview;
+    snapPreview = document.createElement("div");
+    snapPreview.className = "sme-snap-preview";
+    snapPreview.hidden = true;
+    snapPreview.setAttribute("aria-hidden", "true");
+    workspace.appendChild(snapPreview);
+    return snapPreview;
+  }
+
+  function showSnapPreview(target) {
+    var preview = ensureSnapPreview();
+    var rect = snapRect(target);
+    if (!rect) {
+      hideSnapPreview();
+      return;
+    }
+    preview.dataset.snapTarget = target;
+    preview.style.left = rect.left + "px";
+    preview.style.top = rect.top + "px";
+    preview.style.width = rect.width + "px";
+    preview.style.height = rect.height + "px";
+    preview.hidden = false;
+  }
+
+  function hideSnapPreview() {
+    if (!snapPreview) return;
+    snapPreview.hidden = true;
+    delete snapPreview.dataset.snapTarget;
+  }
+
+  function detectSnapTarget(clientX, clientY) {
+    var rect = workspace.getBoundingClientRect();
+    var x = clientX - rect.left;
+    var y = clientY - rect.top;
+    var width = rect.width;
+    var height = rect.height;
+    var edgeThreshold = 34;
+    var cornerReach = Math.min(120, Math.max(72, Math.min(width, height) * 0.16));
+
+    var nearLeft = x <= edgeThreshold;
+    var nearRight = x >= width - edgeThreshold;
+    var nearTop = y <= edgeThreshold;
+    var nearBottom = y >= height - edgeThreshold;
+
+    if ((nearLeft || x <= cornerReach) && (nearTop || y <= cornerReach) && x <= cornerReach && y <= cornerReach) return "top-left";
+    if ((nearRight || x >= width - cornerReach) && (nearTop || y <= cornerReach) && x >= width - cornerReach && y <= cornerReach) return "top-right";
+    if ((nearLeft || x <= cornerReach) && (nearBottom || y >= height - cornerReach) && x <= cornerReach && y >= height - cornerReach) return "bottom-left";
+    if ((nearRight || x >= width - cornerReach) && (nearBottom || y >= height - cornerReach) && x >= width - cornerReach && y >= height - cornerReach) return "bottom-right";
+    if (nearLeft) return "left";
+    if (nearRight) return "right";
+    if (nearTop) return "top";
+    if (nearBottom) return "bottom";
+    return null;
+  }
+
+  function setIframeInteraction(pane, enabled) {
+    var iframe = pane.querySelector("iframe");
+    if (iframe) iframe.style.pointerEvents = enabled ? "" : "none";
+  }
+
+  function beginPaneDrag(event, pane, header) {
+    if (event.target.closest(".sme-pane__controls") || pane.classList.contains("is-maximized") || isMobile()) return;
+    event.preventDefault();
+    bringToFront(pane);
+
+    var workspaceBounds = workspace.getBoundingClientRect();
+    var pointerX = event.clientX - workspaceBounds.left;
+    var pointerY = event.clientY - workspaceBounds.top;
+
+    if (pane.dataset.snapTarget) {
+      var snappedRect = getPaneRect(pane);
+      var xRatio = snappedRect.width ? (pointerX - snappedRect.left) / snappedRect.width : 0.5;
+      var floating = getFloatingRect(pane) || {
+        left: pointerX - 480,
+        top: pointerY - 19,
+        width: Math.min(960, workspace.clientWidth - 40),
+        height: Math.min(700, workspace.clientHeight - 40)
+      };
+      clearSnap(pane);
+      floating.left = pointerX - Math.max(0.08, Math.min(0.92, xRatio)) * floating.width;
+      floating.top = pointerY - 19;
+      setPaneRect(pane, floating);
+      clampPane(pane);
+    }
+
+    var startRect = getPaneRect(pane);
+    var startX = event.clientX;
+    var startY = event.clientY;
+    var pendingSnap = null;
+    pane.dataset.manipulating = "drag";
+    setIframeInteraction(pane, false);
+    header.setPointerCapture(event.pointerId);
+
+    function move(moveEvent) {
+      var maxLeft = Math.max(0, workspace.clientWidth - startRect.width);
+      var maxTop = Math.max(0, workspace.clientHeight - startRect.height);
+      pane.style.left = Math.max(0, Math.min(startRect.left + moveEvent.clientX - startX, maxLeft)) + "px";
+      pane.style.top = Math.max(0, Math.min(startRect.top + moveEvent.clientY - startY, maxTop)) + "px";
+
+      pendingSnap = detectSnapTarget(moveEvent.clientX, moveEvent.clientY);
+      if (pendingSnap) showSnapPreview(pendingSnap);
+      else hideSnapPreview();
+    }
+
+    function finish() {
+      header.removeEventListener("pointermove", move);
+      header.removeEventListener("pointerup", finish);
+      header.removeEventListener("pointercancel", cancel);
+      setIframeInteraction(pane, true);
+      delete pane.dataset.manipulating;
+      hideSnapPreview();
+
+      if (pendingSnap) applySnap(pane, pendingSnap, true);
+      else {
+        clampPane(pane);
+        storeFloatingRect(pane);
+      }
+      saveLayout();
+    }
+
+    function cancel() {
+      pendingSnap = null;
+      finish();
+    }
+
+    header.addEventListener("pointermove", move);
+    header.addEventListener("pointerup", finish);
+    header.addEventListener("pointercancel", cancel);
+  }
+
+  function addResizeHandles(pane) {
+    ["n", "ne", "e", "se", "s", "sw", "w", "nw"].forEach(function (direction) {
+      var handle = document.createElement("div");
+      handle.className = "sme-resize-handle sme-resize-handle--" + direction;
+      handle.dataset.resizeDirection = direction;
+      handle.setAttribute("aria-hidden", "true");
+      pane.appendChild(handle);
+
+      handle.addEventListener("pointerdown", function (event) {
+        if (pane.classList.contains("is-maximized") || isMobile()) return;
+        event.preventDefault();
+        event.stopPropagation();
+        bringToFront(pane);
+        hideSnapPreview();
+
+        var startRect = getPaneRect(pane);
+        if (pane.dataset.snapTarget) {
+          clearSnap(pane);
+          storeFloatingRect(pane, startRect);
+        }
+
+        var startX = event.clientX;
+        var startY = event.clientY;
+        var directionValue = handle.dataset.resizeDirection;
+        var startRight = startRect.left + startRect.width;
+        var startBottom = startRect.top + startRect.height;
+        var minimumWidth = Math.min(minPaneWidth, workspace.clientWidth);
+        var minimumHeight = Math.min(minPaneHeight, workspace.clientHeight);
+
+        pane.dataset.manipulating = "resize";
+        setIframeInteraction(pane, false);
+        handle.setPointerCapture(event.pointerId);
+
+        function move(moveEvent) {
+          var dx = moveEvent.clientX - startX;
+          var dy = moveEvent.clientY - startY;
+          var next = {
+            left: startRect.left,
+            top: startRect.top,
+            width: startRect.width,
+            height: startRect.height
+          };
+
+          if (directionValue.indexOf("e") !== -1) {
+            next.width = Math.max(minimumWidth, Math.min(startRect.width + dx, workspace.clientWidth - startRect.left));
+          }
+          if (directionValue.indexOf("s") !== -1) {
+            next.height = Math.max(minimumHeight, Math.min(startRect.height + dy, workspace.clientHeight - startRect.top));
+          }
+          if (directionValue.indexOf("w") !== -1) {
+            next.left = Math.max(0, Math.min(startRect.left + dx, startRight - minimumWidth));
+            next.width = startRight - next.left;
+          }
+          if (directionValue.indexOf("n") !== -1) {
+            next.top = Math.max(0, Math.min(startRect.top + dy, startBottom - minimumHeight));
+            next.height = startBottom - next.top;
+          }
+
+          setPaneRect(pane, next);
+        }
+
+        function finish() {
+          handle.removeEventListener("pointermove", move);
+          handle.removeEventListener("pointerup", finish);
+          handle.removeEventListener("pointercancel", finish);
+          setIframeInteraction(pane, true);
+          delete pane.dataset.manipulating;
+          clampPane(pane);
+          storeFloatingRect(pane);
+          saveLayout();
+        }
+
+        handle.addEventListener("pointermove", move);
+        handle.addEventListener("pointerup", finish);
+        handle.addEventListener("pointercancel", finish);
+      });
+    });
+  }
+
   function setupPane(pane) {
     var header = pane.querySelector(".sme-pane__header");
-    var iframe = pane.querySelector("iframe");
 
     pane.addEventListener("pointerdown", function () { bringToFront(pane); });
-    pane.addEventListener("mouseup", saveLayout);
-    pane.addEventListener("touchend", saveLayout, { passive: true });
-
     pane.querySelector('[data-pane-action="close"]').addEventListener("click", function () {
       pane.remove();
       updateEmptyState();
@@ -129,40 +437,15 @@
     header.addEventListener("dblclick", function (event) {
       if (!event.target.closest(".sme-pane__controls")) toggleMaximize(pane);
     });
-
     header.addEventListener("pointerdown", function (event) {
-      if (event.target.closest(".sme-pane__controls") || pane.classList.contains("is-maximized") || window.matchMedia("(max-width: 820px)").matches) return;
-      event.preventDefault();
-      bringToFront(pane);
-      var startX = event.clientX;
-      var startY = event.clientY;
-      var startLeft = pane.offsetLeft;
-      var startTop = pane.offsetTop;
-      iframe.style.pointerEvents = "none";
-      header.setPointerCapture(event.pointerId);
-
-      function move(moveEvent) {
-        var maxLeft = Math.max(0, workspace.clientWidth - pane.offsetWidth);
-        var maxTop = Math.max(0, workspace.clientHeight - 42);
-        pane.style.left = Math.max(0, Math.min(startLeft + moveEvent.clientX - startX, maxLeft)) + "px";
-        pane.style.top = Math.max(0, Math.min(startTop + moveEvent.clientY - startY, maxTop)) + "px";
-      }
-      function finish() {
-        header.removeEventListener("pointermove", move);
-        header.removeEventListener("pointerup", finish);
-        header.removeEventListener("pointercancel", finish);
-        iframe.style.pointerEvents = "";
-        clampPane(pane);
-        saveLayout();
-      }
-      header.addEventListener("pointermove", move);
-      header.addEventListener("pointerup", finish);
-      header.addEventListener("pointercancel", finish);
+      beginPaneDrag(event, pane, header);
     });
+
+    addResizeHandles(pane);
 
     if (window.ResizeObserver) {
       new ResizeObserver(function () {
-        if (!pane.classList.contains("is-maximized")) saveLayout();
+        if (!pane.classList.contains("is-maximized") && !pane.dataset.manipulating) saveLayout();
       }).observe(pane);
     }
     bringToFront(pane);
@@ -193,10 +476,19 @@
     pane.style.top = saved && saved.top ? saved.top : 24 + offset + "px";
     pane.style.width = saved && saved.width ? saved.width : defaultWidth + "px";
     pane.style.height = saved && saved.height ? saved.height : defaultHeight + "px";
+
+    if (saved && saved.floatingRect) pane.dataset.floatingRect = JSON.stringify(saved.floatingRect);
+    else storeFloatingRect(pane, getPaneRect(pane));
+    if (saved && saved.snapTarget) pane.dataset.snapTarget = saved.snapTarget;
     if (saved && saved.maximized) pane.classList.add("is-maximized");
+    else if (saved && saved.snapTarget) pane.classList.add("is-snapped");
 
     setupPane(pane);
-    window.setTimeout(function () { clampPane(pane); saveLayout(); }, 0);
+    window.setTimeout(function () {
+      if (pane.dataset.snapTarget && !pane.classList.contains("is-maximized")) layoutSnappedPane(pane);
+      else clampPane(pane);
+      saveLayout();
+    }, 0);
     updateEmptyState();
     return pane;
   }
@@ -213,6 +505,7 @@
   function init() {
     workspace = document.getElementById("sme-workspace");
     emptyState = document.getElementById("sme-empty-state");
+    ensureSnapPreview();
     setupMenus();
 
     document.querySelectorAll("[data-open-pane]").forEach(function (button) {
@@ -230,7 +523,12 @@
     });
 
     window.addEventListener("resize", function () {
-      workspace.querySelectorAll(".sme-pane").forEach(clampPane);
+      workspace.querySelectorAll(".sme-pane").forEach(function (pane) {
+        if (pane.dataset.snapTarget) layoutSnappedPane(pane);
+        else clampPane(pane);
+      });
+      hideSnapPreview();
+      saveLayout();
     });
     restoreLayout();
 

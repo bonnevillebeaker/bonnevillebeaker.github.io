@@ -20,7 +20,7 @@
   flex: 0 0 auto;
   min-height: 68px;
   display: grid;
-  grid-template-columns: minmax(210px, auto) auto 1fr;
+  grid-template-columns: minmax(210px, auto) auto minmax(280px, 1fr);
   align-items: center;
   gap: 20px;
   padding: 9px 18px;
@@ -33,7 +33,24 @@
 .sme-toolbar__title div { display: flex; flex-direction: column; line-height: 1.15; min-width: 0; }
 .sme-toolbar__title strong { font-family: 'Libre Baskerville', serif; font-size: 1.05rem; white-space: nowrap; }
 .sme-toolbar__title span { color: #68777a; font: 0.78rem Arial, sans-serif; }
-.sme-toolbar__hint { justify-self: end; margin: 0; color: #657477; font: 0.82rem/1.35 Arial, sans-serif; text-align: right; }
+.sme-toolbar__right { justify-self: end; display: flex; align-items: center; justify-content: flex-end; gap: 14px; min-width: 0; }
+.sme-toolbar__hint { margin: 0; max-width: 470px; color: #657477; font: 0.78rem/1.3 Arial, sans-serif; text-align: right; }
+.sme-creator-apply-button {
+  flex: 0 0 auto;
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 15px;
+  border: 1px solid #1f8794;
+  border-radius: 7px;
+  background: var(--teal);
+  color: #fff;
+  font: 800 0.86rem Arial, sans-serif;
+  text-decoration: none;
+  box-shadow: 0 5px 12px rgba(31, 135, 148, 0.17);
+}
+.sme-creator-apply-button:hover { background: var(--teal-dark); color: #fff; }
 .sme-module-menu { display: flex; align-items: center; gap: 8px; }
 .sme-menu-group { position: relative; }
 .sme-menu-button {
@@ -191,19 +208,21 @@
   .sme-main { height: auto; min-height: calc(100vh - var(--header-h)); overflow: visible; }
   .sme-toolbar { grid-template-columns: 1fr; gap: 8px; padding: 10px 12px; }
   .sme-toolbar__title { display: none; }
+  .sme-toolbar__right { width: 100%; justify-self: stretch; }
   .sme-toolbar__hint { display: none; }
+  .sme-creator-apply-button { width: 100%; }
   .sme-module-menu { width: 100%; }
   .sme-menu-group { flex: 1; }
   .sme-menu-button { width: 100%; }
-  .sme-dropdown { position: fixed; top: calc(var(--header-h) + 62px); left: 12px; right: 12px; width: auto; }
-  .sme-workspace { min-height: calc(100vh - var(--header-h) - 62px); overflow: visible; touch-action: auto; }
+  .sme-dropdown { position: fixed; top: calc(var(--header-h) + 114px); left: 12px; right: 12px; width: auto; }
+  .sme-workspace { min-height: calc(100vh - var(--header-h) - 114px); overflow: visible; touch-action: auto; }
   .sme-pane,
   .sme-pane.is-maximized {
     position: relative;
     left: auto !important;
     top: auto !important;
     width: 100% !important;
-    height: calc(100vh - var(--header-h) - 62px) !important;
+    height: calc(100vh - var(--header-h) - 114px) !important;
     min-width: 0;
     min-height: 560px;
     resize: none;

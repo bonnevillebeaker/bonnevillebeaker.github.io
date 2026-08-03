@@ -1,18 +1,21 @@
 /* Science Made Easy modular workspace */
 .sme-workspace-page {
-  height: 100vh;
-  overflow: hidden;
+  min-height: 100vh;
+  height: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
   background: #dfe8e9;
 }
 .sme-workspace-page .brand-logo { width: 48px; height: 48px; vertical-align: middle; margin-right: 8px; }
 .sme-main {
   max-width: none;
-  height: calc(100vh - var(--header-h));
+  min-height: calc(100vh - var(--header-h));
+  height: auto;
   margin-top: var(--header-h);
   padding: 0;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: visible;
 }
 .sme-toolbar {
   position: relative;
@@ -71,7 +74,12 @@
   top: calc(100% + 7px);
   left: 0;
   width: 260px;
+  max-height: min(72vh, calc(100vh - var(--header-h) - 96px));
   padding: 10px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
   border: 1px solid #aebfc1;
   border-radius: 9px;
   background: #fff;
@@ -110,8 +118,8 @@
 
 .sme-workspace {
   position: relative;
-  flex: 1 1 auto;
-  min-height: 0;
+  flex: 1 0 auto;
+  min-height: max(720px, calc(100vh - var(--header-h) - 86px));
   overflow: hidden;
   background-color: #dfe8e9;
   background-image:
@@ -218,7 +226,14 @@
   .sme-module-menu { width: 100%; }
   .sme-menu-group { flex: 1; }
   .sme-menu-button { width: 100%; }
-  .sme-dropdown { position: fixed; top: calc(var(--header-h) + 114px); left: 12px; right: 12px; width: auto; }
+  .sme-dropdown {
+    position: fixed;
+    top: calc(var(--header-h) + 114px);
+    right: 12px;
+    left: 12px;
+    width: auto;
+    max-height: calc(100vh - var(--header-h) - 138px);
+  }
   .sme-workspace { min-height: calc(100vh - var(--header-h) - 114px); overflow: visible; touch-action: auto; }
   .sme-pane,
   .sme-pane.is-maximized {

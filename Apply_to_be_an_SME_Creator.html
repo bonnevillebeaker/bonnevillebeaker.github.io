@@ -58,7 +58,7 @@
 <p class="creator-kicker">Our aim</p>
 <h2 id="aim-heading">Make scientific ideas understandable, interactive, and testable.</h2>
 </div>
-<p>Science Made Easy brings explanations and hands-on learning into one shared space. An SME contribution should help a learner understand a scientific principle, connect it to the real world, and—when an interactive tool is useful—demonstrate that principle for themselves.</p>
+<p>Science Made Easy brings explanations and hands-on learning into one shared space. An SME contribution should help a learner understand a scientific principle, connect it to the real world, and, when an interactive tool is useful, demonstrate that principle for themselves.</p>
 </section>
 
 <section class="creator-section creator-security" id="rules" aria-labelledby="rules-heading">
@@ -72,6 +72,12 @@
 <li><strong>A mentor referral is required.</strong> Every submission must include written confirmation from a mentor with an established, verifiable role in the relevant scientific community. The mentor must state that they reviewed the submitted work, confirmed that it functions as described, and found no malicious or concealed behavior.</li>
 <li><strong>Only approved file types will be accepted.</strong> A submission may contain only <code>.html</code>, <code>.css</code>, <code>.js</code>, <code>.txt</code>, <code>.csv</code>, and ordinary static image files. Executables, installers, documents, archives within archives, and all other file types will be rejected.</li>
 <li><strong>The submission must be completely self-contained.</strong> Articles and tools may not link to, load, embed, or request outside resources. This includes external webpages, APIs, CDNs, hosted libraries, fonts, scripts, stylesheets, images, data files, analytics, and tracking services. Scientific sources may be listed as plain-text citations, but not as active external links.</li>
+<li><strong>Acceptance and publication are not guaranteed.</strong> Submission to the SME Creator program does not promise review, acceptance, publication, continued hosting, or placement within any specific SME section.</li>
+<li><strong>Participation is voluntary and uncompensated.</strong> Participation is at will. There is no promise of payment, royalties, employment, sponsorship, reimbursement, or compensation of any kind.</li>
+<li><strong>JavaScript must use the GNU GPL v3.0 license.</strong> Every submitted <code>.js</code> file must be original source code distributed under the GNU General Public License version 3.0. Include a plain-text copy of the GPL v3.0 license in the ZIP package and identify the license in <code>README.txt</code>.</li>
+<li><strong>Original work and lawful assets are required.</strong> Scripts and written material must be original. AI may assist with development, writing, or design, but the creator remains responsible for the submission and the mentor must verify that the final tool functions correctly and is not malicious. Do not submit copyrighted, trademarked, plagiarized, or otherwise unauthorized material.</li>
+<li><strong>Include a recognizable project logo.</strong> Standard SME practice is to include a fun, professional logo or mascot that users can associate with the tool, similar to the Smart Turtle logo. The logo may be AI generated, but it must look professional and the creator must have the right to use and publish it.</li>
+<li><strong>Submissions may be modified for consistency.</strong> The Bonneville Beaker may propose or make scientific, editorial, accessibility, security, interface, and styling changes so a contribution fits the overall style and feel of the site. All proposed modifications will be reviewed with the submitter, and the final modified version will not be published until the submitter verifies and approves it.</li>
 </ol>
 <p class="creator-note"><strong>Clarification:</strong> The no-external-links rule applies to the submitted article and tool. Your application email may include the credential-verification link, mentor information, and a view-only link used to deliver the ZIP file.</p>
 </div>
@@ -113,9 +119,9 @@
 <li><strong>Propose.</strong><span>Email a concise description of your topic, intended audience, learning goals, and the information needed to verify your graduate-level eligibility.</span></li>
 <li><strong>Obtain a referral.</strong><span>Ask a qualified mentor to review the finished work and provide written confirmation that it functions as described and contains no malicious or concealed behavior.</span></li>
 <li><strong>Submit.</strong><span>Email a view-only share link to a ZIP package containing the complete, self-contained article or tool and only the approved file types.</span></li>
-<li><strong>Review.</strong><span>Submissions are evaluated for scientific accuracy, clarity, usability, accessibility, originality, and security.</span></li>
-<li><strong>Revise.</strong><span>We may request factual, editorial, technical, accessibility, or security changes before publication.</span></li>
-<li><strong>Publish.</strong><span>Accepted articles appear under <strong>Topics</strong>; accepted interactive modules may also appear under <strong>Tools</strong>.</span></li>
+<li><strong>Review.</strong><span>Submissions are evaluated for scientific accuracy, clarity, usability, accessibility, originality, licensing, rights, and security. Review does not guarantee acceptance or publication.</span></li>
+<li><strong>Revise together.</strong><span>The Bonneville Beaker may adjust scientific wording, accessibility, security, interface details, and visual styling. Every modification will be reviewed with the submitter before final publication.</span></li>
+<li><strong>Publish.</strong><span>Approved articles may appear under <strong>Topics</strong>, and approved interactive modules may also appear under <strong>Tools</strong>. Publication remains at the discretion of The Bonneville Beaker.</span></li>
 </ol>
 </section>
 
@@ -126,6 +132,7 @@
 <div class="creator-code-card" aria-label="Example submission folder structure">
 <code>your-topic-name/<br/>
 &nbsp;&nbsp;README.txt<br/>
+&nbsp;&nbsp;LICENSE.txt&nbsp;&nbsp;&nbsp;&nbsp;<span># GNU GPL v3.0</span><br/>
 &nbsp;&nbsp;article.html<br/>
 &nbsp;&nbsp;article.css<br/>
 &nbsp;&nbsp;tool.html&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span># interactive submissions</span><br/>
@@ -138,7 +145,9 @@
 <ul>
 <li>Include every local <code>.html</code>, <code>.css</code>, and <code>.js</code> file needed for the article and tool.</li>
 <li>Place only ordinary static image files and any approved <code>.csv</code> data files in an <code>assets</code> folder.</li>
-<li>In <code>README.txt</code>, give the title, creator name, intended audience, learning objectives, file entry points, plain-text scientific references, licenses, and setup notes.</li>
+<li>In <code>README.txt</code>, give the title, creator name, intended audience, learning objectives, file entry points, plain-text scientific references, licenses, AI-assistance disclosure, asset sources, and setup notes.</li>
+<li>Include <code>LICENSE.txt</code> containing the GNU GPL v3.0 license, and identify every submitted <code>.js</code> file as GPL v3.0 licensed source code.</li>
+<li>Include a professional project logo or mascot as an ordinary static image file. The logo may be AI generated, but it must be original or lawfully licensed for this use.</li>
 <li>Use relative file paths so the submission works when opened from its own folder with internet access disabled.</li>
 <li>Bundle every permitted dependency locally. Do not use external links, CDNs, APIs, hosted fonts, remote images, remote data, or network requests.</li>
 <li>Do not include secrets, API keys, passwords, personal learner data, analytics, advertising, or tracking scripts.</li>
@@ -157,7 +166,8 @@
 <li>Do not attach the ZIP directly to Gmail. Upload it to Google Drive or a public GitHub repository and email a view-only link.</li>
 <li>Do not password-protect or encrypt the archive.</li>
 <li>Do not include executables, installers, shell scripts, browser extensions, Office files, macros, hidden binaries, symbolic links, or nested archives.</li>
-<li>Do not minify or obfuscate code. The submitted source must be readable.</li>
+<li>Do not minify or obfuscate code. The submitted source must be readable and original.</li>
+<li>Do not include copyrighted, trademarked, plagiarized, or unauthorized code, text, images, logos, data, or other assets.</li>
 <li>Do not include external URLs or network requests. The article and tool must function locally with internet access disabled.</li>
 <li>Do not use code that reads unrelated local files, accesses the clipboard without a user action, performs cryptocurrency mining, downloads additional code, or attempts to evade browser security controls.</li>
 </ul>
@@ -184,11 +194,15 @@
 <li>The mentor’s name, title, institution, contact information, and written confirmation that the submission works as described and contains no malicious or concealed behavior.</li>
 <li>The proposed title, target audience, three to five learning objectives, and whether the submission is an interactive tool + article or a discussion-based article.</li>
 <li>A short explanation of why the topic belongs in SME.</li>
+<li>The name of the project logo or mascot, whether AI assisted, and confirmation that you have the right to publish it.</li>
+<li>Confirmation that the scripts and article are original, contain no copyrighted, trademarked, plagiarized, or unauthorized material, and disclose any AI assistance.</li>
+<li>Confirmation that every <code>.js</code> file is supplied under the GNU GPL v3.0 license and that <code>LICENSE.txt</code> is included.</li>
+<li>Acknowledgment that submission does not guarantee acceptance or publication, that participation is voluntary and uncompensated, and that proposed modifications will be reviewed with you before final publication.</li>
 <li>A view-only Google Drive link to the ZIP file or a link to a public GitHub repository.</li>
 </ul>
 </div>
-<a class="creator-primary-button creator-email-draft" href="mailto:bonnevillebeaker@gmail.com?subject=SME%20Creator%20Application&amp;body=Name%3A%0A%0ADegree%20or%20current%20graduate%20program%3A%0A%0AInstitution%20and%20field%3A%0A%0ACredential-verification%20link%3A%0A%0AMentor%20name%2C%20title%2C%20institution%2C%20and%20email%3A%0A%0AMentor%20written%20confirmation%3A%0A%0AProposed%20title%3A%0A%0ATarget%20audience%3A%0A%0ASubmission%20type%3A%20Interactive%20tool%20%2B%20article%20%2F%20Discussion-based%20article%0A%0ALearning%20objectives%3A%0A1.%20%0A2.%20%0A3.%20%0A%0AWhy%20this%20belongs%20in%20SME%3A%0A%0AZIP%20or%20GitHub%20link%3A%0A">Open an application email</a>
-<p class="creator-fine-print">Submissions that do not meet the published eligibility, referral, file-type, and self-contained-content rules will not be reviewed. Submission does not guarantee publication. Contributors must have the right to share everything they submit and agree to reasonable editorial, scientific, accessibility, and technical revisions.</p>
+<a class="creator-primary-button creator-email-draft" href="mailto:bonnevillebeaker@gmail.com?subject=SME%20Creator%20Application&amp;body=Name%3A%0A%0ADegree%20or%20current%20graduate%20program%3A%0A%0AInstitution%20and%20field%3A%0A%0ACredential-verification%20link%3A%0A%0AMentor%20name%2C%20title%2C%20institution%2C%20and%20email%3A%0A%0AMentor%20written%20confirmation%3A%0A%0AProposed%20title%3A%0A%0ATarget%20audience%3A%0A%0ASubmission%20type%3A%20Interactive%20tool%20%2B%20article%20/%20Discussion-based%20article%0A%0ALearning%20objectives%3A%0A1.%20%0A2.%20%0A3.%20%0A%0AProject%20logo%20or%20mascot%3A%0A%0AWas%20AI%20used%3F%20If%20so%2C%20describe%20how%3A%0A%0AOriginality%20and%20rights%20confirmation%3A%0A%0AGPL%20v3.0%20license%20confirmation%3A%0A%0AAcknowledgment%20of%20voluntary%2C%20uncompensated%20participation%20and%20no%20guarantee%20of%20acceptance%20or%20publication%3A%0A%0AWhy%20this%20belongs%20in%20SME%3A%0A%0AZIP%20or%20GitHub%20link%3A%0A">Open an application email</a>
+<p class="creator-fine-print">Submissions that do not meet the published eligibility, referral, licensing, originality, rights, file-type, and self-contained-content rules will not be reviewed. Submission does not guarantee acceptance or publication. Participation is voluntary and at will, with no promise of compensation of any kind. The Bonneville Beaker may propose modifications to meet the site's scientific, technical, accessibility, security, and visual standards, but all modifications will be reviewed with the submitter before final publication.</p>
 </section>
 </main>
 

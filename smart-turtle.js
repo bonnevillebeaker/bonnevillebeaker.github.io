@@ -411,14 +411,15 @@
     return niceFraction * Math.pow(10, exponent);
   }
 
-  function getPlotRange() {
-    if (!state.runs.length) return null;
-    var latest = state.runs[state.runs.length - 1];
+  function getPlotRange(runs) {
+    runs = runs || state.runs;
+    if (!runs.length) return null;
+    var latest = runs[runs.length - 1];
     if (latest.fixedRange !== null) {
       return { min: latest.peaks[0].mz - 0.5, max: latest.peaks[0].mz + latest.fixedRange };
     }
     var min = Infinity, max = -Infinity;
-    state.runs.forEach(function (run) {
+    runs.forEach(function (run) {
       run.peaks.forEach(function (p) {
         if (p.mz < min) min = p.mz;
         if (p.mz > max) max = p.mz;
@@ -433,6 +434,40 @@
     var fwhm = Math.max(peak.mz / resolvingPower, 1e-8);
     var sigma = fwhm / (2 * Math.sqrt(2 * Math.log(2)));
     return peak.intensity * Math.exp(-Math.pow(x - peak.mz, 2) / (2 * sigma * sigma));
+  }
+
+
+  function buildProfilePoints(run, range, plotWidth) {
+    // One baseline sample per horizontal pixel plus explicit peak centers and
+    // shoulders. The same point generator feeds the canvas and SVG export.
+    var sampleCount = Math.min(1800, Math.max(650, Math.round(plotWidth)));
+    var xValues = [];
+    for (var i = 0; i < sampleCount; i += 1) {
+      xValues.push(range.min + (range.max - range.min) * i / (sampleCount - 1));
+    }
+    run.peaks.forEach(function (peak) {
+      if (peak.mz < range.min || peak.mz > range.max) return;
+      var fwhm = peak.mz / run.resolvingPower;
+      var sigma = fwhm / (2 * Math.sqrt(2 * Math.log(2)));
+      xValues.push(peak.mz - 2 * sigma, peak.mz - sigma, peak.mz, peak.mz + sigma, peak.mz + 2 * sigma);
+    });
+    xValues = xValues
+      .filter(function (x) { return x >= range.min && x <= range.max; })
+      .sort(function (a, b) { return a - b; });
+
+    var random = seededRandom(run.noiseSeed);
+    return xValues.map(function (mz) {
+      var intensity = 0;
+      for (var p = 0; p < run.peaks.length; p += 1) {
+        var peak = run.peaks[p];
+        var fwhmPeak = peak.mz / run.resolvingPower;
+        if (Math.abs(mz - peak.mz) <= 4.5 * fwhmPeak) {
+          intensity += gaussianHeight(mz, peak, run.resolvingPower);
+        }
+      }
+      if (run.noise > 0) intensity += (random() * 2 - 1) * run.noise;
+      return { mz: mz, intensity: intensity };
+    });
   }
 
   function renderGraph() {
@@ -500,35 +535,12 @@
       ctx.strokeStyle = run.color;
       ctx.fillStyle = run.color;
       if (run.showProfile) {
-        // Use one sample per horizontal pixel, then explicitly insert every
-        // centroid and its shoulders. This preserves very narrow peaks even
-        // when an enriched spectrum spans a wide m/z range.
-        var sampleCount = Math.min(1800, Math.max(650, Math.round(plotW)));
-        var xValues = [];
-        for (var i = 0; i < sampleCount; i += 1) {
-          xValues.push(range.min + (range.max - range.min) * i / (sampleCount - 1));
-        }
-        run.peaks.forEach(function (peak) {
-          if (peak.mz < range.min || peak.mz > range.max) return;
-          var fwhm = peak.mz / run.resolvingPower;
-          var sigma = fwhm / (2 * Math.sqrt(2 * Math.log(2)));
-          xValues.push(peak.mz - 2 * sigma, peak.mz - sigma, peak.mz, peak.mz + sigma, peak.mz + 2 * sigma);
-        });
-        xValues = xValues.filter(function (x) { return x >= range.min && x <= range.max; }).sort(function (a, b) { return a - b; });
-        var random = seededRandom(run.noiseSeed);
+        var profilePoints = buildProfilePoints(run, range, plotW);
         ctx.beginPath();
-        for (var xi = 0; xi < xValues.length; xi += 1) {
-          var mz = xValues[xi];
-          var intensity = 0;
-          for (var p = 0; p < run.peaks.length; p += 1) {
-            var peak = run.peaks[p];
-            var fwhmPeak = peak.mz / run.resolvingPower;
-            if (Math.abs(mz - peak.mz) <= 4.5 * fwhmPeak) intensity += gaussianHeight(mz, peak, run.resolvingPower);
-          }
-          if (run.noise > 0) intensity += (random() * 2 - 1) * run.noise;
-          var px = xToPx(mz), py = yToPx(intensity);
-          if (xi === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
-        }
+        profilePoints.forEach(function (point, pointIndex) {
+          var px = xToPx(point.mz), py = yToPx(point.intensity);
+          if (pointIndex === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+        });
         ctx.lineWidth = 1.7;
         ctx.stroke();
       }
@@ -649,14 +661,101 @@
     renderGraph();
   }
 
+  function escapeXml(value) {
+    return String(value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&apos;");
+  }
+
+  function svgNumber(value) {
+    return Number(value.toFixed(3));
+  }
+
+  function buildSvgMarkup(exportRuns, requestedWidth, requestedHeight) {
+    var runs = Array.isArray(exportRuns) ? exportRuns : state.runs;
+    if (!runs.length) return "";
+
+    var rect = els.canvas && els.canvas.getBoundingClientRect ? els.canvas.getBoundingClientRect() : { width: 900, height: 480 };
+    var sourceWidth = Math.max(320, Math.round(rect.width || 900));
+    var sourceHeight = Math.max(260, Math.round(rect.height || 480));
+    var width = Math.max(320, Math.round(requestedWidth || Math.max(900, sourceWidth)));
+    var height = Math.max(260, Math.round(requestedHeight || Math.max(480, width * sourceHeight / sourceWidth)));
+    var range = getPlotRange(runs);
+    var margin = { left: 74, right: 24, top: 22, bottom: 62 };
+    var plotW = Math.max(10, width - margin.left - margin.right);
+    var plotH = Math.max(10, height - margin.top - margin.bottom);
+    var yMin = 0, yMax = 110;
+    var xToPx = function (x) { return margin.left + (x - range.min) / (range.max - range.min) * plotW; };
+    var yToPx = function (y) { return margin.top + plotH - (y - yMin) / (yMax - yMin) * plotH; };
+    var parts = [];
+
+    parts.push('<?xml version="1.0" encoding="UTF-8"?>');
+    parts.push('<svg xmlns="http://www.w3.org/2000/svg" width="' + width + '" height="' + height + '" viewBox="0 0 ' + width + ' ' + height + '" role="img" aria-labelledby="svg-title svg-desc">');
+    parts.push('<title id="svg-title">Smart Turtle isotope spectrum</title>');
+    parts.push('<desc id="svg-desc">Vector mass spectrum generated locally by Smart Turtle.</desc>');
+    parts.push('<rect width="100%" height="100%" fill="#ffffff"/>');
+    parts.push('<defs><clipPath id="smart-turtle-plot-clip"><rect x="' + margin.left + '" y="' + margin.top + '" width="' + plotW + '" height="' + plotH + '"/></clipPath></defs>');
+
+    [0, 20, 40, 60, 80, 100].forEach(function (tick) {
+      var y = svgNumber(yToPx(tick));
+      parts.push('<line x1="' + margin.left + '" y1="' + y + '" x2="' + (margin.left + plotW) + '" y2="' + y + '" stroke="#dfe7e8" stroke-width="1"/>');
+      parts.push('<text x="' + (margin.left - 9) + '" y="' + y + '" fill="#516063" font-family="Arial, sans-serif" font-size="12" text-anchor="end" dominant-baseline="middle">' + tick + '</text>');
+    });
+
+    var tickStep = niceNumber((range.max - range.min) / 6, true);
+    var firstTick = Math.ceil(range.min / tickStep) * tickStep;
+    var decimals = tickStep < 0.01 ? 4 : tickStep < 0.1 ? 3 : tickStep < 1 ? 2 : tickStep < 10 ? 1 : 0;
+    for (var tick = firstTick; tick <= range.max + tickStep * 0.1; tick += tickStep) {
+      var x = svgNumber(xToPx(tick));
+      parts.push('<line x1="' + x + '" y1="' + margin.top + '" x2="' + x + '" y2="' + (margin.top + plotH) + '" stroke="#dfe7e8" stroke-width="1"/>');
+      parts.push('<text x="' + x + '" y="' + (margin.top + plotH + 22) + '" fill="#516063" font-family="Arial, sans-serif" font-size="12" text-anchor="middle">' + escapeXml(tick.toFixed(decimals)) + '</text>');
+    }
+
+    parts.push('<rect x="' + margin.left + '" y="' + margin.top + '" width="' + plotW + '" height="' + plotH + '" fill="none" stroke="#68777a" stroke-width="1.2"/>');
+    parts.push('<text x="' + (margin.left + plotW / 2) + '" y="' + (height - 12) + '" fill="#334144" font-family="Arial, sans-serif" font-size="13" text-anchor="middle">m/z</text>');
+    parts.push('<text x="18" y="' + (margin.top + plotH / 2) + '" fill="#334144" font-family="Arial, sans-serif" font-size="13" text-anchor="middle" transform="rotate(-90 18 ' + (margin.top + plotH / 2) + ')">Normalized Intensity</text>');
+    parts.push('<g clip-path="url(#smart-turtle-plot-clip)">');
+
+    runs.forEach(function (run) {
+      if (run.showProfile) {
+        var points = buildProfilePoints(run, range, plotW);
+        var path = points.map(function (point, index) {
+          var command = index === 0 ? "M" : "L";
+          return command + svgNumber(xToPx(point.mz)) + " " + svgNumber(yToPx(point.intensity));
+        }).join(" ");
+        parts.push('<path d="' + path + '" fill="none" stroke="' + escapeXml(run.color) + '" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"/>');
+      }
+      if (run.showCentroid) {
+        run.peaks.forEach(function (peak) {
+          if (peak.mz < range.min || peak.mz > range.max) return;
+          var x = svgNumber(xToPx(peak.mz));
+          parts.push('<line x1="' + x + '" y1="' + svgNumber(yToPx(0)) + '" x2="' + x + '" y2="' + svgNumber(yToPx(peak.intensity)) + '" stroke="' + escapeXml(run.color) + '" stroke-width="1.3" stroke-dasharray="5 3" opacity="0.65"/>');
+        });
+      }
+    });
+
+    parts.push('</g>');
+    parts.push('<metadata>Generated by Smart Turtle · The Bonneville Beaker</metadata>');
+    parts.push('</svg>');
+    return parts.join("\n");
+  }
+
   function saveGraph() {
     if (!state.runs.length) return;
+    var svg = buildSvgMarkup();
+    var blob = new Blob([svg], { type: "image/svg+xml;charset=utf-8" });
+    var url = URL.createObjectURL(blob);
+    var latestFormula = state.runs[state.runs.length - 1].formula.replace(/[^A-Za-z0-9_-]+/g, "-");
     var link = document.createElement("a");
-    link.download = "smart-turtle-spectrum.png";
-    link.href = els.canvas.toDataURL("image/png");
+    link.download = "smart-turtle-" + (latestFormula || "spectrum") + ".svg";
+    link.href = url;
     document.body.appendChild(link);
     link.click();
     link.remove();
+    window.setTimeout(function () { URL.revokeObjectURL(url); }, 0);
   }
 
   function copyOutput() {
@@ -748,6 +847,7 @@
   window.SmartTurtleEngine = {
     parseFormula: parseFormula,
     applyAdduct: applyAdduct,
+    exportSvg: buildSvgMarkup,
     calculate: function (options) {
       options = options || {};
       var parsed = parseFormula(options.formula || "");

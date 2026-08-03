@@ -10,6 +10,11 @@
   <link rel="icon" type="image/svg+xml" href="logo.svg">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <script>
+    if (new URLSearchParams(window.location.search).get("embed") === "1") {
+      document.documentElement.classList.add("smart-turtle-embedded");
+    }
+  </script>
   <script src="device.js"></script>
 </head>
 <body class="smart-turtle-page">
@@ -54,7 +59,7 @@
             <p id="spectrum-status" class="status-line" aria-live="polite">Enter a formula and select Simulate.</p>
           </div>
           <div class="spectrum-actions">
-            <button id="save-graph" class="turtle-button turtle-button--secondary" type="button" disabled>Save PNG</button>
+            <button id="save-graph" class="turtle-button turtle-button--secondary" type="button" disabled>Save SVG</button>
             <button id="reset-graph" class="turtle-button turtle-button--danger" type="button" disabled>Reset graph</button>
           </div>
         </div>

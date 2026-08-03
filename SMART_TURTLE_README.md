@@ -10,6 +10,10 @@ Files:
 - `smart-turtle.css`: tool-specific responsive styling
 - `smart_turtle_cropped_soft_edges.png`: mascot image
 
-The browser port implements the v1.21 analytic convolution approach from the uploaded Python application. It supports formula parsing, selected adducts, charge states, D/13C/15N/18O enrichment, labelable hydrogens (nL), resolving power, baseline noise, fixed m/z windows, overlaid runs, centroid/profile display, text output, copy, reset, and PNG export.
+The browser port implements the v1.21 analytic convolution approach from the uploaded Python application. It supports formula parsing, selected adducts, charge states, D/13C/15N/18O enrichment, labelable hydrogens (nL), resolving power, baseline noise, fixed m/z windows, overlaid runs, centroid/profile display, text output, copy, reset, and true vector SVG export.
 
 License: GPL v3.0 or later. Isotope data attribution remains with Scientific Instrument Services.
+
+## SME workspace
+
+`Science_Made_Easy.html` now provides Topics and Tools menus. Smart Turtle can be opened as a draggable, resizable workspace pane or in its standalone page. The first workspace version supports floating, draggable, resizable, maximizable panes, and saves pane position and size in the browser. Split docking and tab stacks can be added in the next workspace iteration.

@@ -1,58 +1,116 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="theme-color" content="#2DABBA">
-    <title>SME · The Bonneville Beaker</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="icon" type="image/svg+xml" href="logo.svg">
-    <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="apple-touch-icon.png">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-title" content="Beaker">
-    <style>
-      #preloader{position:fixed;inset:0;z-index:3000;display:grid;place-items:center;background:#fff}
-    </style>
-    <script src="device.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#2DABBA">
+  <title>Science Made Easy · The Bonneville Beaker</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="sme.css">
+  <link rel="icon" type="image/svg+xml" href="logo.svg">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Beaker">
+  <script src="device.js"></script>
 </head>
-<body>
-    <div id="preloader" aria-hidden="true">
-        <div class="preloader-inner">
-            <img class="preloader-logo" src="logo.svg" alt="">
-            <div class="preloader-ring"></div>
+<body class="sme-workspace-page">
+  <header class="header">
+    <nav class="nav-bar" aria-label="Main">
+      <a class="brand" href="index.html">
+        <img class="brand-logo" src="logo.svg" alt="">
+        <span>The Bonneville Beaker</span>
+      </a>
+      <button class="nav-toggle" aria-label="Menu" aria-expanded="false" aria-controls="primary-menu">
+        <span></span><span></span><span></span>
+      </button>
+      <ul id="primary-menu">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="Podcast_Episodes.html">Podcast</a></li>
+        <li><a href="Shorts.html">Shorts</a></li>
+        <li><a href="Archive.html">Archive</a></li>
+        <li><a href="Events.html">Events</a></li>
+        <li><a href="Science_Made_Easy.html" aria-current="page">SME</a></li>
+        <li><a href="Merchandise.html">Merchandise</a></li>
+        <li><a href="About.html">About</a></li>
+        <li><a href="Support_Us.html">Support Us!</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="sme-main" aria-label="Science Made Easy workspace">
+    <section class="sme-toolbar" aria-label="SME menu">
+      <div class="sme-toolbar__title">
+        <img src="logo.svg" alt="" aria-hidden="true">
+        <div>
+          <strong>Science Made Easy</strong>
+          <span>Interactive workspace</span>
         </div>
-    </div>
-    <header class="header">
-        <nav class="nav-bar" aria-label="Main">
-            <a class="brand" href="index.html">
-                <img class="brand-logo" src="logo.svg" alt="">
-                <span>The Bonneville Beaker</span>
-            </a>
-            <button class="nav-toggle" aria-label="Menu" aria-expanded="false" aria-controls="primary-menu">
-                <span></span><span></span><span></span>
-            </button>
-            <ul id="primary-menu">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="Podcast_Episodes.html">Podcast</a></li>
-                <li><a href="Shorts.html">Shorts</a></li>
-                <li><a href="Archive.html">Archive</a></li>
-                <li><a href="Events.html">Events</a></li>
-                <li><a href="Science_Made_Easy.html" aria-current="page">SME</a></li>
-                <li><a href="Merchandise.html">Merchandise</a></li>
-                <li><a href="About.html">About</a></li>
-                <li><a href="Support_Us.html">Support Us!</a></li>
-            </ul>
-        </nav>
-    </header>
-    <main>
-        <h1>Science Made Easy</h1>
-        <p class="coming-soon"><span class="beaker-dot"></span>Coming soon!</p>
-    </main>
-    <footer>
-        <p>The Bonneville Beaker · Science from the Intermountain West</p>
-        <p><a href="#" onclick="BB.openYouTube();return false;">YouTube</a> · <a href="#" onclick="BB.openInstagram();return false;">Instagram</a></p>
-    </footer>
-    <script src="script.js"></script>
+      </div>
+
+      <nav class="sme-module-menu" aria-label="Workspace modules">
+        <div class="sme-menu-group">
+          <button class="sme-menu-button" type="button" aria-haspopup="menu" aria-expanded="false" data-menu-button="topics">
+            Topics <span aria-hidden="true">▾</span>
+          </button>
+          <div class="sme-dropdown" id="topics-menu" role="menu" data-menu="topics" hidden>
+            <p class="sme-menu-empty">No topics have been added yet.</p>
+          </div>
+        </div>
+
+        <div class="sme-menu-group">
+          <button class="sme-menu-button" type="button" aria-haspopup="menu" aria-expanded="false" data-menu-button="tools">
+            Tools <span aria-hidden="true">▾</span>
+          </button>
+          <div class="sme-dropdown sme-dropdown--wide" id="tools-menu" role="menu" data-menu="tools" hidden>
+            <div class="sme-module-card" role="none">
+              <img src="smart_turtle_cropped_soft_edges.png" alt="" aria-hidden="true">
+              <div class="sme-module-card__body">
+                <strong>Smart Turtle</strong>
+                <span>Isotope distribution and mass spectrometry simulator</span>
+                <div class="sme-module-actions">
+                  <button type="button" class="sme-action-button" data-open-pane="smart-turtle">Open as pane</button>
+                  <a class="sme-action-link" href="Smart_Turtle.html" target="_blank" rel="noopener">Open in new tab</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <p class="sme-toolbar__hint">Drag pane headers to move them. Drag a pane edge or corner to resize.</p>
+    </section>
+
+    <section id="sme-workspace" class="sme-workspace" aria-label="Module workspace">
+      <div id="sme-empty-state" class="sme-empty-state">
+        <img src="smart_turtle_cropped_soft_edges.png" alt="">
+        <h1>Build your science workspace</h1>
+        <p>Open a topic or tool from the menus above. Modules can run here as movable panes or in their own browser tab.</p>
+        <button type="button" class="sme-empty-action" data-open-pane="smart-turtle">Open Smart Turtle</button>
+      </div>
+    </section>
+  </main>
+
+  <template id="smart-turtle-pane-template">
+    <article class="sme-pane" data-pane-id="smart-turtle" aria-label="Smart Turtle pane">
+      <header class="sme-pane__header">
+        <div class="sme-pane__identity">
+          <img src="smart_turtle_cropped_soft_edges.png" alt="">
+          <span>Smart Turtle</span>
+        </div>
+        <div class="sme-pane__controls">
+          <a href="Smart_Turtle.html" target="_blank" rel="noopener" title="Open in new tab" aria-label="Open Smart Turtle in a new tab">↗</a>
+          <button type="button" data-pane-action="maximize" title="Maximize pane" aria-label="Maximize Smart Turtle pane">□</button>
+          <button type="button" data-pane-action="close" title="Close pane" aria-label="Close Smart Turtle pane">×</button>
+        </div>
+      </header>
+      <div class="sme-pane__body">
+        <iframe title="Smart Turtle isotope simulator" src="Smart_Turtle.html?embed=1" loading="eager"></iframe>
+      </div>
+    </article>
+  </template>
+
+  <script src="sme.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>

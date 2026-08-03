@@ -164,3 +164,32 @@
   .field--wide { grid-column: auto; }
   .tab-panel { min-height: 0; }
 }
+
+
+/* Embedded mode used by the SME workspace pane. */
+.smart-turtle-embedded,
+.smart-turtle-embedded body {
+  min-height: 100%;
+  background: #eef4f4;
+}
+.smart-turtle-embedded .header,
+.smart-turtle-embedded body > footer,
+.smart-turtle-embedded .turtle-heading,
+.smart-turtle-embedded .turtle-notes {
+  display: none !important;
+}
+.smart-turtle-embedded body {
+  margin: 0;
+  overflow: auto;
+}
+.smart-turtle-embedded main.smart-turtle-main {
+  max-width: none;
+  margin: 0;
+  padding: 10px;
+}
+.smart-turtle-embedded .controls-panel {
+  top: 10px;
+}
+@media (max-width: 980px) {
+  .smart-turtle-embedded .controls-panel { position: static; }
+}

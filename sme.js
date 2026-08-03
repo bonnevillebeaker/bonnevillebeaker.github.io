@@ -4,7 +4,19 @@
   var workspace;
   var emptyState;
   var topZ = 10;
-  var storageKey = "bonneville-sme-workspace-v1";
+  var storageKey = "bonneville-sme-workspace-v2";
+  var moduleDefinitions = {
+    "understanding-mass-spectrometry": {
+      templateId: "understanding-mass-spectrometry-pane-template",
+      defaultWidth: 980,
+      defaultHeight: 740
+    },
+    "smart-turtle": {
+      templateId: "smart-turtle-pane-template",
+      defaultWidth: 1040,
+      defaultHeight: 720
+    }
+  };
 
   function closeMenus(exceptName) {
     document.querySelectorAll("[data-menu]").forEach(function (menu) {
@@ -56,8 +68,8 @@
     var top = Math.max(0, Math.min(parseFloat(pane.style.top) || pane.offsetTop, maxTop));
     pane.style.left = left + "px";
     pane.style.top = top + "px";
-    pane.style.width = Math.min(pane.offsetWidth, workspace.clientWidth - left) + "px";
-    pane.style.height = Math.min(pane.offsetHeight, workspace.clientHeight - top) + "px";
+    pane.style.width = Math.max(360, Math.min(pane.offsetWidth, workspace.clientWidth - left)) + "px";
+    pane.style.height = Math.max(300, Math.min(pane.offsetHeight, workspace.clientHeight - top)) + "px";
   }
 
   function saveLayout() {
@@ -156,20 +168,29 @@
     bringToFront(pane);
   }
 
-  function createSmartTurtlePane(saved) {
-    var existing = workspace.querySelector('[data-pane-id="smart-turtle"]');
+  function createModulePane(moduleId, saved) {
+    var definition = moduleDefinitions[moduleId];
+    if (!definition) return null;
+    var existing = workspace.querySelector('[data-pane-id="' + moduleId + '"]');
     if (existing) {
       bringToFront(existing);
       return existing;
     }
-    var template = document.getElementById("smart-turtle-pane-template");
+
+    var template = document.getElementById(definition.templateId);
+    if (!template) return null;
     var pane = template.content.firstElementChild.cloneNode(true);
     workspace.appendChild(pane);
 
-    var defaultWidth = Math.min(1040, Math.max(620, workspace.clientWidth - 56));
-    var defaultHeight = Math.min(720, Math.max(480, workspace.clientHeight - 48));
-    pane.style.left = saved && saved.left ? saved.left : Math.max(20, (workspace.clientWidth - defaultWidth) / 2) + "px";
-    pane.style.top = saved && saved.top ? saved.top : "24px";
+    var horizontalInset = moduleId === "understanding-mass-spectrometry" ? 84 : 56;
+    var verticalInset = moduleId === "understanding-mass-spectrometry" ? 64 : 48;
+    var defaultWidth = Math.min(definition.defaultWidth, Math.max(620, workspace.clientWidth - horizontalInset));
+    var defaultHeight = Math.min(definition.defaultHeight, Math.max(480, workspace.clientHeight - verticalInset));
+    var alreadyOpen = workspace.querySelectorAll(".sme-pane").length - 1;
+    var offset = Math.min(alreadyOpen * 28, 112);
+
+    pane.style.left = saved && saved.left ? saved.left : Math.max(20, (workspace.clientWidth - defaultWidth) / 2 + offset) + "px";
+    pane.style.top = saved && saved.top ? saved.top : 24 + offset + "px";
     pane.style.width = saved && saved.width ? saved.width : defaultWidth + "px";
     pane.style.height = saved && saved.height ? saved.height : defaultHeight + "px";
     if (saved && saved.maximized) pane.classList.add("is-maximized");
@@ -185,7 +206,7 @@
     try { saved = JSON.parse(localStorage.getItem(storageKey) || "[]"); } catch (error) {}
     if (!Array.isArray(saved)) return;
     saved.forEach(function (pane) {
-      if (pane.id === "smart-turtle") createSmartTurtlePane(pane);
+      if (moduleDefinitions[pane.id]) createModulePane(pane.id, pane);
     });
   }
 
@@ -193,12 +214,21 @@
     workspace = document.getElementById("sme-workspace");
     emptyState = document.getElementById("sme-empty-state");
     setupMenus();
-    document.querySelectorAll('[data-open-pane="smart-turtle"]').forEach(function (button) {
+
+    document.querySelectorAll("[data-open-pane]").forEach(function (button) {
       button.addEventListener("click", function () {
-        createSmartTurtlePane();
+        createModulePane(button.getAttribute("data-open-pane"));
         closeMenus();
       });
     });
+
+    window.addEventListener("message", function (event) {
+      var data = event.data || {};
+      if (data.type === "sme-open-pane" && moduleDefinitions[data.moduleId]) {
+        createModulePane(data.moduleId);
+      }
+    });
+
     window.addEventListener("resize", function () {
       workspace.querySelectorAll(".sme-pane").forEach(clampPane);
     });

@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#2DABBA">
+  <title>Understanding Mass Spectrometry · The Bonneville Beaker</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="mass-spectrometry-topic.css">
+  <link rel="icon" type="image/svg+xml" href="logo.svg">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <script>
+    if (new URLSearchParams(window.location.search).get("embed") === "1") {
+      document.documentElement.classList.add("ms-topic-embedded");
+    }
+  </script>
+  <script src="device.js"></script>
+</head>
+<body class="ms-topic-page">
+  <header class="header">
+    <nav class="nav-bar" aria-label="Main">
+      <a class="brand" href="index.html">
+        <img class="brand-logo" src="logo.svg" alt="">
+        <span>The Bonneville Beaker</span>
+      </a>
+      <button class="nav-toggle" aria-label="Menu" aria-expanded="false" aria-controls="primary-menu">
+        <span></span><span></span><span></span>
+      </button>
+      <ul id="primary-menu">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="Podcast_Episodes.html">Podcast</a></li>
+        <li><a href="Shorts.html">Shorts</a></li>
+        <li><a href="Archive.html">Archive</a></li>
+        <li><a href="Events.html">Events</a></li>
+        <li><a href="Science_Made_Easy.html" aria-current="page">SME</a></li>
+        <li><a href="Merchandise.html">Merchandise</a></li>
+        <li><a href="About.html">About</a></li>
+        <li><a href="Support_Us.html">Support Us!</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="ms-topic-main wide">
+    <section class="ms-hero" aria-labelledby="ms-topic-title">
+      <img src="mass-spectrometry-topic.svg" alt="Mass spectrum icon" class="ms-hero__icon">
+      <div>
+        <p class="ms-eyebrow"><a href="Science_Made_Easy.html">Science Made Easy</a> / Topics</p>
+        <h1 id="ms-topic-title">Understanding Mass Spectrometry</h1>
+        <p class="lead">How a mass spectrometer turns ions into a spectrum—and how to read what the spectrum is telling you.</p>
+      </div>
+    </section>
+
+    <nav class="ms-section-nav" aria-label="Topic sections">
+      <a href="#what-is-ms">What it is</a>
+      <a href="#reading-spectrum">The axes</a>
+      <a href="#resolution">Resolution</a>
+      <a href="#centroiding">Centroiding</a>
+      <a href="#adducts-charge">Adducts & charge</a>
+      <a href="#isotope-labeling">Isotope labeling</a>
+      <a href="#uses">Uses</a>
+    </nav>
+
+    <section id="what-is-ms" class="ms-card ms-intro-card">
+      <div class="ms-section-heading">
+        <span class="ms-section-number">01</span>
+        <div>
+          <p class="ms-kicker">The central idea</p>
+          <h2>What is mass spectrometry?</h2>
+        </div>
+      </div>
+      <div class="ms-definition">
+        <p><strong>Mass spectrometry is an analytical technique that creates gas-phase ions and separates or detects them according to their mass-to-charge ratio, written <em>m/z</em>.</strong></p>
+      </div>
+      <p>A mass spectrometer does not simply “weigh a molecule.” First, the sample must be converted into ions. Those ions are then guided through an analyzer, where their behavior depends on <em>m/z</em>. A detector records how much signal arrives at each <em>m/z</em> value, producing a mass spectrum.</p>
+
+      <div class="ms-flow" aria-label="Simplified mass spectrometry workflow">
+        <div class="ms-flow__step">
+          <span>1</span>
+          <strong>Introduce sample</strong>
+          <small>Liquid, gas, solid extract, or separated chromatographic peak</small>
+        </div>
+        <div class="ms-flow__arrow" aria-hidden="true">→</div>
+        <div class="ms-flow__step">
+          <span>2</span>
+          <strong>Create ions</strong>
+          <small>Examples: electrospray, electron ionization, MALDI</small>
+        </div>
+        <div class="ms-flow__arrow" aria-hidden="true">→</div>
+        <div class="ms-flow__step">
+          <span>3</span>
+          <strong>Separate by m/z</strong>
+          <small>Examples: quadrupole, TOF, Orbitrap, ion trap</small>
+        </div>
+        <div class="ms-flow__arrow" aria-hidden="true">→</div>
+        <div class="ms-flow__step">
+          <span>4</span>
+          <strong>Detect ions</strong>
+          <small>The instrument converts ion arrival into an electrical signal</small>
+        </div>
+      </div>
+
+      <aside class="ms-callout">
+        <strong>Important distinction:</strong> mass spectrometry measures ions. Neutral molecules must gain or lose charge—or be converted into charged fragments—before the mass analyzer can detect them.
+      </aside>
+    </section>
+
+    <section id="reading-spectrum" class="ms-card">
+      <div class="ms-section-heading">
+        <span class="ms-section-number">02</span>
+        <div>
+          <p class="ms-kicker">Reading the output</p>
+          <h2>What do the axes mean?</h2>
+        </div>
+      </div>
+
+      <div class="ms-two-column ms-two-column--spectrum">
+        <div>
+          <div class="ms-spectrum-figure" role="img" aria-label="Example mass spectrum showing mass-to-charge ratio on the horizontal axis and relative intensity on the vertical axis">
+            <svg viewBox="0 0 760 390" aria-hidden="true">
+              <defs>
+                <linearGradient id="plotFade" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#2DABBA" stop-opacity="0.18"/>
+                  <stop offset="1" stop-color="#2DABBA" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <rect x="72" y="28" width="650" height="286" rx="8" fill="#fff" stroke="#cad9db"/>
+              <path d="M72 314H722M72 314V28" stroke="#344d51" stroke-width="3" fill="none"/>
+              <path d="M160 314V265M255 314V170M350 314V278M470 314V75M565 314V245M647 314V292" stroke="#2DABBA" stroke-width="10" stroke-linecap="round"/>
+              <path d="M160 314V265L255 170L350 278L470 75L565 245L647 292V314Z" fill="url(#plotFade)" opacity="0.7"/>
+              <g fill="#344d51" font-family="Arial, sans-serif" font-size="18">
+                <text x="370" y="365" text-anchor="middle">mass-to-charge ratio (m/z)</text>
+                <text x="24" y="180" text-anchor="middle" transform="rotate(-90 24 180)">relative intensity (%)</text>
+                <text x="142" y="340">179</text>
+                <text x="237" y="340">180</text>
+                <text x="332" y="340">181</text>
+                <text x="452" y="340">182</text>
+                <text x="547" y="340">183</text>
+                <text x="629" y="340">184</text>
+              </g>
+              <g fill="#1f6f79" font-family="Arial, sans-serif" font-size="17" font-weight="700">
+                <text x="470" y="58" text-anchor="middle">base peak</text>
+                <text x="470" y="98" text-anchor="middle">100%</text>
+              </g>
+            </svg>
+          </div>
+        </div>
+        <div class="ms-axis-cards">
+          <article>
+            <span class="ms-axis-symbol">x</span>
+            <div>
+              <h3>Horizontal axis: m/z</h3>
+              <p><em>m</em> is the ion’s mass and <em>z</em> is the magnitude of its charge. A singly charged ion usually appears near its ionic mass. A doubly charged ion appears at roughly half that value.</p>
+            </div>
+          </article>
+          <article>
+            <span class="ms-axis-symbol">y</span>
+            <div>
+              <h3>Vertical axis: intensity</h3>
+              <p>Intensity represents the detector signal associated with ions at that <em>m/z</em>. Spectra are often normalized so the strongest peak—the <strong>base peak</strong>—is shown as 100%.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <aside class="ms-callout ms-callout--caution">
+        <strong>Intensity is not automatically concentration.</strong> Different molecules ionize, transmit, fragment, and reach the detector with different efficiencies. Quantitative measurements normally require calibration, controls, or internal standards.
+      </aside>
+    </section>
+
+    <section id="resolution" class="ms-card">
+      <div class="ms-section-heading">
+        <span class="ms-section-number">03</span>
+        <div>
+          <p class="ms-kicker">Separating nearby signals</p>
+          <h2>Resolution and resolving power</h2>
+        </div>
+      </div>
+
+      <p><strong>Resolution</strong> describes how close two ion signals can be while still being distinguished. Instruments commonly report <strong>resolving power</strong>:</p>
+      <div class="ms-equation" aria-label="Resolving power equals m divided by delta m">
+        <span>R</span><span>=</span><span class="ms-fraction"><span>m</span><span>Δm</span></span>
+      </div>
+      <p>At <em>m/z</em> 500, a resolving power of 10,000 corresponds to a peak width of approximately 0.05 Da when Δm is measured at full width at half maximum. Higher resolving power produces narrower peaks and makes nearby ions easier to distinguish.</p>
+
+      <div class="ms-lab" aria-labelledby="resolution-lab-title">
+        <div class="ms-lab__controls">
+          <h3 id="resolution-lab-title">Resolution lab</h3>
+          <label>
+            <span>Resolving power: <output id="resolution-r-output">10,000</output></span>
+            <input id="resolution-r" type="range" min="2000" max="100000" step="1000" value="10000">
+          </label>
+          <label>
+            <span>Peak separation: <output id="resolution-delta-output">0.050</output> Da</span>
+            <input id="resolution-delta" type="range" min="0.005" max="0.150" step="0.005" value="0.050">
+          </label>
+          <div class="ms-metric-grid">
+            <div><span>Peak width (FWHM)</span><strong id="resolution-width">0.0500 Da</strong></div>
+            <div><span>Separation ÷ width</span><strong id="resolution-ratio">1.00×</strong></div>
+          </div>
+          <p id="resolution-assessment" class="ms-assessment" aria-live="polite"></p>
+        </div>
+        <div class="ms-lab__plot">
+          <svg id="resolution-plot" viewBox="0 0 700 330" role="img" aria-label="Two simulated peaks demonstrating resolving power"></svg>
+        </div>
+      </div>
+      <p class="ms-fine-print">The exact definition of Δm depends on the stated convention, such as full width at half maximum or a valley criterion. Always compare resolving-power values measured using the same convention.</p>
+    </section>
+
+    <section id="centroiding" class="ms-card">
+      <div class="ms-section-heading">
+        <span class="ms-section-number">04</span>
+        <div>
+          <p class="ms-kicker">Two ways to represent a peak</p>
+          <h2>Profile data and centroided data</h2>
+        </div>
+      </div>
+
+      <div class="ms-centroid-demo">
+        <div class="ms-centroid-controls" role="group" aria-label="Spectrum display mode">
+          <button type="button" class="is-active" data-centroid-mode="profile">Profile</button>
+          <button type="button" data-centroid-mode="centroid">Centroid</button>
+          <button type="button" data-centroid-mode="both">Both</button>
+        </div>
+        <svg id="centroid-plot" viewBox="0 0 760 310" role="img" aria-label="Comparison of profile and centroided mass spectral data"></svg>
+      </div>
+
+      <div class="ms-comparison-grid">
+        <article>
+          <h3>Profile data</h3>
+          <p>Profile data preserve the sampled shape of each peak across many adjacent <em>m/z</em> points. They contain information about width, shape, noise, and shoulders—but require more storage.</p>
+        </article>
+        <article>
+          <h3>Centroided data</h3>
+          <p>Centroiding summarizes each detected peak as a single <em>m/z</em> value and an intensity. The result is compact and convenient for peak lists, database searching, and downstream analysis.</p>
+        </article>
+      </div>
+      <aside class="ms-callout">
+        A centroid is an estimate of a peak’s center, not a claim that the original signal was infinitely narrow. Poor peak detection or overlapping peaks can produce incorrect centroids.
+      </aside>
+    </section>
+
+    <section id="adducts-charge" class="ms-card">
+      <div class="ms-section-heading">
+        <span class="ms-section-number">05</span>
+        <div>
+          <p class="ms-kicker">Why the observed m/z differs from neutral mass</p>
+          <h2>Adducts and charge</h2>
+        </div>
+      </div>
+
+      <div class="ms-two-column">
+        <div>
+          <h3>What is an adduct?</h3>
+          <p>An <strong>adduct ion</strong> forms when a molecule is detected together with an added charged species or after the molecule loses a charged species. Common electrospray examples include protonated <strong>[M+H]<sup>+</sup></strong>, sodiated <strong>[M+Na]<sup>+</sup></strong>, and deprotonated <strong>[M−H]<sup>−</sup></strong> ions.</p>
+          <p>The same neutral compound can therefore produce several peaks with different <em>m/z</em> values. Recognizing adducts prevents you from mistaking one molecule for several unrelated molecules.</p>
+        </div>
+        <div class="ms-formula-card">
+          <span>General relationship</span>
+          <div class="ms-formula-line">m/z ≈ (M + added mass − lost mass) / |z|</div>
+          <small>Exact calculations use the appropriate ionic masses and sign conventions.</small>
+        </div>
+      </div>
+
+      <div class="ms-adduct-lab" aria-labelledby="adduct-lab-title">
+        <div class="ms-adduct-lab__controls">
+          <h3 id="adduct-lab-title">Adduct calculator</h3>
+          <label>
+            <span>Neutral monoisotopic mass (Da)</span>
+            <input id="neutral-mass" type="number" min="1" step="0.0001" value="180.0634">
+          </label>
+          <label>
+            <span>Ion form</span>
+            <select id="adduct-select">
+              <option value="protonated">[M+H]⁺</option>
+              <option value="sodiated">[M+Na]⁺</option>
+              <option value="deprotonated">[M−H]⁻</option>
+              <option value="double-protonated">[M+2H]²⁺</option>
+            </select>
+          </label>
+        </div>
+        <div class="ms-adduct-result">
+          <span>Predicted m/z</span>
+          <strong id="adduct-result">181.0707</strong>
+          <small id="adduct-explanation">One proton is added and the ion carries one positive charge.</small>
+        </div>
+      </div>
+
+      <div class="ms-charge-lab" aria-labelledby="charge-lab-title">
+        <div class="ms-charge-copy">
+          <h3 id="charge-lab-title">How charge changes a spectrum</h3>
+          <p>Because mass is divided by charge, multiply charged ions appear at lower <em>m/z</em>. This lets instruments measure molecules whose neutral masses are much larger than the analyzer’s nominal <em>m/z</em> range.</p>
+          <label>
+            <span>Charge state: <output id="charge-output">2+</output></span>
+            <input id="charge-slider" type="range" min="1" max="6" step="1" value="2">
+          </label>
+          <div class="ms-metric-grid">
+            <div><span>Ion m/z for a 1000 Da molecule</span><strong id="charge-mz">501.0073</strong></div>
+            <div><span>Approx. ¹³C isotope spacing</span><strong id="isotope-spacing">0.5017 m/z</strong></div>
+          </div>
+        </div>
+        <svg id="charge-plot" viewBox="0 0 700 280" role="img" aria-label="Spectrum illustrating how charge changes isotope spacing and mass-to-charge ratio"></svg>
+      </div>
+    </section>
+
+    <section id="isotope-labeling" class="ms-card">
+      <div class="ms-section-heading">
+        <span class="ms-section-number">06</span>
+        <div>
+          <p class="ms-kicker">Following atoms through chemistry and biology</p>
+          <h2>How isotope labeling changes the isotope distribution</h2>
+        </div>
+      </div>
+
+      <p>Every element has naturally occurring isotopes. A molecule therefore appears as an <strong>isotope distribution</strong>: a group of isotopologues that contain different combinations of light and heavy isotopes.</p>
+      <p>Isotope labeling deliberately increases the abundance of a heavy isotope—such as <sup>2</sup>H, <sup>13</sup>C, or <sup>15</sup>N. As label is incorporated, signal moves away from the unlabeled <strong>M0</strong> peak and into heavier <strong>M+1, M+2, …</strong> peaks. The envelope may shift, broaden, or develop a new labeled population depending on the experiment.</p>
+
+      <div class="ms-neutromer-explainer" aria-labelledby="neutromer-title">
+        <div class="ms-neutromer-copy">
+          <p class="ms-kicker">Reading isotope fine structure</p>
+          <h3 id="neutromer-title">What is a neutromer?</h3>
+          <p>A <strong>neutromer</strong> is the portion of an ion’s isotope distribution that has the same number of additional neutrons relative to the monoisotopic <strong>M0</strong> form. The <strong>M+1 neutromer</strong>, for example, contains every molecular variant that has gained one neutron—even when that neutron is carried by a different isotope.</p>
+          <p>Those variants are extremely close in mass, but they are not perfectly identical. A nucleus weighs slightly less than the separate protons and neutrons used to build it because some mass is converted into <strong>nuclear binding energy</strong>. Different isotopes have different binding energies, so “adding one neutron” does not always add exactly 1 Da. This small departure from an integer mass is called the <strong>mass defect</strong>.</p>
+          <p>At modest resolving power, the exact-mass peaks within a neutromer blend together into one M+1, M+2, or M+3 peak. At high resolving power, the instrument can separate this <strong>isotopic fine structure</strong>.</p>
+        </div>
+        <div class="ms-neutromer-example" aria-label="Examples of one-neutron isotope substitutions with slightly different exact mass shifts">
+          <div class="ms-neutromer-example__heading">
+            <span>All add one neutron</span>
+            <strong>Exact mass shift</strong>
+          </div>
+          <div><span><sup>14</sup>N → <sup>15</sup>N</span><strong>+0.997035 Da</strong></div>
+          <div><span><sup>12</sup>C → <sup>13</sup>C</span><strong>+1.003355 Da</strong></div>
+          <div><span><sup>1</sup>H → <sup>2</sup>H</span><strong>+1.006277 Da</strong></div>
+          <small>Values shown for neutral isotope substitutions. In an ion, the observed spacing on the m/z axis is divided by the charge magnitude |z|.</small>
+        </div>
+      </div>
+
+      <aside class="ms-callout">
+        <strong>In Smart Turtle:</strong> selecting “Collapse centroid and text into neutromers” adds together all fine-structure signals with the same additional-neutron count and reports one probability-weighted centroid for each M group.
+      </aside>
+
+      <div class="ms-label-lab" aria-labelledby="label-lab-title">
+        <div class="ms-lab__controls">
+          <h3 id="label-lab-title">Simplified isotope-labeling model</h3>
+          <label>
+            <span>Heavy-isotope enrichment: <output id="label-enrichment-output">2.0%</output></span>
+            <input id="label-enrichment" type="range" min="0" max="30" step="0.25" value="2">
+          </label>
+          <label>
+            <span>Labelable sites: <output id="label-sites-output">12</output></span>
+            <input id="label-sites" type="range" min="1" max="40" step="1" value="12">
+          </label>
+          <div class="ms-metric-grid">
+            <div><span>Expected labels per molecule</span><strong id="expected-labels">0.24</strong></div>
+            <div><span>Unlabeled fraction (M0)</span><strong id="m0-fraction">78.47%</strong></div>
+          </div>
+          <button type="button" class="ms-primary-button" data-open-smart-turtle>Explore a full formula in Smart Turtle Mass Spectrometry Simulator</button>
+        </div>
+        <div class="ms-lab__plot">
+          <svg id="label-plot" viewBox="0 0 720 350" role="img" aria-label="Binomial isotope distribution as heavy isotope enrichment changes"></svg>
+        </div>
+      </div>
+
+      <p class="ms-fine-print">This mini-model isolates one set of equivalent labelable sites so the probability shift is easy to see. A real molecular spectrum also includes the natural isotope distributions of every element, exact isotope masses, adducts, and charge. Smart Turtle Mass Spectrometry Simulator performs that fuller calculation.</p>
+
+      <div class="ms-label-interpretation">
+        <article><strong>More enrichment</strong><span>increases the probability that each eligible position contains the heavy isotope.</span></article>
+        <article><strong>More labelable sites</strong><span>allows a wider range of labeled isotopologues and generally broadens the envelope.</span></article>
+        <article><strong>Time-course labeling</strong><span>can reveal synthesis, turnover, pathway activity, and movement of atoms through a system.</span></article>
+      </div>
+    </section>
+
+    <section id="uses" class="ms-card">
+      <div class="ms-section-heading">
+        <span class="ms-section-number">07</span>
+        <div>
+          <p class="ms-kicker">Why scientists use it</p>
+          <h2>What is mass spectrometry used for?</h2>
+        </div>
+      </div>
+
+      <div class="ms-use-grid">
+        <article>
+          <span class="ms-use-icon" aria-hidden="true">?</span>
+          <h3>Identify compounds</h3>
+          <p>Combine accurate mass, isotope pattern, retention time, and fragmentation to narrow or confirm molecular identity.</p>
+        </article>
+        <article>
+          <span class="ms-use-icon" aria-hidden="true">#</span>
+          <h3>Measure amount</h3>
+          <p>Quantify drugs, metabolites, pollutants, peptides, and other analytes using standards and calibrated responses.</p>
+        </article>
+        <article>
+          <span class="ms-use-icon" aria-hidden="true">✂</span>
+          <h3>Study structure</h3>
+          <p>Fragment selected ions in tandem mass spectrometry to reveal substructures, sequences, and bond connectivity.</p>
+        </article>
+        <article>
+          <span class="ms-use-icon" aria-hidden="true">⌁</span>
+          <h3>Profile complex systems</h3>
+          <p>Measure thousands of proteins, lipids, metabolites, or environmental chemicals in a single study.</p>
+        </article>
+        <article>
+          <span class="ms-use-icon" aria-hidden="true">↻</span>
+          <h3>Trace metabolism</h3>
+          <p>Use stable isotopes to determine where atoms came from and how quickly molecules are synthesized or replaced.</p>
+        </article>
+        <article>
+          <span class="ms-use-icon" aria-hidden="true">✓</span>
+          <h3>Test quality and safety</h3>
+          <p>Check product purity, confirm manufacturing consistency, and detect contaminants or prohibited substances.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="ms-card ms-summary-card" aria-labelledby="key-ideas-title">
+      <h2 id="key-ideas-title">Key ideas to remember</h2>
+      <div class="ms-summary-grid">
+        <div><span>1</span><p>A mass spectrometer detects <strong>ions</strong>, not neutral molecules.</p></div>
+        <div><span>2</span><p>The horizontal axis is <strong>m/z</strong>; the vertical axis is detector <strong>intensity</strong>.</p></div>
+        <div><span>3</span><p>Higher resolving power means <strong>narrower peaks</strong> and better separation of nearby ions.</p></div>
+        <div><span>4</span><p>Centroiding converts a sampled peak shape into a compact <strong>m/z–intensity pair</strong>.</p></div>
+        <div><span>5</span><p>Adducts and charge determine where a molecule appears on the <strong>m/z axis</strong>.</p></div>
+        <div><span>6</span><p>Isotope labeling redistributes signal into <strong>heavier isotopologues</strong>, making atom movement measurable.</p></div>
+        <div><span>7</span><p>A <strong>neutromer</strong> groups isotope signals with the same added-neutron count; nuclear binding energy gives its members slightly different exact masses.</p></div>
+      </div>
+      <div class="ms-summary-actions">
+        <button type="button" class="ms-primary-button" data-open-smart-turtle>Open Smart Turtle Mass Spectrometry Simulator in the SME workspace</button>
+        <a class="ms-secondary-button" href="Smart_Turtle.html" target="_blank" rel="noopener">Open Smart Turtle Mass Spectrometry Simulator in a new tab</a>
+      </div>
+    </section>
+
+    <details class="ms-sources">
+      <summary>Terminology and technical sources</summary>
+      <p>The term <strong>neutromer</strong> is used here for the portion of an ion signal with a common neutron count. The binding-energy explanation and exact isotope-mass behavior are consistent with high-resolution isotope fine-structure and neutron-encoded labeling literature.</p>
+      <p><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4423578/" target="_blank" rel="noopener">Proposed mass-spectrometry signal nomenclature</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5920564/" target="_blank" rel="noopener">Neutron-encoded stable-isotope labeling</a> · <a href="https://www.nist.gov/pml/atomic-weights-and-isotopic-compositions-relative-atomic-masses" target="_blank" rel="noopener">NIST isotope mass data</a></p>
+    </details>
+  </main>
+
+  <footer>
+    <p>The Bonneville Beaker · Science from the Intermountain West</p>
+    <p><a href="#" onclick="BB.openYouTube();return false;">YouTube</a> · <a href="#" onclick="BB.openInstagram();return false;">Instagram</a></p>
+  </footer>
+
+  <script src="mass-spectrometry-topic.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

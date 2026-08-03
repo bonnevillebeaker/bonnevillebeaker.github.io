@@ -1,19 +1,37 @@
-# Smart Turtle browser port
+# Smart Turtle Mass Spectrometry Simulator browser port
 
-Open `Smart_Turtle.html` through the Bonneville Beaker site or deploy the folder to GitHub Pages.
-The calculation is performed entirely in the visitor's browser. No Python installation or server is required.
+This version runs entirely in the browser and does not require Python on the visitor's computer.
 
-Files:
-- `Smart_Turtle.html`: standalone tool page
-- `smart-turtle.js`: interface, exact isotope calculation, graph rendering, download/copy actions
-- `smart-turtle-data.js`: isotope masses and natural-abundance table
-- `smart-turtle.css`: tool-specific responsive styling
-- `smart_turtle_cropped_soft_edges.png`: mascot image
+## Files
 
-The browser port implements the v1.21 analytic convolution approach from the uploaded Python application. It supports formula parsing, selected adducts, charge states, D/13C/15N/18O enrichment, labelable hydrogens (nL), resolving power, baseline noise, fixed m/z windows, overlaid runs, centroid/profile display, text output, copy, reset, and true vector SVG export.
+- `Smart_Turtle.html` — standalone simulator page and reusable iframe page
+- `smart-turtle.js` — exact isotope calculation engine, interface logic, SVG export, and neutromer aggregation
+- `smart-turtle-data.js` — isotope masses and natural abundance data
+- `smart-turtle.css` — standalone and embedded interface styling
+- `smart_turtle_cropped_soft_edges.png` — simulator mascot
 
-License: GPL v3.0 or later. Isotope data attribution remains with Scientific Instrument Services.
+## Simulator capabilities
 
-## SME workspace
+- Exact analytic isotope distributions using mass-keyed convolution
+- Chemical formulas with nested parentheses
+- Natural abundance or user-defined 2H, 13C, 15N, and 18O enrichment
+- Labelable-hydrogen (`nL`) control
+- Positive and negative adducts, including singly and doubly charged ions
+- Profile and centroid spectrum rendering
+- Optional centroid/text aggregation by additional-neutron count (M0, M+1, M+2, …)
+- Overlay runs, graph reset, copyable numerical output, and true vector SVG export
 
-`Science_Made_Easy.html` now provides Topics and Tools menus. Smart Turtle can be opened as a draggable, resizable workspace pane or in its standalone page. The first workspace version supports floating, draggable, resizable, maximizable panes, and saves pane position and size in the browser. Split docking and tab stacks can be added in the next workspace iteration.
+## Science Made Easy integration
+
+`Science_Made_Easy.html` provides **Topics** and **Tools** menus. Both the first topic, `Understanding_Mass_Spectrometry.html`, and Smart Turtle Mass Spectrometry Simulator can be opened as movable/resizable workspace panes or in standalone browser tabs. The workspace saves pane position and size in the browser.
+
+## License and attribution
+
+The simulator remains GPL v3.0. Keep `SMART_TURTLE_LICENSE.txt` and the source copyright notices with redistributed or modified versions.
+
+Isotope masses and natural-abundance data are attributed to Scientific Instrument Services, matching the desktop project's existing attribution.
+
+
+## Neutromers
+
+The optional neutromer view combines isotope fine-structure peaks that share the same additional-neutron count (M0, M+1, M+2, …). Their exact masses can differ slightly because nuclear binding energy produces isotope-specific mass defects.

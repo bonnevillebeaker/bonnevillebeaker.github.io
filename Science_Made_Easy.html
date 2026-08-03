@@ -53,8 +53,18 @@
           <button class="sme-menu-button" type="button" aria-haspopup="menu" aria-expanded="false" data-menu-button="topics">
             Topics <span aria-hidden="true">▾</span>
           </button>
-          <div class="sme-dropdown" id="topics-menu" role="menu" data-menu="topics" hidden>
-            <p class="sme-menu-empty">No topics have been added yet.</p>
+          <div class="sme-dropdown sme-dropdown--wide" id="topics-menu" role="menu" data-menu="topics" hidden>
+            <div class="sme-module-card" role="none">
+              <img src="mass-spectrometry-topic.svg" alt="" aria-hidden="true">
+              <div class="sme-module-card__body">
+                <strong>Understanding Mass Spectrometry</strong>
+                <span>A visual introduction to spectra, resolution, centroiding, adducts, charge, isotope labeling, and common uses.</span>
+                <div class="sme-module-actions">
+                  <button type="button" class="sme-action-button" data-open-pane="understanding-mass-spectrometry">Open as pane</button>
+                  <a class="sme-action-link" href="Understanding_Mass_Spectrometry.html" target="_blank" rel="noopener">Open in new tab</a>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -66,8 +76,8 @@
             <div class="sme-module-card" role="none">
               <img src="smart_turtle_cropped_soft_edges.png" alt="" aria-hidden="true">
               <div class="sme-module-card__body">
-                <strong>Smart Turtle</strong>
-                <span>Isotope distribution and mass spectrometry simulator</span>
+                <strong>Smart Turtle Mass Spectrometry Simulator</strong>
+                <span>Calculate and visualize exact isotope distributions, enrichment, adducts, charge states, and resolving power.</span>
                 <div class="sme-module-actions">
                   <button type="button" class="sme-action-button" data-open-pane="smart-turtle">Open as pane</button>
                   <a class="sme-action-link" href="Smart_Turtle.html" target="_blank" rel="noopener">Open in new tab</a>
@@ -83,29 +93,47 @@
 
     <section id="sme-workspace" class="sme-workspace" aria-label="Module workspace">
       <div id="sme-empty-state" class="sme-empty-state">
-        <img src="smart_turtle_cropped_soft_edges.png" alt="">
-        <h1>Build your science workspace</h1>
-        <p>Open a topic or tool from the menus above. Modules can run here as movable panes or in their own browser tab.</p>
-        <button type="button" class="sme-empty-action" data-open-pane="smart-turtle">Open Smart Turtle</button>
+        <img src="logo.svg" alt="">
+        <h1>Science Made Easy workspace</h1>
+        <p>Open a topic or tool from the menus above. Each module can run here as a movable pane or in its own browser tab.</p>
       </div>
     </section>
   </main>
 
-  <template id="smart-turtle-pane-template">
-    <article class="sme-pane" data-pane-id="smart-turtle" aria-label="Smart Turtle pane">
+  <template id="understanding-mass-spectrometry-pane-template">
+    <article class="sme-pane" data-pane-id="understanding-mass-spectrometry" aria-label="Understanding Mass Spectrometry pane">
       <header class="sme-pane__header">
         <div class="sme-pane__identity">
-          <img src="smart_turtle_cropped_soft_edges.png" alt="">
-          <span>Smart Turtle</span>
+          <img src="mass-spectrometry-topic.svg" alt="">
+          <span>Understanding Mass Spectrometry</span>
         </div>
         <div class="sme-pane__controls">
-          <a href="Smart_Turtle.html" target="_blank" rel="noopener" title="Open in new tab" aria-label="Open Smart Turtle in a new tab">↗</a>
-          <button type="button" data-pane-action="maximize" title="Maximize pane" aria-label="Maximize Smart Turtle pane">□</button>
-          <button type="button" data-pane-action="close" title="Close pane" aria-label="Close Smart Turtle pane">×</button>
+          <a href="Understanding_Mass_Spectrometry.html" target="_blank" rel="noopener" title="Open in new tab" aria-label="Open Understanding Mass Spectrometry in a new tab">↗</a>
+          <button type="button" data-pane-action="maximize" title="Maximize pane" aria-label="Maximize Understanding Mass Spectrometry pane">□</button>
+          <button type="button" data-pane-action="close" title="Close pane" aria-label="Close Understanding Mass Spectrometry pane">×</button>
         </div>
       </header>
       <div class="sme-pane__body">
-        <iframe title="Smart Turtle isotope simulator" src="Smart_Turtle.html?embed=1" loading="eager"></iframe>
+        <iframe title="Understanding Mass Spectrometry topic" src="Understanding_Mass_Spectrometry.html?embed=1" loading="eager"></iframe>
+      </div>
+    </article>
+  </template>
+
+  <template id="smart-turtle-pane-template">
+    <article class="sme-pane" data-pane-id="smart-turtle" aria-label="Smart Turtle Mass Spectrometry Simulator pane">
+      <header class="sme-pane__header">
+        <div class="sme-pane__identity">
+          <img src="smart_turtle_cropped_soft_edges.png" alt="">
+          <span>Smart Turtle Mass Spectrometry Simulator</span>
+        </div>
+        <div class="sme-pane__controls">
+          <a href="Smart_Turtle.html" target="_blank" rel="noopener" title="Open in new tab" aria-label="Open Smart Turtle Mass Spectrometry Simulator in a new tab">↗</a>
+          <button type="button" data-pane-action="maximize" title="Maximize pane" aria-label="Maximize Smart Turtle Mass Spectrometry Simulator pane">□</button>
+          <button type="button" data-pane-action="close" title="Close pane" aria-label="Close Smart Turtle Mass Spectrometry Simulator pane">×</button>
+        </div>
+      </header>
+      <div class="sme-pane__body">
+        <iframe title="Smart Turtle Mass Spectrometry Simulator" src="Smart_Turtle.html?embed=1" loading="eager"></iframe>
       </div>
     </article>
   </template>

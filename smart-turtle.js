@@ -332,6 +332,7 @@
       warning: warning,
       showProfile: els.showProfile.checked,
       showCentroid: els.showCentroid.checked,
+      collapseNeutromers: els.collapseNeutromers.checked,
       fixedRange: fixedRange,
       enrichment: {
         D: nullablePercent(els.deuterium),
@@ -342,12 +343,21 @@
     };
   }
 
+  function formatNominalLabel(nominal) {
+    if (nominal === 0) return "M0";
+    return nominal > 0 ? "M+" + nominal : "M" + nominal;
+  }
+
+  function neutronCountForPeak(peak, baseIonMass, charge) {
+    return Math.round(peak.mz * charge - baseIonMass);
+  }
+
   function generateLabels(peaks, charge) {
     if (!peaks.length) return [];
     var baseMass = peaks[0].mz * charge;
     var groups = Object.create(null);
     peaks.forEach(function (peak, i) {
-      var nominal = Math.round(peak.mz * charge - baseMass);
+      var nominal = neutronCountForPeak(peak, baseMass, charge);
       if (!groups[nominal]) groups[nominal] = [];
       groups[nominal].push(i);
     });
@@ -356,21 +366,65 @@
       var nominal = Number(nominalKey);
       var indices = groups[nominalKey];
       indices.forEach(function (peakIndex, letterIndex) {
-        labels[peakIndex] = "M" + nominal + (indices.length > 1 ? String.fromCharCode(97 + letterIndex) : "");
+        labels[peakIndex] = formatNominalLabel(nominal) + (indices.length > 1 ? String.fromCharCode(97 + letterIndex) : "");
       });
     });
     return labels;
+  }
+
+  function aggregateByNeutronCount(peaks, charge) {
+    if (!peaks.length) return [];
+    var baseIonMass = peaks[0].mz * charge;
+    var groups = new Map();
+    peaks.forEach(function (peak) {
+      var nominal = neutronCountForPeak(peak, baseIonMass, charge);
+      if (!groups.has(nominal)) {
+        groups.set(nominal, {
+          nominal: nominal,
+          probability: 0,
+          intensity: 0,
+          weightedMz: 0,
+          memberCount: 0
+        });
+      }
+      var group = groups.get(nominal);
+      group.probability += peak.probability;
+      if (Number.isFinite(peak.intensity)) group.intensity += peak.intensity;
+      group.weightedMz += peak.mz * peak.probability;
+      group.memberCount += 1;
+    });
+    return Array.from(groups.values()).sort(function (a, b) { return a.nominal - b.nominal; }).map(function (group) {
+      return {
+        nominal: group.nominal,
+        label: formatNominalLabel(group.nominal),
+        probability: group.probability,
+        intensity: group.intensity,
+        mz: group.probability > 0 ? group.weightedMz / group.probability : 0,
+        memberCount: group.memberCount
+      };
+    });
+  }
+
+  function getCentroidPeaks(run) {
+    return run.collapseNeutromers ? run.collapsedPeaks : run.peaks;
   }
 
   function formatOutput(run) {
     var lines = [
       "Normalized Isotopic Distribution:",
       "Formula: " + run.formula + "    Adduct: " + run.adductLabel + "    Charge: " + run.charge,
+      "Representation: " + (run.collapseNeutromers ? "neutromers (grouped by additional-neutron count)" : "resolved isotope fine structure"),
       ""
     ];
-    run.peaks.forEach(function (peak, i) {
-      lines.push(run.labels[i] + ", Intensity: " + peak.intensity.toFixed(3) + ", m/z: " + peak.mz.toFixed(4));
-    });
+    if (run.collapseNeutromers) {
+      run.collapsedPeaks.forEach(function (peak) {
+        lines.push(peak.label + ", Intensity: " + peak.intensity.toFixed(3) + ", centroid m/z: " + peak.mz.toFixed(4) + ", fine peaks combined: " + peak.memberCount);
+      });
+    } else {
+      run.peaks.forEach(function (peak, i) {
+        lines.push(run.labels[i] + ", Intensity: " + peak.intensity.toFixed(3) + ", m/z: " + peak.mz.toFixed(4));
+      });
+    }
     if (run.warning) lines.push("\n⚠ " + run.warning);
     return lines.join("\n");
   }
@@ -490,7 +544,12 @@
     var margin = { left: 66, right: 18, top: 18, bottom: 54 };
     var plotW = Math.max(10, cssWidth - margin.left - margin.right);
     var plotH = Math.max(10, cssHeight - margin.top - margin.bottom);
-    var yMin = 0, yMax = 110;
+    var displayMaximum = 100;
+    state.runs.forEach(function (run) {
+      getCentroidPeaks(run).forEach(function (peak) { displayMaximum = Math.max(displayMaximum, peak.intensity); });
+    });
+    var yMin = 0;
+    var yMax = Math.max(110, Math.ceil(displayMaximum / 20) * 20 + 10);
     var xToPx = function (x) { return margin.left + (x - range.min) / (range.max - range.min) * plotW; };
     var yToPx = function (y) { return margin.top + plotH - (y - yMin) / (yMax - yMin) * plotH; };
 
@@ -500,11 +559,12 @@
     ctx.lineWidth = 1;
 
     // Y grid and labels.
-    [0, 20, 40, 60, 80, 100].forEach(function (tick) {
-      var y = yToPx(tick);
+    var yTickStep = niceNumber(yMax / 5, true);
+    for (var yTick = 0; yTick <= yMax + yTickStep * 0.05; yTick += yTickStep) {
+      var y = yToPx(yTick);
       ctx.beginPath(); ctx.moveTo(margin.left, y); ctx.lineTo(margin.left + plotW, y); ctx.stroke();
-      ctx.textAlign = "right"; ctx.textBaseline = "middle"; ctx.fillText(String(tick), margin.left - 9, y);
-    });
+      ctx.textAlign = "right"; ctx.textBaseline = "middle"; ctx.fillText(String(Math.round(yTick * 100) / 100), margin.left - 9, y);
+    }
 
     // X grid and labels.
     var tickStep = niceNumber((range.max - range.min) / 6, true);
@@ -548,7 +608,7 @@
         ctx.globalAlpha = 0.65;
         ctx.setLineDash([5, 3]);
         ctx.lineWidth = 1.3;
-        run.peaks.forEach(function (peak) {
+        getCentroidPeaks(run).forEach(function (peak) {
           if (peak.mz < range.min || peak.mz > range.max) return;
           var x = xToPx(peak.mz);
           ctx.beginPath(); ctx.moveTo(x, yToPx(0)); ctx.lineTo(x, yToPx(peak.intensity)); ctx.stroke();
@@ -603,11 +663,14 @@
         applyEnrichment(tables, input.enrichment);
         var normalizedTables = normalizeTables(tables);
         var rawPeaks = computeDistribution(input.composition, normalizedTables, input.charge, input.nL);
-        var peakMax = rawPeaks.reduce(function (m, p) { return Math.max(m, p.probability); }, 0);
+        var rawCollapsedPeaks = aggregateByNeutronCount(rawPeaks, input.charge);
+        var normalizationPeaks = input.collapseNeutromers ? rawCollapsedPeaks : rawPeaks;
+        var peakMax = normalizationPeaks.reduce(function (m, p) { return Math.max(m, p.probability); }, 0);
         if (state.firstNormalization === null) state.firstNormalization = peakMax;
         var peaks = rawPeaks.map(function (p) {
           return { mz: p.mz, probability: p.probability, intensity: p.probability / state.firstNormalization * 100 };
         });
+        var collapsedPeaks = aggregateByNeutronCount(peaks, input.charge);
         var run = {
           formula: input.formula,
           composition: input.composition,
@@ -620,8 +683,10 @@
           warning: input.warning,
           showProfile: input.showProfile,
           showCentroid: input.showCentroid,
+          collapseNeutromers: input.collapseNeutromers,
           fixedRange: input.fixedRange,
           peaks: peaks,
+          collapsedPeaks: collapsedPeaks,
           labels: generateLabels(peaks, input.charge),
           color: COLORS[state.runs.length % COLORS.length],
           noiseSeed: hashString(input.formula + input.adductLabel + JSON.stringify(input.enrichment) + state.runs.length)
@@ -634,7 +699,11 @@
         els.save.disabled = false;
         els.reset.disabled = false;
         els.copy.disabled = false;
-        els.status.textContent = "Run " + state.runs.length + ": " + peaks.length + " displayed isotope peak" + (peaks.length === 1 ? "" : "s") + "." + (run.warning ? " " + run.warning : "");
+        var statusCount = input.collapseNeutromers ? collapsedPeaks.length : peaks.length;
+        var statusDescription = input.collapseNeutromers
+          ? statusCount + " neutromer" + (statusCount === 1 ? "" : "s") + " from " + peaks.length + " fine-structure peaks"
+          : statusCount + " displayed isotope peak" + (statusCount === 1 ? "" : "s");
+        els.status.textContent = "Run " + state.runs.length + ": " + statusDescription + "." + (run.warning ? " " + run.warning : "");
         renderLegend();
         renderGraph();
       } catch (error) {
@@ -687,23 +756,30 @@
     var margin = { left: 74, right: 24, top: 22, bottom: 62 };
     var plotW = Math.max(10, width - margin.left - margin.right);
     var plotH = Math.max(10, height - margin.top - margin.bottom);
-    var yMin = 0, yMax = 110;
+    var displayMaximum = 100;
+    runs.forEach(function (run) {
+      getCentroidPeaks(run).forEach(function (peak) { displayMaximum = Math.max(displayMaximum, peak.intensity); });
+    });
+    var yMin = 0;
+    var yMax = Math.max(110, Math.ceil(displayMaximum / 20) * 20 + 10);
     var xToPx = function (x) { return margin.left + (x - range.min) / (range.max - range.min) * plotW; };
     var yToPx = function (y) { return margin.top + plotH - (y - yMin) / (yMax - yMin) * plotH; };
     var parts = [];
 
     parts.push('<?xml version="1.0" encoding="UTF-8"?>');
     parts.push('<svg xmlns="http://www.w3.org/2000/svg" width="' + width + '" height="' + height + '" viewBox="0 0 ' + width + ' ' + height + '" role="img" aria-labelledby="svg-title svg-desc">');
-    parts.push('<title id="svg-title">Smart Turtle isotope spectrum</title>');
-    parts.push('<desc id="svg-desc">Vector mass spectrum generated locally by Smart Turtle.</desc>');
+    parts.push('<title id="svg-title">Smart Turtle Mass Spectrometry Simulator isotope spectrum</title>');
+    parts.push('<desc id="svg-desc">Vector mass spectrum generated locally by Smart Turtle Mass Spectrometry Simulator.</desc>');
     parts.push('<rect width="100%" height="100%" fill="#ffffff"/>');
     parts.push('<defs><clipPath id="smart-turtle-plot-clip"><rect x="' + margin.left + '" y="' + margin.top + '" width="' + plotW + '" height="' + plotH + '"/></clipPath></defs>');
 
-    [0, 20, 40, 60, 80, 100].forEach(function (tick) {
-      var y = svgNumber(yToPx(tick));
+    var yTickStep = niceNumber(yMax / 5, true);
+    for (var yTick = 0; yTick <= yMax + yTickStep * 0.05; yTick += yTickStep) {
+      var y = svgNumber(yToPx(yTick));
+      var yTickLabel = Math.round(yTick * 100) / 100;
       parts.push('<line x1="' + margin.left + '" y1="' + y + '" x2="' + (margin.left + plotW) + '" y2="' + y + '" stroke="#dfe7e8" stroke-width="1"/>');
-      parts.push('<text x="' + (margin.left - 9) + '" y="' + y + '" fill="#516063" font-family="Arial, sans-serif" font-size="12" text-anchor="end" dominant-baseline="middle">' + tick + '</text>');
-    });
+      parts.push('<text x="' + (margin.left - 9) + '" y="' + y + '" fill="#516063" font-family="Arial, sans-serif" font-size="12" text-anchor="end" dominant-baseline="middle">' + yTickLabel + '</text>');
+    }
 
     var tickStep = niceNumber((range.max - range.min) / 6, true);
     var firstTick = Math.ceil(range.min / tickStep) * tickStep;
@@ -729,7 +805,7 @@
         parts.push('<path d="' + path + '" fill="none" stroke="' + escapeXml(run.color) + '" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"/>');
       }
       if (run.showCentroid) {
-        run.peaks.forEach(function (peak) {
+        getCentroidPeaks(run).forEach(function (peak) {
           if (peak.mz < range.min || peak.mz > range.max) return;
           var x = svgNumber(xToPx(peak.mz));
           parts.push('<line x1="' + x + '" y1="' + svgNumber(yToPx(0)) + '" x2="' + x + '" y2="' + svgNumber(yToPx(peak.intensity)) + '" stroke="' + escapeXml(run.color) + '" stroke-width="1.3" stroke-dasharray="5 3" opacity="0.65"/>');
@@ -738,7 +814,7 @@
     });
 
     parts.push('</g>');
-    parts.push('<metadata>Generated by Smart Turtle · The Bonneville Beaker</metadata>');
+    parts.push('<metadata>Generated by Smart Turtle Mass Spectrometry Simulator · The Bonneville Beaker</metadata>');
     parts.push('</svg>');
     return parts.join("\n");
   }
@@ -750,7 +826,7 @@
     var url = URL.createObjectURL(blob);
     var latestFormula = state.runs[state.runs.length - 1].formula.replace(/[^A-Za-z0-9_-]+/g, "-");
     var link = document.createElement("a");
-    link.download = "smart-turtle-" + (latestFormula || "spectrum") + ".svg";
+    link.download = "smart-turtle-mass-spectrometry-" + (latestFormula || "spectrum") + ".svg";
     link.href = url;
     document.body.appendChild(link);
     link.click();
@@ -799,6 +875,7 @@
     els.formula = $("chemical-formula");
     els.showProfile = $("show-profile");
     els.showCentroid = $("show-centroid");
+    els.collapseNeutromers = $("collapse-neutromers");
     els.resolvingPower = $("resolving-power");
     els.baselineNoise = $("baseline-noise");
     els.adduct = $("adduct-type");
@@ -847,6 +924,7 @@
   window.SmartTurtleEngine = {
     parseFormula: parseFormula,
     applyAdduct: applyAdduct,
+    aggregateByNeutronCount: aggregateByNeutronCount,
     exportSvg: buildSvgMarkup,
     calculate: function (options) {
       options = options || {};

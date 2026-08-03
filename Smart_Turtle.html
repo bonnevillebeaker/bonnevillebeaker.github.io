@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#2DABBA">
-  <title>Smart Turtle · The Bonneville Beaker</title>
+  <title>Smart Turtle Mass Spectrometry Simulator · The Bonneville Beaker</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="smart-turtle.css">
   <link rel="icon" type="image/svg+xml" href="logo.svg">
@@ -46,8 +46,8 @@
       <img src="smart_turtle_cropped_soft_edges.png" alt="Smart Turtle mascot" class="turtle-heading__image">
       <div>
         <p class="eyebrow"><a href="Science_Made_Easy.html">Science Made Easy</a> / Tools</p>
-        <h1 id="smart-turtle-title">Smart Turtle</h1>
-        <p class="lead">Isotope distribution and mass spectrometry simulator</p>
+        <h1 id="smart-turtle-title">Smart Turtle Mass Spectrometry Simulator</h1>
+        <p class="lead">Interactive isotope-distribution and mass-spectrum simulation</p>
       </div>
     </section>
 
@@ -81,7 +81,7 @@
           </div>
         </div>
 
-        <div class="tab-list" role="tablist" aria-label="Smart Turtle settings">
+        <div class="tab-list" role="tablist" aria-label="Smart Turtle Mass Spectrometry Simulator settings">
           <button class="tab-button is-active" type="button" role="tab" aria-selected="true" aria-controls="tab-basic" id="tab-button-basic" data-tab="basic">Basic</button>
           <button class="tab-button" type="button" role="tab" aria-selected="false" aria-controls="tab-advanced" id="tab-button-advanced" data-tab="advanced">Advanced</button>
           <button class="tab-button" type="button" role="tab" aria-selected="false" aria-controls="tab-enrichment" id="tab-button-enrichment" data-tab="enrichment">Isotope enrichment</button>
@@ -103,14 +103,19 @@
                 <input id="show-centroid" type="checkbox">
                 <span>Show centroided data</span>
               </label>
+              <label class="check-field check-field--wide">
+                <input id="collapse-neutromers" type="checkbox">
+                <span>Collapse centroid and text into neutromers</span>
+              </label>
             </div>
+            <p class="control-note">A neutromer contains all isotope fine-structure peaks with the same number of additional neutrons: M0, M+1, M+2, and so on. Peaks within one neutromer can differ slightly in exact mass because isotopes have different nuclear binding energies.</p>
           </div>
 
           <div id="tab-advanced" class="tab-panel" role="tabpanel" aria-labelledby="tab-button-advanced" hidden>
             <div class="field-grid">
               <label class="field">
                 <span>Resolving power</span>
-                <input id="resolving-power" type="number" min="100" max="1000000" step="100" value="3000">
+                <input id="resolving-power" type="number" min="100" max="1000000" step="100" value="10000">
                 <small>R = m/Δm</small>
               </label>
               <label class="field">
@@ -201,8 +206,8 @@
     </div>
 
     <section class="turtle-notes">
-      <p><strong>Educational tool:</strong> Smart Turtle is intended for teaching and figure creation. Results should be independently verified before use in regulated or clinical work.</p>
-      <p class="attribution">Isotope masses and natural-abundance data: Scientific Instrument Services. Smart Turtle © 2024 Coleman Nielsen. Released under GPL v3.0.</p>
+      <p><strong>Educational tool:</strong> Smart Turtle Mass Spectrometry Simulator is intended for teaching and figure creation. Results should be independently verified before use in regulated or clinical work.</p>
+      <p class="attribution">Isotope masses and natural-abundance data: Scientific Instrument Services. Smart Turtle Mass Spectrometry Simulator © 2024 Coleman Nielsen. Released under GPL v3.0.</p>
     </section>
   </main>
 

@@ -1,446 +1,74 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
 <meta content="#2DABBA" name="theme-color"/>
-<title>Understanding Mass Spectrometry · The Bonneville Beaker</title>
+<title>Topic Temporarily Unavailable · The Bonneville Beaker</title>
 <link href="style.css" rel="stylesheet"/>
-<link href="mass-spectrometry-topic.css" rel="stylesheet"/>
 <link href="logo.svg" rel="icon" type="image/svg+xml"/>
 <link href="manifest.json" rel="manifest"/>
 <link href="apple-touch-icon.png" rel="apple-touch-icon"/>
-
-
+<script src="device.js"></script>
+<style>
+  .topic-offline {
+    min-height: calc(100vh - 150px);
+    display: grid;
+    place-items: center;
+    padding: 42px 20px;
+  }
+  .topic-offline__card {
+    width: min(680px, 100%);
+    padding: clamp(28px, 6vw, 54px);
+    border: 1px solid rgba(45, 171, 186, 0.22);
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: 0 18px 45px rgba(35, 63, 67, 0.12);
+    text-align: center;
+  }
+  .topic-offline__card img { width: 86px; height: 86px; margin-bottom: 12px; }
+  .topic-offline__card h1 { margin: 0 0 12px; color: #263a3d; }
+  .topic-offline__card p { margin: 0 auto 24px; max-width: 540px; color: #627276; line-height: 1.65; }
+  .topic-offline__card a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0 20px;
+    border-radius: 999px;
+    background: #2DABBA;
+    color: #fff;
+    font-weight: 700;
+    text-decoration: none;
+  }
+</style>
 </head>
-<body class="ms-topic-page"><span aria-hidden="true" id="embedded-mode"></span>
+<body>
 <header class="header">
 <nav aria-label="Main" class="nav-bar">
-<a class="brand" href="index.html">
-<img alt="" class="brand-logo" src="logo.svg"/>
-<span>The Bonneville Beaker</span>
-</a>
-
+<a class="brand" href="index.html"><img alt="" class="brand-logo" src="logo.svg"/><span>The Bonneville Beaker</span></a>
+<button aria-controls="primary-menu" aria-expanded="false" aria-label="Menu" class="nav-toggle"><span></span><span></span><span></span></button>
 <ul id="primary-menu">
 <li><a href="index.html">Home</a></li>
 <li><a href="Podcast_Episodes.html">Podcast</a></li>
 <li><a href="Shorts.html">Shorts</a></li>
 <li><a href="Archive.html">Archive</a></li>
 <li><a href="Events.html">Events</a></li>
-<li><a aria-current="page" href="Science_Made_Easy.html">SME</a></li>
+<li><a href="Science_Made_Easy.html">SME</a></li>
 <li><a href="Merchandise.html">Merchandise</a></li>
 <li><a href="About.html">About</a></li>
 <li><a href="Support_Us.html">Support Us!</a></li>
 </ul>
 </nav>
 </header>
-<main class="ms-topic-main wide">
-<section aria-labelledby="ms-topic-title" class="ms-hero">
-<img alt="Mass spectrum icon" class="ms-hero__icon" src="mass-spectrometry-topic.svg"/>
-<div>
-<p class="ms-eyebrow"><a href="Science_Made_Easy.html">Science Made Easy</a> / Topics</p>
-<h1 id="ms-topic-title">Understanding Mass Spectrometry</h1>
-<p class="lead">How a mass spectrometer turns ions into a spectrum—and how to read what the spectrum is telling you.</p>
-</div>
+<main class="topic-offline">
+<section class="topic-offline__card" aria-labelledby="offline-title">
+<img alt="" src="mass-spectrometry-topic.svg"/>
+<h1 id="offline-title">This topic is being revised</h1>
+<p><strong>Understanding Mass Spectrometry</strong> is temporarily unpublished while the lesson is being developed. The Smart Turtle Mass Spectrometry Simulator remains available in the Science Made Easy workspace.</p>
+<a href="Science_Made_Easy.html">Return to Science Made Easy</a>
 </section>
-<section aria-labelledby="companion-title" class="ms-companion">
-<div class="ms-companion__copy">
-<p class="ms-kicker">Your hands-on laboratory</p>
-<h2 id="companion-title">Learn this topic with Smart Turtle Mass Spectrometry Simulator</h2>
-<p>This page provides the explanation and instructions. The experiments themselves happen in Smart Turtle. For the best experience, keep this lesson and the simulator open side by side in the SME workspace.</p>
-</div>
-<div class="ms-companion__actions">
-<a class="ms-primary-button" href="Science_Made_Easy.html?open=smart-turtle" target="_top">Open simulator in the SME workspace</a>
-<a class="ms-secondary-button" href="Smart_Turtle.html" rel="noopener" target="_blank">Open simulator in a new tab</a>
-</div>
-</section>
-
-<nav aria-label="Topic sections" class="ms-section-nav">
-<a href="#what-is-ms">What it is</a>
-<a href="#reading-spectrum">The axes</a>
-<a href="#resolution">Resolution</a>
-<a href="#centroiding">Centroiding</a>
-<a href="#adducts-charge">Adducts &amp; charge</a>
-<a href="#isotope-labeling">Isotope labeling</a>
-<a href="#uses">Uses</a>
-</nav>
-<section class="ms-card ms-intro-card" id="what-is-ms">
-<div class="ms-section-heading">
-<span class="ms-section-number">01</span>
-<div>
-<p class="ms-kicker">The central idea</p>
-<h2>What is mass spectrometry?</h2>
-</div>
-</div>
-<div class="ms-definition">
-<p><strong>Mass spectrometry is an analytical technique that creates gas-phase ions and separates or detects them according to their mass-to-charge ratio, written <em>m/z</em>.</strong></p>
-</div>
-<p>A mass spectrometer does not simply “weigh a molecule.” First, the sample must be converted into ions. Those ions are then guided through an analyzer, where their behavior depends on <em>m/z</em>. A detector records how much signal arrives at each <em>m/z</em> value, producing a mass spectrum.</p>
-<div aria-label="Simplified mass spectrometry workflow" class="ms-flow">
-<div class="ms-flow__step">
-<span>1</span>
-<strong>Introduce sample</strong>
-<small>Liquid, gas, solid extract, or separated chromatographic peak</small>
-</div>
-<div aria-hidden="true" class="ms-flow__arrow">→</div>
-<div class="ms-flow__step">
-<span>2</span>
-<strong>Create ions</strong>
-<small>Examples: electrospray, electron ionization, MALDI</small>
-</div>
-<div aria-hidden="true" class="ms-flow__arrow">→</div>
-<div class="ms-flow__step">
-<span>3</span>
-<strong>Separate by m/z</strong>
-<small>Examples: quadrupole, TOF, Orbitrap, ion trap</small>
-</div>
-<div aria-hidden="true" class="ms-flow__arrow">→</div>
-<div class="ms-flow__step">
-<span>4</span>
-<strong>Detect ions</strong>
-<small>The instrument converts ion arrival into an electrical signal</small>
-</div>
-</div>
-<aside class="ms-callout">
-<strong>Important distinction:</strong> mass spectrometry measures ions. Neutral molecules must gain or lose charge—or be converted into charged fragments—before the mass analyzer can detect them.
-      </aside>
-<aside aria-label="Smart Turtle exercise 1: Create your first mass spectrum" class="ms-exercise">
-<div class="ms-exercise__heading">
-<span>Smart Turtle exercise 1</span>
-<h3>Create your first mass spectrum</h3>
-</div>
-<p>Start with glucose so you can see the full workflow—from a chemical formula to an ion signal.</p>
-<ol><li>Open <strong>Smart Turtle Mass Spectrometry Simulator</strong>.</li><li>Enter <code>C6H12O6</code> as the chemical formula.</li><li>Leave the adduct set to <strong>+H⁺</strong>, keep <strong>Show Profile Data</strong> selected, and click <strong>Simulate</strong>.</li><li>Look at both the graph and the text output. The neutral formula has been converted into a protonated gas-phase ion before its <em>m/z</em> values are displayed.</li></ol>
-<div class="ms-exercise__observe"><strong>Watch for:</strong> One chemical formula produces several isotope peaks rather than one perfectly isolated signal.</div>
-<p class="ms-exercise__tip"><strong>Why this works:</strong> Molecules contain naturally occurring isotopes, so the instrument sees a distribution of isotopologues.</p>
-<div class="ms-exercise__actions">
-<a href="Science_Made_Easy.html?open=smart-turtle" target="_top">Open as an SME pane</a>
-<a href="Smart_Turtle.html" rel="noopener" target="_blank">Open in a new tab</a>
-</div>
-</aside></section>
-<section class="ms-card" id="reading-spectrum">
-<div class="ms-section-heading">
-<span class="ms-section-number">02</span>
-<div>
-<p class="ms-kicker">Reading the output</p>
-<h2>What do the axes mean?</h2>
-</div>
-</div>
-<div class="ms-two-column ms-two-column--spectrum">
-<div>
-<div aria-label="Example mass spectrum showing mass-to-charge ratio on the horizontal axis and relative intensity on the vertical axis" class="ms-spectrum-figure" role="img">
-<svg aria-hidden="true" viewbox="0 0 760 390">
-<defs>
-<lineargradient id="plotFade" x1="0" x2="0" y1="0" y2="1">
-<stop offset="0" stop-color="#2DABBA" stop-opacity="0.18"></stop>
-<stop offset="1" stop-color="#2DABBA" stop-opacity="0"></stop>
-</lineargradient>
-</defs>
-<rect fill="#fff" height="286" rx="8" stroke="#cad9db" width="650" x="72" y="28"></rect>
-<path d="M72 314H722M72 314V28" fill="none" stroke="#344d51" stroke-width="3"></path>
-<path d="M160 314V265M255 314V170M350 314V278M470 314V75M565 314V245M647 314V292" stroke="#2DABBA" stroke-linecap="round" stroke-width="10"></path>
-<path d="M160 314V265L255 170L350 278L470 75L565 245L647 292V314Z" fill="url(#plotFade)" opacity="0.7"></path>
-<g fill="#344d51" font-family="Arial, sans-serif" font-size="18">
-<text text-anchor="middle" x="370" y="365">mass-to-charge ratio (m/z)</text>
-<text text-anchor="middle" transform="rotate(-90 24 180)" x="24" y="180">relative intensity (%)</text>
-<text x="142" y="340">179</text>
-<text x="237" y="340">180</text>
-<text x="332" y="340">181</text>
-<text x="452" y="340">182</text>
-<text x="547" y="340">183</text>
-<text x="629" y="340">184</text>
-</g>
-<g fill="#1f6f79" font-family="Arial, sans-serif" font-size="17" font-weight="700">
-<text text-anchor="middle" x="470" y="58">base peak</text>
-<text text-anchor="middle" x="470" y="98">100%</text>
-</g>
-</svg>
-</div>
-</div>
-<div class="ms-axis-cards">
-<article>
-<span class="ms-axis-symbol">x</span>
-<div>
-<h3>Horizontal axis: m/z</h3>
-<p><em>m</em> is the ion’s mass and <em>z</em> is the magnitude of its charge. A singly charged ion usually appears near its ionic mass. A doubly charged ion appears at roughly half that value.</p>
-</div>
-</article>
-<article>
-<span class="ms-axis-symbol">y</span>
-<div>
-<h3>Vertical axis: intensity</h3>
-<p>Intensity represents the detector signal associated with ions at that <em>m/z</em>. Spectra are often normalized so the strongest peak—the <strong>base peak</strong>—is shown as 100%.</p>
-</div>
-</article>
-</div>
-</div>
-<aside class="ms-callout ms-callout--caution">
-<strong>Intensity is not automatically concentration.</strong> Different molecules ionize, transmit, fragment, and reach the detector with different efficiencies. Quantitative measurements normally require calibration, controls, or internal standards.
-      </aside>
-<aside aria-label="Smart Turtle exercise 2: Read the x- and y-axes" class="ms-exercise">
-<div class="ms-exercise__heading">
-<span>Smart Turtle exercise 2</span>
-<h3>Read the x- and y-axes</h3>
-</div>
-<p>Use the glucose spectrum from Exercise 1 to connect each plotted feature to the information reported in the text panel.</p>
-<ol><li>Turn on <strong>Show Centroided Data</strong> and simulate glucose again.</li><li>Find the tallest peak. Its intensity is normalized to approximately <strong>100%</strong>; this is the base peak.</li><li>Match one centroid stick to its line in the text output. Compare the listed <em>m/z</em> and normalized intensity with the graph.</li><li>Ask yourself whether a taller peak necessarily means that the original sample contained a proportionally larger concentration of that molecule.</li></ol>
-<div class="ms-exercise__observe"><strong>Watch for:</strong> The horizontal position reports <em>m/z</em>; the vertical height reports relative detector response. Intensity is not automatically concentration.</div>
-<p class="ms-exercise__tip"><strong>Why this works:</strong> Ionization and transmission efficiencies can differ substantially between compounds.</p>
-<div class="ms-exercise__actions">
-<a href="Science_Made_Easy.html?open=smart-turtle" target="_top">Open as an SME pane</a>
-<a href="Smart_Turtle.html" rel="noopener" target="_blank">Open in a new tab</a>
-</div>
-</aside></section>
-<section class="ms-card" id="resolution">
-<div class="ms-section-heading">
-<span class="ms-section-number">03</span>
-<div>
-<p class="ms-kicker">Separating nearby signals</p>
-<h2>Resolution and resolving power</h2>
-</div>
-</div>
-<p><strong>Resolution</strong> describes how close two ion signals can be while still being distinguished. Instruments commonly report <strong>resolving power</strong>:</p>
-<div aria-label="Resolving power equals m divided by delta m" class="ms-equation">
-<span>R</span><span>=</span><span class="ms-fraction"><span>m</span><span>Δm</span></span>
-</div>
-<p>At <em>m/z</em> 500, a resolving power of 10,000 corresponds to a peak width of approximately 0.05 Da when Δm is measured at full width at half maximum. Higher resolving power produces narrower peaks and makes nearby ions easier to distinguish.</p>
-<aside aria-label="Smart Turtle exercise 3: Change the resolving power" class="ms-exercise">
-<div class="ms-exercise__heading">
-<span>Smart Turtle exercise 3</span>
-<h3>Change the resolving power</h3>
-</div>
-<p>Resolving power controls peak width and determines whether nearby exact-mass signals blend together or separate.</p>
-<ol><li>Click <strong>Reset graph</strong>, enter caffeine as <code>C8H10N4O2</code>, and choose <strong>+H⁺</strong>.</li><li>In Advanced settings, turn on <strong>Fix graph window</strong> and set the <em>m/z</em> range from M0 to <strong>1.2</strong>. Turn on <strong>Show profile data</strong>, set resolving power to <strong>2,000</strong>, and simulate.</li><li>Without resetting, change the resolving power to <strong>100,000</strong> and simulate again. The second trace will be overlaid in a new color.</li><li>Compare the widths of the two traces. Then inspect the M+1 region for exact-mass signals that become distinguishable at higher resolving power.</li></ol>
-<div class="ms-exercise__observe"><strong>Watch for:</strong> Higher resolving power produces narrower profile peaks. Narrower peaks reveal nearby isotope fine structure that was hidden inside the broad low-resolution envelope.</div>
-<p class="ms-exercise__tip"><strong>Why this works:</strong> Because R = m/Δm, increasing R decreases the peak width Δm at a fixed <em>m/z</em>.</p>
-<div class="ms-exercise__actions">
-<a href="Science_Made_Easy.html?open=smart-turtle" target="_top">Open as an SME pane</a>
-<a href="Smart_Turtle.html" rel="noopener" target="_blank">Open in a new tab</a>
-</div>
-</aside>
-<p class="ms-fine-print">The exact definition of Δm depends on the stated convention, such as full width at half maximum or a valley criterion. Always compare resolving-power values measured using the same convention.</p>
-</section>
-<section class="ms-card" id="centroiding">
-<div class="ms-section-heading">
-<span class="ms-section-number">04</span>
-<div>
-<p class="ms-kicker">Two ways to represent a peak</p>
-<h2>Profile data and centroided data</h2>
-</div>
-</div>
-<aside aria-label="Smart Turtle exercise 4: Compare profile and centroided data" class="ms-exercise">
-<div class="ms-exercise__heading">
-<span>Smart Turtle exercise 4</span>
-<h3>Compare profile and centroided data</h3>
-</div>
-<p>Smart Turtle can display the sampled peak shape, centroid sticks, or both at once.</p>
-<ol><li>Reset the graph and enter <code>C6H12O6</code> with the <strong>+H⁺</strong> adduct.</li><li>Select both <strong>Show Profile Data</strong> and <strong>Show Centroided Data</strong>, then simulate.</li><li>Notice that each centroid stick summarizes the center and intensity of a broader profile peak.</li><li>Turn off profile data and simulate again. Compare the compact peak list with the information that was visible in the profile shape.</li></ol>
-<div class="ms-exercise__observe"><strong>Watch for:</strong> Centroiding greatly reduces the amount of data, but peak width, shoulders, detailed shape, and much of the noise are no longer represented.</div>
-<p class="ms-exercise__tip"><strong>Why this works:</strong> A centroid is an estimated peak center—not an infinitely narrow physical signal.</p>
-<div class="ms-exercise__actions">
-<a href="Science_Made_Easy.html?open=smart-turtle" target="_top">Open as an SME pane</a>
-<a href="Smart_Turtle.html" rel="noopener" target="_blank">Open in a new tab</a>
-</div>
-</aside>
-<div class="ms-comparison-grid">
-<article>
-<h3>Profile data</h3>
-<p>Profile data preserve the sampled shape of each peak across many adjacent <em>m/z</em> points. They contain information about width, shape, noise, and shoulders—but require more storage.</p>
-</article>
-<article>
-<h3>Centroided data</h3>
-<p>Centroiding summarizes each detected peak as a single <em>m/z</em> value and an intensity. The result is compact and convenient for peak lists, database searching, and downstream analysis.</p>
-</article>
-</div>
-<aside class="ms-callout">
-        A centroid is an estimate of a peak’s center, not a claim that the original signal was infinitely narrow. Poor peak detection or overlapping peaks can produce incorrect centroids.
-      </aside>
-</section>
-<section class="ms-card" id="adducts-charge">
-<div class="ms-section-heading">
-<span class="ms-section-number">05</span>
-<div>
-<p class="ms-kicker">Why the observed m/z differs from neutral mass</p>
-<h2>Adducts and charge</h2>
-</div>
-</div>
-<div class="ms-two-column">
-<div>
-<h3>What is an adduct?</h3>
-<p>An <strong>adduct ion</strong> forms when a molecule is detected together with an added charged species or after the molecule loses a charged species. Common electrospray examples include protonated <strong>[M+H]<sup>+</sup></strong>, sodiated <strong>[M+Na]<sup>+</sup></strong>, and deprotonated <strong>[M−H]<sup>−</sup></strong> ions.</p>
-<p>The same neutral compound can therefore produce several peaks with different <em>m/z</em> values. Recognizing adducts prevents you from mistaking one molecule for several unrelated molecules.</p>
-</div>
-<div class="ms-formula-card">
-<span>General relationship</span>
-<div class="ms-formula-line">m/z ≈ (M + added mass − lost mass) / |z|</div>
-<small>Exact calculations use the appropriate ionic masses and sign conventions.</small>
-</div>
-</div>
-<aside aria-label="Smart Turtle exercise 5A: Give the same molecule different adducts" class="ms-exercise">
-<div class="ms-exercise__heading">
-<span>Smart Turtle exercise 5A</span>
-<h3>Give the same molecule different adducts</h3>
-</div>
-<p>An adduct changes the ion composition and therefore changes where the same neutral molecule appears on the <em>m/z</em> axis.</p>
-<ol><li>Reset the graph, enter <code>C6H12O6</code>, turn on centroided data, and turn off profile data.</li><li>Select <strong>+H⁺</strong> and simulate.</li><li>Without resetting, select <strong>+Na⁺</strong> and simulate again.</li><li>Compare the two monoisotopic peaks and the text output. Both signals originated from glucose, but one ion carries a proton and the other carries sodium.</li></ol>
-<div class="ms-exercise__observe"><strong>Watch for:</strong> The sodium adduct appears at a higher <em>m/z</em> than the protonated ion. Adduct recognition prevents one compound from being mistaken for several unrelated compounds.</div>
-<div class="ms-exercise__actions">
-<a href="Science_Made_Easy.html?open=smart-turtle" target="_top">Open as an SME pane</a>
-<a href="Smart_Turtle.html" rel="noopener" target="_blank">Open in a new tab</a>
-</div>
-</aside>
-<aside aria-label="Smart Turtle exercise 5B: See how charge changes m/z and isotope spacing" class="ms-exercise">
-<div class="ms-exercise__heading">
-<span>Smart Turtle exercise 5B</span>
-<h3>See how charge changes m/z and isotope spacing</h3>
-</div>
-<p>Mass is divided by the magnitude of the charge. The spacing between isotope peaks is divided by charge as well.</p>
-<ol><li>Reset the graph and enter <code>C20H32O2</code>. Keep centroided data on.</li><li>Select <strong>+H⁺</strong>, simulate, and note the monoisotopic <em>m/z</em> and spacing between neighboring neutromers.</li><li>Without resetting, select <strong>+2H²⁺</strong> and simulate.</li><li>Compare the two traces. The doubly charged ion appears near half the <em>m/z</em>, and neighboring one-neutron groups are separated by roughly 0.5 <em>m/z</em> instead of roughly 1.0.</li></ol>
-<div class="ms-exercise__observe"><strong>Watch for:</strong> Both the ion mass and each isotope mass difference are divided by |z|.</div>
-<p class="ms-exercise__tip"><strong>Why this works:</strong> Multiply charged ions allow large molecules to appear within a practical analyzer range.</p>
-<div class="ms-exercise__actions">
-<a href="Science_Made_Easy.html?open=smart-turtle" target="_top">Open as an SME pane</a>
-<a href="Smart_Turtle.html" rel="noopener" target="_blank">Open in a new tab</a>
-</div>
-</aside>
-</section>
-<section class="ms-card" id="isotope-labeling">
-<div class="ms-section-heading">
-<span class="ms-section-number">06</span>
-<div>
-<p class="ms-kicker">Following atoms through chemistry and biology</p>
-<h2>How isotope labeling changes the isotope distribution</h2>
-</div>
-</div>
-<p>Every element has naturally occurring isotopes. A molecule therefore appears as an <strong>isotope distribution</strong>: a group of isotopologues that contain different combinations of light and heavy isotopes.</p>
-<p>Isotope labeling deliberately increases the abundance of a heavy isotope—such as <sup>2</sup>H, <sup>13</sup>C, or <sup>15</sup>N. As label is incorporated, signal moves away from the unlabeled <strong>M0</strong> peak and into heavier <strong>M+1, M+2, …</strong> peaks. The envelope may shift, broaden, or develop a new labeled population depending on the experiment.</p>
-<div aria-labelledby="neutromer-title" class="ms-neutromer-explainer">
-<div class="ms-neutromer-copy">
-<p class="ms-kicker">Reading isotope fine structure</p>
-<h3 id="neutromer-title">What is a neutromer?</h3>
-<p>A <strong>neutromer</strong> is the portion of an ion’s isotope distribution that has the same number of additional neutrons relative to the monoisotopic <strong>M0</strong> form. The <strong>M+1 neutromer</strong>, for example, contains every molecular variant that has gained one neutron—even when that neutron is carried by a different isotope.</p>
-<p>Those variants are extremely close in mass, but they are not perfectly identical. A nucleus weighs slightly less than the separate protons and neutrons used to build it because some mass is converted into <strong>nuclear binding energy</strong>. Different isotopes have different binding energies, so “adding one neutron” does not always add exactly 1 Da. This small departure from an integer mass is called the <strong>mass defect</strong>.</p>
-<p>At modest resolving power, the exact-mass peaks within a neutromer blend together into one M+1, M+2, or M+3 peak. At high resolving power, the instrument can separate this <strong>isotopic fine structure</strong>.</p>
-</div>
-<div aria-label="Examples of one-neutron isotope substitutions with slightly different exact mass shifts" class="ms-neutromer-example">
-<div class="ms-neutromer-example__heading">
-<span>All add one neutron</span>
-<strong>Exact mass shift</strong>
-</div>
-<div><span><sup>14</sup>N → <sup>15</sup>N</span><strong>+0.997035 Da</strong></div>
-<div><span><sup>12</sup>C → <sup>13</sup>C</span><strong>+1.003355 Da</strong></div>
-<div><span><sup>1</sup>H → <sup>2</sup>H</span><strong>+1.006277 Da</strong></div>
-<small>Values shown for neutral isotope substitutions. In an ion, the observed spacing on the m/z axis is divided by the charge magnitude |z|.</small>
-</div>
-</div>
-<aside class="ms-callout">
-<strong>In Smart Turtle:</strong> selecting “Collapse centroid and text into neutromers” adds together all fine-structure signals with the same additional-neutron count and reports one probability-weighted centroid for each M group.
-      </aside>
-<aside aria-label="Smart Turtle exercise 6: Enrich a heavy isotope" class="ms-exercise">
-<div class="ms-exercise__heading">
-<span>Smart Turtle exercise 6</span>
-<h3>Enrich a heavy isotope</h3>
-</div>
-<p>Stable-isotope enrichment redistributes probability from the unlabeled molecule into heavier isotopologues.</p>
-<ol><li>Reset the graph and enter <code>C6H12O6</code> with <strong>+H⁺</strong>. Turn on profile and centroided data.</li><li>Set <strong>Labelable H sites (n<sub>L,H</sub>)</strong> to <strong>12</strong>. Leave deuterium enrichment blank and simulate the natural-abundance spectrum.</li><li>Enter <strong>2</strong> for % deuterium and simulate again without resetting.</li><li>Increase deuterium to <strong>10</strong> and simulate once more.</li><li>Repeat the comparison with n<sub>L,H</sub> set to <strong>6</strong>. This limits the number of hydrogen positions allowed to draw from the enriched isotope pool.</li><li>Reset the graph, set carbon-13 enrichment to <strong>25%</strong>, and compare n<sub>L,C</sub> values of <strong>6</strong> and <strong>3</strong>. The same idea applies to n<sub>L,N</sub> and n<sub>L,O</sub>.</li></ol>
-<div class="ms-exercise__observe"><strong>Watch for:</strong> As enrichment rises, M0 loses relative intensity and signal moves into heavier neutromers. Increasing nₗ allows a broader range of labeled molecules.</div>
-<p class="ms-exercise__tip"><strong>Why this works:</strong> The isotope distribution records probabilities across many molecules; it does not mean that one molecule physically moves from peak to peak.</p>
-<div class="ms-exercise__actions">
-<a href="Science_Made_Easy.html?open=smart-turtle" target="_top">Open as an SME pane</a>
-<a href="Smart_Turtle.html" rel="noopener" target="_blank">Open in a new tab</a>
-</div>
-</aside><aside aria-label="Smart Turtle exercise 7: Resolve and collapse neutromers" class="ms-exercise">
-<div class="ms-exercise__heading">
-<span>Smart Turtle exercise 7</span>
-<h3>Resolve and collapse neutromers</h3>
-</div>
-<p>A neutromer groups isotope signals with the same additional-neutron count, even though their exact masses can differ slightly.</p>
-<ol><li>Reset the graph and enter caffeine, <code>C8H10N4O2</code>, with <strong>+H⁺</strong>. Set resolving power to <strong>100,000</strong>, turn on <strong>Fix graph window</strong>, and set the <em>m/z</em> range from M0 to <strong>1.2</strong>.</li><li>Turn on profile and centroided data, leave <strong>Collapse centroid and text into neutromers</strong> off, and simulate.</li><li>Inspect the M+1 region and the text output. Signals such as a <sup>13</sup>C substitution, a <sup>15</sup>N substitution, or a <sup>2</sup>H substitution all add one neutron but have slightly different exact masses.</li><li>Turn on <strong>Collapse centroid and text into neutromers</strong> and simulate again. Smart Turtle now sums the fine-structure probabilities into one M+1 group and reports a probability-weighted centroid.</li></ol>
-<div class="ms-exercise__observe"><strong>Watch for:</strong> The fine-structure peaks share an added-neutron count but differ slightly because isotope-specific nuclear binding energies produce different mass defects.</div>
-<p class="ms-exercise__tip"><strong>Why this works:</strong> At lower resolving power these signals merge physically; the collapse option gives you the corresponding grouped representation deliberately.</p>
-<div class="ms-exercise__actions">
-<a href="Science_Made_Easy.html?open=smart-turtle" target="_top">Open as an SME pane</a>
-<a href="Smart_Turtle.html" rel="noopener" target="_blank">Open in a new tab</a>
-</div>
-</aside>
-
-<div class="ms-label-interpretation">
-<article><strong>More enrichment</strong><span>increases the probability that each eligible position contains the heavy isotope.</span></article>
-<article><strong>More labelable sites</strong><span>for H, C, N, or O allow a wider range of labeled isotopologues and generally broadens the envelope.</span></article>
-<article><strong>Time-course labeling</strong><span>can reveal synthesis, turnover, pathway activity, and movement of atoms through a system.</span></article>
-</div>
-</section>
-<section class="ms-card" id="uses">
-<div class="ms-section-heading">
-<span class="ms-section-number">07</span>
-<div>
-<p class="ms-kicker">Why scientists use it</p>
-<h2>What is mass spectrometry used for?</h2>
-</div>
-</div>
-<div class="ms-use-grid">
-<article>
-<span aria-hidden="true" class="ms-use-icon">?</span>
-<h3>Identify compounds</h3>
-<p>Combine accurate mass, isotope pattern, retention time, and fragmentation to narrow or confirm molecular identity.</p>
-</article>
-<article>
-<span aria-hidden="true" class="ms-use-icon">#</span>
-<h3>Measure amount</h3>
-<p>Quantify drugs, metabolites, pollutants, peptides, and other analytes using standards and calibrated responses.</p>
-</article>
-<article>
-<span aria-hidden="true" class="ms-use-icon">✂</span>
-<h3>Study structure</h3>
-<p>Fragment selected ions in tandem mass spectrometry to reveal substructures, sequences, and bond connectivity.</p>
-</article>
-<article>
-<span aria-hidden="true" class="ms-use-icon">⌁</span>
-<h3>Profile complex systems</h3>
-<p>Measure thousands of proteins, lipids, metabolites, or environmental chemicals in a single study.</p>
-</article>
-<article>
-<span aria-hidden="true" class="ms-use-icon">↻</span>
-<h3>Trace metabolism</h3>
-<p>Use stable isotopes to determine where atoms came from and how quickly molecules are synthesized or replaced.</p>
-</article>
-<article>
-<span aria-hidden="true" class="ms-use-icon">✓</span>
-<h3>Test quality and safety</h3>
-<p>Check product purity, confirm manufacturing consistency, and detect contaminants or prohibited substances.</p>
-</article>
-</div>
-</section>
-<section aria-labelledby="key-ideas-title" class="ms-card ms-summary-card">
-<h2 id="key-ideas-title">Key ideas to remember</h2>
-<div class="ms-summary-grid">
-<div><span>1</span><p>A mass spectrometer detects <strong>ions</strong>, not neutral molecules.</p></div>
-<div><span>2</span><p>The horizontal axis is <strong>m/z</strong>; the vertical axis is detector <strong>intensity</strong>.</p></div>
-<div><span>3</span><p>Higher resolving power means <strong>narrower peaks</strong> and better separation of nearby ions.</p></div>
-<div><span>4</span><p>Centroiding converts a sampled peak shape into a compact <strong>m/z–intensity pair</strong>.</p></div>
-<div><span>5</span><p>Adducts and charge determine where a molecule appears on the <strong>m/z axis</strong>.</p></div>
-<div><span>6</span><p>Isotope labeling redistributes signal into <strong>heavier isotopologues</strong>, making atom movement measurable.</p></div>
-<div><span>7</span><p>A <strong>neutromer</strong> groups isotope signals with the same added-neutron count; nuclear binding energy gives its members slightly different exact masses.</p></div>
-</div>
-
-<div class="ms-summary-actions">
-<a class="ms-primary-button" href="Science_Made_Easy.html?open=smart-turtle" target="_top">Continue experimenting in the SME workspace</a>
-<a class="ms-secondary-button" href="Smart_Turtle.html" rel="noopener" target="_blank">Open Smart Turtle in a new tab</a>
-</div>
-
-</section>
-<details class="ms-sources">
-<summary>Terminology and technical sources</summary>
-<p>The term <strong>neutromer</strong> is used here for the portion of an ion signal with a common neutron count. The binding-energy explanation and exact isotope-mass behavior are consistent with high-resolution isotope fine-structure and neutron-encoded labeling literature.</p>
-<p><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4423578/" rel="noopener" target="_blank">Proposed mass-spectrometry signal nomenclature</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5920564/" rel="noopener" target="_blank">Neutron-encoded stable-isotope labeling</a> · <a href="https://www.nist.gov/pml/atomic-weights-and-isotopic-compositions-relative-atomic-masses" rel="noopener" target="_blank">NIST isotope mass data</a></p>
-</details>
 </main>
-<footer>
-<p>The Bonneville Beaker · Science from the Intermountain West</p>
-<p><a href="https://www.youtube.com/@thebonnevillebeaker" rel="noopener" target="_blank">YouTube</a> · <a href="https://www.instagram.com/bonnevillebeaker/" rel="noopener" target="_blank">Instagram</a></p>
-</footer>
-
-
+<script src="script.js"></script>
 </body>
 </html>

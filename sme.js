@@ -10,11 +10,6 @@
   var minPaneWidth = 360;
   var minPaneHeight = 300;
   var moduleDefinitions = {
-    "understanding-mass-spectrometry": {
-      templateId: "understanding-mass-spectrometry-pane-template",
-      defaultWidth: 980,
-      defaultHeight: 740
-    },
     "smart-turtle": {
       templateId: "smart-turtle-pane-template",
       defaultWidth: 1040,
@@ -465,8 +460,8 @@
     var pane = template.content.firstElementChild.cloneNode(true);
     workspace.appendChild(pane);
 
-    var horizontalInset = moduleId === "understanding-mass-spectrometry" ? 84 : 56;
-    var verticalInset = moduleId === "understanding-mass-spectrometry" ? 64 : 48;
+    var horizontalInset = 56;
+    var verticalInset = 48;
     var defaultWidth = Math.min(definition.defaultWidth, Math.max(620, workspace.clientWidth - horizontalInset));
     var defaultHeight = Math.min(definition.defaultHeight, Math.max(480, workspace.clientHeight - verticalInset));
     var alreadyOpen = workspace.querySelectorAll(".sme-pane").length - 1;
@@ -497,9 +492,15 @@
     var saved = [];
     try { saved = JSON.parse(localStorage.getItem(storageKey) || "[]"); } catch (error) {}
     if (!Array.isArray(saved)) return;
-    saved.forEach(function (pane) {
-      if (moduleDefinitions[pane.id]) createModulePane(pane.id, pane);
+    var enabledPanes = saved.filter(function (pane) {
+      return pane && moduleDefinitions[pane.id];
     });
+    enabledPanes.forEach(function (pane) {
+      createModulePane(pane.id, pane);
+    });
+    if (enabledPanes.length !== saved.length) {
+      try { localStorage.setItem(storageKey, JSON.stringify(enabledPanes)); } catch (error) {}
+    }
   }
 
   function init() {

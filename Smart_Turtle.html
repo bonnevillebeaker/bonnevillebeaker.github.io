@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#2DABBA">
+  <title>Smart Turtle · The Bonneville Beaker</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="smart-turtle.css">
+  <link rel="icon" type="image/svg+xml" href="logo.svg">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <script src="device.js"></script>
+</head>
+<body class="smart-turtle-page">
+  <header class="header">
+    <nav class="nav-bar" aria-label="Main">
+      <a class="brand" href="index.html">
+        <img class="brand-logo" src="logo.svg" alt="">
+        <span>The Bonneville Beaker</span>
+      </a>
+      <button class="nav-toggle" aria-label="Menu" aria-expanded="false" aria-controls="primary-menu">
+        <span></span><span></span><span></span>
+      </button>
+      <ul id="primary-menu">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="Podcast_Episodes.html">Podcast</a></li>
+        <li><a href="Shorts.html">Shorts</a></li>
+        <li><a href="Archive.html">Archive</a></li>
+        <li><a href="Events.html">Events</a></li>
+        <li><a href="Science_Made_Easy.html" aria-current="page">SME</a></li>
+        <li><a href="Merchandise.html">Merchandise</a></li>
+        <li><a href="About.html">About</a></li>
+        <li><a href="Support_Us.html">Support Us!</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="smart-turtle-main wide">
+    <section class="turtle-heading" aria-labelledby="smart-turtle-title">
+      <img src="smart_turtle_cropped_soft_edges.png" alt="Smart Turtle mascot" class="turtle-heading__image">
+      <div>
+        <p class="eyebrow"><a href="Science_Made_Easy.html">Science Made Easy</a> / Tools</p>
+        <h1 id="smart-turtle-title">Smart Turtle</h1>
+        <p class="lead">Isotope distribution and mass spectrometry simulator</p>
+      </div>
+    </section>
+
+    <div id="smart-turtle-app" class="turtle-app" aria-busy="false">
+      <section class="spectrum-panel turtle-card" aria-labelledby="spectrum-title">
+        <div class="panel-title-row">
+          <div>
+            <h2 id="spectrum-title">Spectrum</h2>
+            <p id="spectrum-status" class="status-line" aria-live="polite">Enter a formula and select Simulate.</p>
+          </div>
+          <div class="spectrum-actions">
+            <button id="save-graph" class="turtle-button turtle-button--secondary" type="button" disabled>Save PNG</button>
+            <button id="reset-graph" class="turtle-button turtle-button--danger" type="button" disabled>Reset graph</button>
+          </div>
+        </div>
+        <div class="canvas-shell">
+          <canvas id="spectrum-canvas" aria-label="Simulated mass spectrum"></canvas>
+          <div id="canvas-empty-state" class="canvas-empty-state">
+            <img src="smart_turtle_cropped_soft_edges.png" alt="">
+            <span>Your isotope spectrum will appear here.</span>
+          </div>
+        </div>
+        <div id="run-legend" class="run-legend" aria-label="Spectrum overlay legend"></div>
+      </section>
+
+      <section class="controls-panel turtle-card" aria-labelledby="controls-title">
+        <div class="panel-title-row">
+          <div>
+            <h2 id="controls-title">Simulation settings</h2>
+            <p class="status-line">All calculations run locally in your browser.</p>
+          </div>
+        </div>
+
+        <div class="tab-list" role="tablist" aria-label="Smart Turtle settings">
+          <button class="tab-button is-active" type="button" role="tab" aria-selected="true" aria-controls="tab-basic" id="tab-button-basic" data-tab="basic">Basic</button>
+          <button class="tab-button" type="button" role="tab" aria-selected="false" aria-controls="tab-advanced" id="tab-button-advanced" data-tab="advanced">Advanced</button>
+          <button class="tab-button" type="button" role="tab" aria-selected="false" aria-controls="tab-enrichment" id="tab-button-enrichment" data-tab="enrichment">Isotope enrichment</button>
+        </div>
+
+        <form id="smart-turtle-form" novalidate>
+          <div id="tab-basic" class="tab-panel is-active" role="tabpanel" aria-labelledby="tab-button-basic">
+            <label class="field field--wide">
+              <span>Chemical formula</span>
+              <input id="chemical-formula" name="formula" type="text" inputmode="text" autocomplete="off" placeholder="Example: C6H12O6" value="C6H12O6" required>
+              <small>Use element symbols and counts. Parentheses are supported, such as C6H5(OH)3.</small>
+            </label>
+            <div class="checkbox-grid">
+              <label class="check-field">
+                <input id="show-profile" type="checkbox" checked>
+                <span>Show profile data</span>
+              </label>
+              <label class="check-field">
+                <input id="show-centroid" type="checkbox">
+                <span>Show centroided data</span>
+              </label>
+            </div>
+          </div>
+
+          <div id="tab-advanced" class="tab-panel" role="tabpanel" aria-labelledby="tab-button-advanced" hidden>
+            <div class="field-grid">
+              <label class="field">
+                <span>Resolving power</span>
+                <input id="resolving-power" type="number" min="100" max="1000000" step="100" value="10000">
+                <small>R = m/Δm</small>
+              </label>
+              <label class="field">
+                <span>Baseline noise (%)</span>
+                <input id="baseline-noise" type="number" min="0" max="100" step="0.1" value="0">
+              </label>
+              <label class="field field--wide">
+                <span>Adduct</span>
+                <select id="adduct-type">
+                  <option value="+H">+H⁺</option>
+                  <option value="+Na">+Na⁺</option>
+                  <option value="+K">+K⁺</option>
+                  <option value="+NH4">+NH₄⁺</option>
+                  <option value="+2H">+2H²⁺</option>
+                  <option value="+2Na">+2Na²⁺</option>
+                  <option value="+2K">+2K²⁺</option>
+                  <option value="+2NH4">+2NH₄²⁺</option>
+                  <option value="-H">−H⁻</option>
+                  <option value="+Cl">+Cl⁻</option>
+                  <option value="+Br">+Br⁻</option>
+                  <option value="+I">+I⁻</option>
+                  <option value="+F">+F⁻</option>
+                  <option value="+HCOO">+HCOO⁻</option>
+                  <option value="+CH3COO">+CH₃COO⁻</option>
+                  <option value="-2H">−2H²⁻</option>
+                  <option value="+2Cl">+2Cl²⁻</option>
+                  <option value="+2Br">+2Br²⁻</option>
+                  <option value="+2I">+2I²⁻</option>
+                  <option value="+2F">+2F²⁻</option>
+                  <option value="+2HCOO">+2HCOO²⁻</option>
+                  <option value="+2CH3COO">+2CH₃COO²⁻</option>
+                </select>
+              </label>
+              <label class="check-field field--wide">
+                <input id="fix-graph" type="checkbox">
+                <span>Fix graph window</span>
+              </label>
+              <label class="field field--wide">
+                <span>m/z range from M0</span>
+                <input id="mz-range" type="number" min="0.1" step="0.1" value="5" disabled>
+              </label>
+            </div>
+          </div>
+
+          <div id="tab-enrichment" class="tab-panel" role="tabpanel" aria-labelledby="tab-button-enrichment" hidden>
+            <div class="field-grid">
+              <label class="field">
+                <span>Deuterium (%)</span>
+                <input id="deuterium-enrichment" type="number" min="0" max="100" step="0.01" placeholder="Natural abundance">
+              </label>
+              <label class="field">
+                <span>Carbon-13 (%)</span>
+                <input id="carbon13-enrichment" type="number" min="0" max="100" step="0.01" placeholder="Natural abundance">
+              </label>
+              <label class="field">
+                <span>Nitrogen-15 (%)</span>
+                <input id="nitrogen15-enrichment" type="number" min="0" max="100" step="0.01" placeholder="Natural abundance">
+              </label>
+              <label class="field">
+                <span>Oxygen-18 (%)</span>
+                <input id="oxygen18-enrichment" type="number" min="0" max="100" step="0.01" placeholder="Natural abundance">
+              </label>
+              <label class="field field--wide">
+                <span>Labelable hydrogens (n<sub>L</sub>)</span>
+                <input id="labelable-hydrogens" type="number" min="0" step="1" placeholder="Blank = all hydrogens">
+                <small>Limits deuterium enrichment to the specified number of eligible hydrogen positions.</small>
+              </label>
+            </div>
+          </div>
+
+          <div id="form-error" class="form-error" role="alert" hidden></div>
+          <div class="form-actions">
+            <button id="simulate" class="turtle-button turtle-button--primary" type="submit">Simulate</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="output-panel turtle-card" aria-labelledby="output-title">
+        <div class="panel-title-row">
+          <div>
+            <h2 id="output-title">Normalized isotopic distribution</h2>
+            <p class="status-line">The latest run appears below.</p>
+          </div>
+          <button id="copy-output" class="turtle-button turtle-button--secondary" type="button" disabled>Copy</button>
+        </div>
+        <pre id="text-output" tabindex="0">No simulation yet.</pre>
+      </section>
+    </div>
+
+    <section class="turtle-notes">
+      <p><strong>Educational tool:</strong> Smart Turtle is intended for teaching and figure creation. Results should be independently verified before use in regulated or clinical work.</p>
+      <p class="attribution">Isotope masses and natural-abundance data: Scientific Instrument Services. Smart Turtle © 2024 Coleman Nielsen. Released under GPL v3.0.</p>
+    </section>
+  </main>
+
+  <footer>
+    <p>The Bonneville Beaker · Science from the Intermountain West</p>
+    <p><a href="#" onclick="BB.openYouTube();return false;">YouTube</a> · <a href="#" onclick="BB.openInstagram();return false;">Instagram</a></p>
+  </footer>
+
+  <script src="smart-turtle-data.js"></script>
+  <script src="smart-turtle.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

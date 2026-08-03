@@ -40,7 +40,7 @@
    * its own (universal links), so no hacky app-scheme redirect is needed.
    */
   var HANDLES = {
-    youtube: "@bonnevillebeaker",
+    youtube: "@thebonnevillebeaker",
     instagram: "bonnevillebeaker"
   };
 

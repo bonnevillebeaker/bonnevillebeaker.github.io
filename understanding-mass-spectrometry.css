@@ -1,0 +1,195 @@
+/* Understanding Mass Spectrometry lesson page.
+   Depends on style.css for the shared header, footer, and brand variables.
+   Everything here is scoped with .ums- to avoid collisions. */
+
+.ums-page {
+  --ums-teal: var(--teal, #2DABBA);
+  --ums-teal-dark: var(--teal-dark, #12707d);
+  --ums-ink: #17383d;
+  --ums-muted: #5c7074;
+  --ums-line: #dbe7e8;
+  --ums-tint: #e9f5f6;
+  --ums-cta: #12707d;
+  --ums-cta-hover: #0e626d;
+  background: #f2f8f8;
+}
+
+.ums-page main {
+  max-width: 860px;
+  margin-inline: auto;
+  padding: clamp(6px, 2vw, 20px) clamp(16px, 4vw, 28px) 72px;
+}
+
+.ums-main {
+  color: var(--ums-ink);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  line-height: 1.7;
+  font-size: clamp(1rem, 0.97rem + 0.2vw, 1.075rem);
+}
+
+/* Hero */
+.ums-hero { padding: 26px 0 6px; }
+.ums-eyebrow {
+  margin: 0 0 12px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ums-teal-dark);
+}
+.ums-eyebrow a { color: inherit; text-decoration: none; }
+.ums-eyebrow a:hover { text-decoration: underline; }
+.ums-title {
+  margin: 0 0 16px;
+  font-size: clamp(2rem, 1.4rem + 3vw, 3rem);
+  line-height: 1.08;
+  font-weight: 800;
+  letter-spacing: -0.015em;
+  color: var(--ums-ink);
+}
+.ums-lede {
+  margin: 0;
+  max-width: 62ch;
+  font-size: clamp(1.1rem, 1rem + 0.5vw, 1.28rem);
+  line-height: 1.5;
+  color: var(--ums-muted);
+}
+
+/* Section headings */
+.ums-h2 {
+  margin: 42px 0 14px;
+  font-size: clamp(1.35rem, 1.1rem + 1vw, 1.7rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--ums-ink);
+}
+
+/* Why this matters */
+.ums-why p { margin: 0 0 1.1em; max-width: 68ch; }
+.ums-why p:first-of-type { font-size: 1.06em; }
+
+/* Inline references to things in the simulator */
+.ums-tok {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.9em;
+  background: #eef4f4;
+  border: 1px solid #dce8e9;
+  padding: 0.03em 0.4em;
+  border-radius: 5px;
+  white-space: nowrap;
+}
+
+/* Call to action button */
+.ums-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  min-height: 48px;
+  padding: 0 22px;
+  border-radius: 999px;
+  background: var(--ums-cta);
+  color: #fff;
+  font-weight: 700;
+  font-size: 1rem;
+  text-decoration: none;
+  border: 1px solid transparent;
+  transition: background 0.15s ease, transform 0.05s ease;
+}
+.ums-cta:hover { background: var(--ums-cta-hover); }
+.ums-cta:active { transform: translateY(1px); }
+.ums-cta:focus-visible { outline: 3px solid rgba(45, 171, 186, 0.55); outline-offset: 3px; }
+.ums-cta__arrow { font-size: 1.05em; line-height: 1; }
+
+/* Invitation callout */
+.ums-invite {
+  margin: 24px 0 8px;
+  padding: clamp(18px, 3vw, 26px);
+  background: var(--ums-tint);
+  border: 1px solid var(--ums-line);
+  border-radius: 16px;
+}
+.ums-invite p { margin: 0 0 18px; max-width: 66ch; }
+
+/* Walkthrough steps */
+.ums-steps {
+  list-style: none;
+  margin: 18px 0 0;
+  padding: 0;
+  position: relative;
+}
+.ums-steps::before {
+  content: "";
+  position: absolute;
+  left: 19px;
+  top: 22px;
+  bottom: 22px;
+  width: 2px;
+  background: var(--ums-line);
+}
+.ums-step {
+  position: relative;
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  gap: 18px;
+  margin: 0 0 30px;
+}
+.ums-step:last-of-type { margin-bottom: 10px; }
+.ums-step__num {
+  position: relative;
+  z-index: 1;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #fff;
+  border: 2px solid var(--ums-teal);
+  color: var(--ums-teal-dark);
+  font-weight: 800;
+  font-size: 1.05rem;
+}
+.ums-step__title {
+  margin: 5px 0 12px;
+  font-size: clamp(1.15rem, 1rem + 0.6vw, 1.4rem);
+  font-weight: 700;
+  color: var(--ums-ink);
+}
+.ums-step__body p { margin: 0 0 1em; line-height: 1.7; }
+.ums-step__body p:last-child { margin-bottom: 0; }
+.ums-step__body .ums-action {
+  background: var(--ums-tint);
+  border-left: 4px solid var(--ums-teal);
+  border-radius: 0 10px 10px 0;
+  padding: 12px 16px;
+  margin: 0 0 14px;
+  color: var(--ums-ink);
+}
+
+/* Closing statement */
+.ums-closing {
+  margin: 36px 0 0;
+  padding: 20px 22px;
+  border-left: 4px solid var(--ums-teal);
+  border-radius: 0 12px 12px 0;
+  background: #fff;
+  box-shadow: 0 6px 22px rgba(19, 54, 58, 0.06);
+  font-size: 1.08em;
+  color: var(--ums-ink);
+}
+
+/* Bottom call to action */
+.ums-endcta {
+  margin: 36px 0 0;
+  padding: 30px 20px;
+  text-align: center;
+  background: var(--ums-tint);
+  border: 1px solid var(--ums-line);
+  border-radius: 16px;
+}
+.ums-endcta p { margin: 0 0 18px; font-weight: 600; color: var(--ums-ink); }
+
+@media (max-width: 560px) {
+  .ums-step { gap: 14px; grid-template-columns: 36px 1fr; }
+  .ums-steps::before { left: 17px; }
+  .ums-step__num { width: 36px; height: 36px; font-size: 1rem; }
+}

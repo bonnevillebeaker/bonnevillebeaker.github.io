@@ -40,7 +40,7 @@
    * its own (universal links), so no hacky app-scheme redirect is needed.
    */
   var HANDLES = {
-    youtube: "@TheBonnevilleBeaker",   // <-- TODO: replace with the real YouTube handle
+    youtube: "@bonnevillebeaker",
     instagram: "bonnevillebeaker"
   };
 

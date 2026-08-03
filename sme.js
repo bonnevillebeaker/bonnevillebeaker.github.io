@@ -233,6 +233,18 @@
       workspace.querySelectorAll(".sme-pane").forEach(clampPane);
     });
     restoreLayout();
+
+    // Plain HTML topic pages can request a companion tool without loading
+    // JavaScript themselves. Example: Science_Made_Easy.html?open=smart-turtle
+    var requestedModule = new URLSearchParams(window.location.search).get("open");
+    if (requestedModule && moduleDefinitions[requestedModule]) {
+      createModulePane(requestedModule);
+      try {
+        var cleanUrl = window.location.pathname + window.location.hash;
+        window.history.replaceState({}, document.title, cleanUrl);
+      } catch (error) {}
+    }
+
     updateEmptyState();
   }
 

@@ -1,0 +1,433 @@
+/* ============================================================
+   The Bonneville Beaker â€” style.css
+   Brand kept from the original: teal header (#2DABBA), gold hover
+   (#FFD700), Libre Baskerville headings, Times body. Rebuilt to be
+   mobile-first and responsive.
+   ============================================================ */
+
+   @import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&display=swap');
+
+   :root {
+     --teal: #2DABBA;
+     --teal-dark: #1f8794;
+     --gold: #FFD700;
+     --ink: #2b2b2b;
+     --ink-soft: #555;
+     --beaker: #9fe1cb;      /* the liquid teal from the channel logo */
+     --paper: #ffffff;
+     --paper-2: #f6f8f8;
+     --header-h: 64px;
+   }
+   
+   * { box-sizing: border-box; }
+   
+   html { scroll-behavior: smooth; }
+   
+   body {
+     margin: 0;
+     font-family: 'Times New Roman', Times, serif;
+     line-height: 1.6;
+     color: var(--ink);
+     background: var(--paper);
+     -webkit-text-size-adjust: 100%;   /* stop iOS auto-inflating text */
+   }
+   
+   /* -------------------- Header + nav -------------------- */
+   .header {
+     position: fixed;
+     top: 0; left: 0;
+     width: 100%;
+     background: var(--teal);
+     color: #fff;
+     z-index: 1000;
+     transition: transform 0.3s ease;
+   }
+   .header--hidden { transform: translateY(-100%); }
+   
+   .nav-bar {
+     display: flex;
+     align-items: center;
+     justify-content: space-between;
+     min-height: var(--header-h);
+     padding: 0 16px;
+     max-width: 1100px;
+     margin: 0 auto;
+   }
+   
+   .brand {
+     font-family: 'Libre Baskerville', serif;
+     font-weight: 700;
+     font-size: 1.15rem;
+     color: #fff;
+     text-decoration: none;
+     letter-spacing: 0.2px;
+   }
+   .brand:hover { color: var(--gold); }
+   
+   .nav-toggle {
+     display: inline-flex;
+     flex-direction: column;
+     gap: 5px;
+     background: none;
+     border: 0;
+     padding: 10px;
+     cursor: pointer;
+   }
+   .nav-toggle span {
+     width: 26px; height: 3px;
+     background: #fff;
+     border-radius: 2px;
+     transition: transform 0.25s ease, opacity 0.2s ease;
+   }
+   .nav-open .nav-toggle span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+   .nav-open .nav-toggle span:nth-child(2) { opacity: 0; }
+   .nav-open .nav-toggle span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+   
+   #primary-menu {
+     list-style: none;
+     margin: 0; padding: 0;
+   }
+   
+   /* Mobile: menu is a dropdown panel that slides + fades open */
+   @media (max-width: 819px) {
+     #primary-menu {
+       position: absolute;
+       top: var(--header-h);
+       left: 0; right: 0;
+       background: var(--teal-dark);
+       flex-direction: column;
+       display: flex;                 /* always in the flow; hidden via opacity */
+       padding: 8px 0 14px;
+       box-shadow: 0 14px 30px rgba(0,0,0,0.20);
+       /* hidden state */
+       opacity: 0;
+       visibility: hidden;
+       transform: translateY(-12px);
+       transition: opacity 0.22s ease,
+                   transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+                   visibility 0s linear 0.28s;
+     }
+     .nav-open #primary-menu {
+       opacity: 1;
+       visibility: visible;
+       transform: translateY(0);
+       transition: opacity 0.22s ease,
+                   transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+                   visibility 0s;
+     }
+   
+     #primary-menu li {
+       width: 100%;
+       opacity: 0;
+       transform: translateY(-6px);
+       transition: opacity 0.2s ease, transform 0.2s ease;
+     }
+     .nav-open #primary-menu li { opacity: 1; transform: translateY(0); }
+     /* gentle staggered reveal, top to bottom */
+     .nav-open #primary-menu li:nth-child(1) { transition-delay: 0.03s; }
+     .nav-open #primary-menu li:nth-child(2) { transition-delay: 0.05s; }
+     .nav-open #primary-menu li:nth-child(3) { transition-delay: 0.07s; }
+     .nav-open #primary-menu li:nth-child(4) { transition-delay: 0.09s; }
+     .nav-open #primary-menu li:nth-child(5) { transition-delay: 0.11s; }
+     .nav-open #primary-menu li:nth-child(6) { transition-delay: 0.13s; }
+     .nav-open #primary-menu li:nth-child(7) { transition-delay: 0.15s; }
+     .nav-open #primary-menu li:nth-child(8) { transition-delay: 0.17s; }
+     .nav-open #primary-menu li:nth-child(9) { transition-delay: 0.19s; }
+   
+     #primary-menu a {
+       display: block;
+       padding: 14px 20px;            /* big touch targets */
+       font-size: 1.1rem;
+     }
+   }
+   
+   /* Dimmed backdrop behind the open menu (mobile only) */
+   .nav-backdrop {
+     position: fixed;
+     inset: 0;
+     background: rgba(0, 0, 0, 0.35);
+     opacity: 0;
+     visibility: hidden;
+     z-index: 900;                    /* under the header (1000), over the page */
+     transition: opacity 0.25s ease, visibility 0s linear 0.25s;
+   }
+   .header.nav-open ~ .nav-backdrop {
+     opacity: 1;
+     visibility: visible;
+     transition: opacity 0.25s ease;
+   }
+   @media (min-width: 820px) { .nav-backdrop { display: none; } }
+   
+   /* Stop the page scrolling behind the open menu */
+   html.menu-open, html.menu-open body { overflow: hidden; }
+   
+   @media (prefers-reduced-motion: reduce) {
+     #primary-menu, #primary-menu li, .nav-backdrop { transition-duration: 0.001s; }
+   }
+   
+   /* Desktop: horizontal bar, no hamburger */
+   @media (min-width: 820px) {
+     .nav-toggle { display: none; }
+     #primary-menu {
+       display: flex;
+       gap: 6px;
+       flex-wrap: wrap;
+       justify-content: flex-end;
+     }
+     #primary-menu a { padding: 8px 10px; }
+   }
+   
+   #primary-menu a {
+     color: #fff;
+     text-decoration: none;
+     font-weight: bold;
+     border-radius: 6px;
+     transition: color 0.2s ease, background 0.2s ease;
+   }
+   #primary-menu a:hover,
+   #primary-menu a[aria-current="page"] { color: var(--gold); }
+   
+   /* On touch devices, :hover sticks weirdly â€” give a tap highlight instead */
+   .is-touch #primary-menu a:active { background: rgba(255,255,255,0.12); }
+   
+   /* -------------------- Layout -------------------- */
+   main {
+     margin-top: var(--header-h);
+     padding: 24px 18px 60px;
+     max-width: 900px;
+     margin-left: auto;
+     margin-right: auto;
+   }
+   .wide { max-width: 1100px; }
+   
+   section { padding: 18px 0; }
+   
+   h1 {
+     font-family: 'Libre Baskerville', serif;
+     font-size: clamp(2rem, 7vw, 3.4rem);   /* fluid: never giant on a phone */
+     line-height: 1.15;
+     text-align: center;
+     color: var(--ink);
+     margin: 8px 0 18px;
+   }
+   h2 {
+     font-family: 'Libre Baskerville', serif;
+     font-size: clamp(1.4rem, 4vw, 2.1rem);
+     color: var(--ink);
+   }
+   p { font-size: clamp(1rem, 2.4vw, 1.2rem); }
+   
+   /* Lead paragraph on content pages */
+   .lead { font-size: clamp(1.05rem, 3vw, 1.35rem); color: var(--ink-soft); }
+   
+   /* -------------------- Home hero -------------------- */
+   .hero {
+     text-align: center;
+     padding: 28px 0 8px;
+   }
+   .hero .tagline {
+     max-width: 640px;
+     margin: 0 auto 22px;
+     color: var(--ink-soft);
+   }
+   .cta-row {
+     display: flex;
+     flex-wrap: wrap;
+     gap: 12px;
+     justify-content: center;
+   }
+   
+   /* -------------------- Buttons -------------------- */
+   .btn {
+     display: inline-block;
+     font-family: 'Libre Baskerville', serif;
+     font-size: 1rem;
+     padding: 12px 22px;
+     border-radius: 8px;
+     border: 2px solid var(--teal);
+     background: var(--teal);
+     color: #fff;
+     text-decoration: none;
+     cursor: pointer;
+     transition: background 0.2s ease, transform 0.05s ease;
+     min-height: 44px;            /* Apple's min tap target */
+   }
+   .btn:hover { background: var(--teal-dark); border-color: var(--teal-dark); color: #fff; }
+   .btn:active { transform: translateY(1px); }
+   .btn--ghost { background: #fff; color: var(--teal-dark); }
+   .btn--ghost:hover { background: var(--paper-2); color: var(--teal-dark); }
+   
+   /* -------------------- Coming soon pages -------------------- */
+   .coming-soon {
+     text-align: center;
+     color: var(--ink-soft);
+     padding: 40px 0 80px;
+   }
+   .coming-soon .beaker-dot {
+     display: inline-block;
+     width: 14px; height: 14px;
+     border-radius: 50%;
+     background: var(--beaker);
+     margin-right: 8px;
+     vertical-align: middle;
+   }
+   
+   /* -------------------- About / editor -------------------- */
+   .editor-section {
+     margin-top: 28px;
+     padding: 24px;
+     background: var(--paper);
+     border-radius: 12px;
+     box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+   }
+   .editor-section h2 { text-align: center; margin-bottom: 18px; }
+   .editor-content {
+     display: flex;
+     align-items: center;
+     gap: 24px;
+     flex-wrap: wrap;
+     justify-content: center;
+   }
+   .profile-img {
+     width: 280px;
+     max-width: 80vw;             /* never overflows a phone */
+     height: auto;
+     border-radius: 12px;
+     box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+   }
+   .editor-description { flex: 1; min-width: 260px; }
+   .editor-description p { font-size: clamp(1rem, 2.6vw, 1.25rem); color: var(--ink-soft); }
+   
+   /* -------------------- Shorts feed -------------------- */
+   .shorts-intro { text-align: center; max-width: 620px; margin: 0 auto 8px; color: var(--ink-soft); }
+   
+   .shorts-feed {
+     display: grid;
+     gap: 28px;
+     justify-items: center;
+     padding-top: 10px;
+   }
+   /* Desktop: a couple of vertical players side by side */
+   @media (min-width: 720px) {
+     .shorts-feed { grid-template-columns: repeat(auto-fit, minmax(300px, 340px)); justify-content: center; }
+   }
+   
+   .short {
+     width: 100%;
+     max-width: 380px;
+   }
+   .short-frame {
+     position: relative;
+     width: 100%;
+     aspect-ratio: 9 / 16;        /* true Shorts shape */
+     border-radius: 14px;
+     overflow: hidden;
+     background: #000;
+     box-shadow: 0 6px 20px rgba(0,0,0,0.22);
+   }
+   .short-frame iframe {
+     position: absolute;
+     inset: 0;
+     width: 100%; height: 100%;
+     border: 0;
+   }
+   .short-title {
+     font-family: 'Libre Baskerville', serif;
+     font-size: 1rem;
+     text-align: center;
+     margin: 10px 4px 0;
+     color: var(--ink);
+   }
+   
+   .shorts-empty {
+     text-align: center;
+     color: var(--ink-soft);
+     padding: 30px 0;
+   }
+   
+   /* -------------------- Footer -------------------- */
+   footer {
+     text-align: center;
+     background: var(--paper-2);
+     color: var(--ink-soft);
+     padding: 22px 16px;
+     font-size: 0.95rem;
+   }
+   footer a { color: var(--teal-dark); text-decoration: none; }
+   footer a:hover { color: var(--teal); }
+   
+   /* -------------------- Accessibility -------------------- */
+   :focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+   
+   @media (prefers-reduced-motion: reduce) {
+     * { transition: none !important; scroll-behavior: auto !important; }
+   }
+   
+   /* ==========================================================
+      Logo placements + loading screen (added with the real logo)
+      ========================================================== */
+   
+   /* Brand mark in the header */
+   .brand { display: flex; align-items: center; gap: 10px; }
+   .brand-logo {
+     width: 38px; height: 38px;
+     border-radius: 50%;
+     background: #fff;
+     flex: 0 0 auto;
+     box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+   }
+   
+   /* Big logo on the Home hero */
+   .hero-logo {
+     width: clamp(130px, 32vw, 210px);
+     height: auto;
+     margin: 4px auto 18px;
+     display: block;
+     filter: drop-shadow(0 6px 18px rgba(0,0,0,0.15));
+   }
+   
+   /* ---- Loading screen ---- */
+   #preloader {
+     position: fixed;
+     inset: 0;
+     z-index: 3000;
+     display: grid;
+     place-items: center;
+     background: #ffffff;
+     transition: opacity 0.5s ease;
+   }
+   #preloader.preloader--done { opacity: 0; pointer-events: none; }
+   #preloader.preloader--hidden { display: none; }
+   
+   .preloader-inner {
+     position: relative;
+     display: grid;
+     place-items: center;
+     width: clamp(150px, 40vw, 230px);
+     height: clamp(150px, 40vw, 230px);
+   }
+   .preloader-logo {
+     width: 78%;
+     height: auto;
+     animation: bb-pop 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+   }
+   /* thin teal arc that sweeps around the badge while loading */
+   .preloader-ring {
+     position: absolute;
+     inset: 0;
+     border-radius: 50%;
+     border: 4px solid transparent;
+     border-top-color: var(--teal);
+     border-right-color: var(--beaker);
+     animation: bb-spin 0.9s linear infinite;
+   }
+   @keyframes bb-pop {
+     0%   { transform: scale(0.86); opacity: 0; }
+     100% { transform: scale(1);    opacity: 1; }
+   }
+   @keyframes bb-spin { to { transform: rotate(360deg); } }
+   
+   @media (prefers-reduced-motion: reduce) {
+     .preloader-ring { display: none; }
+     .preloader-logo { animation: none; }
+   }

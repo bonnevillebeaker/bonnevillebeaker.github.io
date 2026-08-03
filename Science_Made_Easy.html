@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#2DABBA">
+    <title>SME · The Bonneville Beaker</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/svg+xml" href="logo.svg">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Beaker">
+    <style>
+      #preloader{position:fixed;inset:0;z-index:3000;display:grid;place-items:center;background:#fff}
+    </style>
+    <script src="device.js"></script>
+</head>
+<body>
+    <!-- Loading screen: plays the logo on load, then fades out -->
+    <div id="preloader" aria-hidden="true">
+        <div class="preloader-inner">
+            <img class="preloader-logo" src="logo.svg" alt="">
+            <div class="preloader-ring"></div>
+        </div>
+    </div>
+    <header class="header">
+        <nav class="nav-bar" aria-label="Main">
+            <a class="brand" href="index.html">
+                <img class="brand-logo" src="logo.svg" alt="">
+                <span>The Bonneville Beaker</span>
+            </a>
+            <button class="nav-toggle" aria-label="Menu" aria-expanded="false" aria-controls="primary-menu">
+                <span></span><span></span><span></span>
+            </button>
+            <ul id="primary-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="Podcast_Episodes.html">Podcast</a></li>
+                <li><a href="Shorts.html">Shorts</a></li>
+                <li><a href="Archive.html">Archive</a></li>
+                <li><a href="Events.html">Events</a></li>
+                <li><a href="Science_Made_Easy.html" aria-current="page">SME</a></li>
+                <li><a href="Merchandise.html">Merchandise</a></li>
+                <li><a href="About.html">About</a></li>
+                <li><a href="Support_Us.html">Support Us!</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>Science Made Easy</h1>
+        <p class="coming-soon"><span class="beaker-dot"></span>Coming soon!</p>
+    </main>
+    <footer>
+        <p>The Bonneville Beaker · Science from the Intermountain West</p>
+        <p><a href="#" onclick="BB.openYouTube();return false;">YouTube</a> · <a href="#" onclick="BB.openInstagram();return false;">Instagram</a></p>
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html>

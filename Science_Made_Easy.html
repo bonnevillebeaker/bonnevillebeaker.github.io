@@ -41,6 +41,7 @@
 <main aria-label="Science Made Easy workspace" class="sme-main">
 <section aria-label="SME menu" class="sme-toolbar">
 <div class="sme-toolbar__title">
+<img alt="" aria-hidden="true" src="logo.svg"/>
 <div>
 <strong>Science Made Easy</strong>
 <span>Interactive workspace</span>
@@ -52,7 +53,17 @@
             Topics <span aria-hidden="true">▾</span>
 </button>
 <div class="sme-dropdown sme-dropdown--wide" data-menu="topics" hidden="" id="topics-menu" role="menu">
-<p class="sme-menu-empty" role="status">No topics are published right now. Check back soon.</p>
+<div class="sme-module-card" role="none">
+<img alt="" aria-hidden="true" src="mass-spectrometry-topic.svg"/>
+<div class="sme-module-card__body">
+<strong>Understanding Mass Spectrometry</strong>
+<span>Learn how mass spectrometers separate ions by mass-to-charge ratio, resolve isotope patterns, and reveal molecular labeling through guided Smart Turtle exercises.</span>
+<div class="sme-module-actions">
+<button class="sme-action-button" data-open-pane="understanding-mass-spectrometry" type="button">Open as pane</button>
+<a class="sme-action-link" href="Understanding_Mass_Spectrometry.html" rel="noopener" target="_blank">Open in new tab</a>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="sme-menu-group">
@@ -68,6 +79,18 @@
 <div class="sme-module-actions">
 <button class="sme-action-button" data-open-pane="smart-turtle" type="button">Open as pane</button>
 <a class="sme-action-link" href="Smart_Turtle.html" rel="noopener" target="_blank">Open in new tab</a>
+</div>
+</div>
+</div>
+<div class="sme-module-card" role="none">
+<img alt="" aria-hidden="true" src="pubchem-periodic-table.svg"/>
+<div class="sme-module-card__body">
+<strong>PubChem Periodic Table</strong>
+<span>Explore elements, chemical properties, periodic trends, and PubChem's educational table views.</span>
+<small class="sme-module-source">Official NIH and National Library of Medicine resource</small>
+<div class="sme-module-actions">
+<button class="sme-action-button" data-open-pane="pubchem-periodic-table" type="button">Open as pane</button>
+<a class="sme-action-link" href="https://pubchem.ncbi.nlm.nih.gov/periodic-table/" rel="noopener noreferrer" target="_blank">Open in new tab</a>
 </div>
 </div>
 </div>
@@ -87,6 +110,24 @@
 </div>
 </section>
 </main>
+<template id="understanding-mass-spectrometry-pane-template">
+<article aria-label="Understanding Mass Spectrometry pane" class="sme-pane" data-pane-id="understanding-mass-spectrometry">
+<header class="sme-pane__header">
+<div class="sme-pane__identity">
+<img alt="" src="mass-spectrometry-topic.svg"/>
+<span>Understanding Mass Spectrometry</span>
+</div>
+<div class="sme-pane__controls">
+<a aria-label="Open Understanding Mass Spectrometry in a new tab" href="Understanding_Mass_Spectrometry.html" rel="noopener" target="_blank" title="Open in new tab">↗</a>
+<button aria-label="Maximize Understanding Mass Spectrometry pane" data-pane-action="maximize" title="Maximize pane" type="button">□</button>
+<button aria-label="Close Understanding Mass Spectrometry pane" data-pane-action="close" title="Close pane" type="button">×</button>
+</div>
+</header>
+<div class="sme-pane__body">
+<iframe loading="eager" src="Understanding_Mass_Spectrometry.html" title="Understanding Mass Spectrometry"></iframe>
+</div>
+</article>
+</template>
 <template id="smart-turtle-pane-template">
 <article aria-label="Smart Turtle Mass Spectrometry Simulator pane" class="sme-pane" data-pane-id="smart-turtle">
 <header class="sme-pane__header">
@@ -102,6 +143,24 @@
 </header>
 <div class="sme-pane__body">
 <iframe loading="eager" src="Smart_Turtle.html?embed=1" title="Smart Turtle Mass Spectrometry Simulator"></iframe>
+</div>
+</article>
+</template>
+<template id="pubchem-periodic-table-pane-template">
+<article aria-label="PubChem Periodic Table pane" class="sme-pane" data-pane-id="pubchem-periodic-table">
+<header class="sme-pane__header">
+<div class="sme-pane__identity">
+<img alt="" src="pubchem-periodic-table.svg"/>
+<span>PubChem Periodic Table</span>
+</div>
+<div class="sme-pane__controls">
+<a aria-label="Open PubChem Periodic Table in a new tab" href="https://pubchem.ncbi.nlm.nih.gov/periodic-table/" rel="noopener noreferrer" target="_blank" title="Open in new tab">↗</a>
+<button aria-label="Maximize PubChem Periodic Table pane" data-pane-action="maximize" title="Maximize pane" type="button">□</button>
+<button aria-label="Close PubChem Periodic Table pane" data-pane-action="close" title="Close pane" type="button">×</button>
+</div>
+</header>
+<div class="sme-pane__body sme-pane__body--pubchem">
+<iframe class="pubchem-widget" loading="eager" referrerpolicy="strict-origin-when-cross-origin" src="https://pubchem.ncbi.nlm.nih.gov/periodic-table/#view=table&amp;embed=true" title="PubChem Periodic Table"></iframe>
 </div>
 </article>
 </template>

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title id="title">Periodic table icon</title>
+  <desc id="desc">A grid of element tiles with a highlighted carbon tile.</desc>
+  <rect width="128" height="128" rx="22" fill="#e9f7f8"/>
+  <g fill="#ffffff" stroke="#4b8f98" stroke-width="2">
+    <rect x="16" y="20" width="24" height="24" rx="3"/>
+    <rect x="88" y="20" width="24" height="24" rx="3"/>
+    <rect x="16" y="50" width="24" height="24" rx="3"/>
+    <rect x="46" y="50" width="24" height="24" rx="3"/>
+    <rect x="76" y="50" width="24" height="24" rx="3"/>
+    <rect x="16" y="80" width="24" height="24" rx="3"/>
+    <rect x="46" y="80" width="24" height="24" rx="3"/>
+    <rect x="76" y="80" width="24" height="24" rx="3"/>
+    <rect x="106" y="80" width="8" height="24" rx="2"/>
+  </g>
+  <rect x="46" y="20" width="36" height="36" rx="5" fill="#2dabba" stroke="#1f7f8a" stroke-width="2"/>
+  <text x="64" y="45" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#ffffff">C</text>
+  <text x="51" y="31" font-family="Arial, sans-serif" font-size="7" font-weight="700" fill="#ffffff">6</text>
+</svg>

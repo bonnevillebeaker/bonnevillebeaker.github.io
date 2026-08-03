@@ -10,10 +10,20 @@
   var minPaneWidth = 360;
   var minPaneHeight = 300;
   var moduleDefinitions = {
+    "understanding-mass-spectrometry": {
+      templateId: "understanding-mass-spectrometry-pane-template",
+      defaultWidth: 900,
+      defaultHeight: 760
+    },
     "smart-turtle": {
       templateId: "smart-turtle-pane-template",
       defaultWidth: 1040,
       defaultHeight: 720
+    },
+    "pubchem-periodic-table": {
+      templateId: "pubchem-periodic-table-pane-template",
+      defaultWidth: 1120,
+      defaultHeight: 800
     }
   };
 

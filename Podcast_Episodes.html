@@ -17,7 +17,6 @@
     <script src="device.js"></script>
 </head>
 <body>
-    <!-- Loading screen: plays the logo on load, then fades out -->
     <div id="preloader" aria-hidden="true">
         <div class="preloader-inner">
             <img class="preloader-logo" src="logo.svg" alt="">
@@ -47,8 +46,19 @@
         </nav>
     </header>
     <main>
-        <h1>Podcast Episodes</h1>
-        <p class="coming-soon"><span class="beaker-dot"></span>Coming soon!</p>
+        <section>
+            <h1>Podcast</h1>
+            <p class="shorts-intro">Full episodes, right here. Press play, or open the show in Spotify to follow and download.</p>
+            <div class="podcast-embed">
+                <iframe src="https://open.spotify.com/embed/show/0XCpjf9uDnVa07mSCc7l5A?utm_source=generator&theme=0" width="100%" height="480"
+                        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                        loading="lazy" title="The Bonneville Beaker on Spotify"></iframe>
+            </div>
+            <div class="cta-row">
+                <a class="btn" href="https://open.spotify.com/show/0XCpjf9uDnVa07mSCc7l5A" target="_blank" rel="noopener">Open in Spotify</a>
+            </div>
+            <p class="podcast-note">On iPhone or Android, "Open in Spotify" launches the app if you have it installed.</p>
+        </section>
     </main>
     <footer>
         <p>The Bonneville Beaker · Science from the Intermountain West</p>

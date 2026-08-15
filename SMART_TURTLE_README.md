@@ -8,7 +8,7 @@ This version runs entirely in the browser and does not require Python on the vis
 - `smart-turtle.js` — exact isotope calculation engine, interface logic, SVG export, and neutromer aggregation
 - `smart-turtle-data.js` — isotope masses and natural abundance data
 - `smart-turtle.css` — standalone and embedded interface styling
-- `smart_turtle_cropped_soft_edges.png` — simulator mascot
+- `smart_turtle.svg` — simulator mascot
 
 ## Simulator capabilities
 

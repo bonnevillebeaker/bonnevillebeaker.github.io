@@ -191,7 +191,7 @@
 .sme-pane__header:active { cursor: grabbing; }
 .sme-pane__identity { min-width: 0; display: flex; align-items: center; gap: 8px; font: 700 0.9rem Arial, sans-serif; color: #2e4549; }
 .sme-pane__identity span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.sme-pane__identity img { width: 25px; height: 25px; border-radius: 6px; object-fit: cover; }
+.sme-pane__identity img { width: 25px; height: 25px; border-radius: 6px; object-fit: contain; }
 .sme-pane__controls { display: flex; align-items: center; gap: 2px; }
 .sme-pane__controls button,
 .sme-pane__controls a {

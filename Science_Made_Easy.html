@@ -93,6 +93,17 @@
 </div>
 </div>
 <div class="sme-module-card" role="none">
+<img alt="" aria-hidden="true" src="musical_raven.svg"/>
+<div class="sme-module-card__body">
+<strong>Bonneville &amp; Brass Sound Editor</strong>
+<span>Layer, trim, split, and mix audio clips on a multitrack timeline, then export the result as a WAV file.</span>
+<div class="sme-module-actions">
+<button class="sme-action-button" data-open-pane="bonneville-brass-editor" type="button">Open as pane</button>
+<a class="sme-action-link" href="Bonneville_and_Brass_Sound_Editor.html" rel="noopener" target="_blank">Open in new tab</a>
+</div>
+</div>
+</div>
+<div class="sme-module-card" role="none">
 <img alt="" aria-hidden="true" src="pubchem-periodic-table.svg"/>
 <div class="sme-module-card__body">
 <strong>PubChem Chemical Structure Sketcher</strong>
@@ -143,16 +154,13 @@
 <div class="sme-module-card sme-custom-embed-card" role="none">
 <img alt="" aria-hidden="true" src="logo.svg"/>
 <div class="sme-module-card__body">
-<strong>Custom HTML Embed</strong>
-<span>Paste a complete HTML document or embed snippet and open it inside a sandboxed workspace pane.</span>
-<label class="sme-custom-embed-label" for="sme-custom-html">Full HTML</label>
-<textarea id="sme-custom-html" class="sme-custom-embed-input" rows="6" spellcheck="false" placeholder="<!doctype html>
-<html>
-  <body>...</body>
-</html>"></textarea>
-<small class="sme-module-source">Runs in a restricted sandbox and is not saved after the page is closed.</small>
+<strong>Embed a web page</strong>
+<span>Enter the address of an external page to open it inside a workspace pane.</span>
+<label class="sme-custom-embed-label" for="sme-custom-url">Page URL</label>
+<input id="sme-custom-url" class="sme-custom-embed-input" type="url" inputmode="url" spellcheck="false" autocomplete="off" placeholder="https://example.com"/>
+<small class="sme-module-source">Opens in a sandboxed frame. Some sites block embedding and will not load.</small>
 <div class="sme-module-actions">
-<button class="sme-action-button" id="sme-open-custom-embed" type="button">Open custom pane</button>
+<button class="sme-action-button" id="sme-open-custom-embed" type="button">Open URL pane</button>
 </div>
 </div>
 </div>
@@ -223,6 +231,24 @@
 </header>
 <div class="sme-pane__body">
 <iframe loading="eager" src="Bonneville_and_Brass.html?embed=1" title="Bonneville &amp; Brass Synthesizer"></iframe>
+</div>
+</article>
+</template>
+<template id="bonneville-brass-editor-pane-template">
+<article aria-label="Bonneville &amp; Brass Sound Editor pane" class="sme-pane" data-pane-id="bonneville-brass-editor">
+<header class="sme-pane__header">
+<div class="sme-pane__identity">
+<img alt="" src="musical_raven.svg"/>
+<span>Bonneville &amp; Brass Sound Editor</span>
+</div>
+<div class="sme-pane__controls">
+<a aria-label="Open Bonneville &amp; Brass Sound Editor in a new tab" href="Bonneville_and_Brass_Sound_Editor.html" rel="noopener" target="_blank" title="Open in new tab">↗</a>
+<button aria-label="Maximize Bonneville &amp; Brass Sound Editor pane" data-pane-action="maximize" title="Maximize pane" type="button">□</button>
+<button aria-label="Close Bonneville &amp; Brass Sound Editor pane" data-pane-action="close" title="Close pane" type="button">×</button>
+</div>
+</header>
+<div class="sme-pane__body">
+<iframe loading="eager" src="Bonneville_and_Brass_Sound_Editor.html?embed=1" title="Bonneville &amp; Brass Sound Editor"></iframe>
 </div>
 </article>
 </template>
@@ -298,20 +324,20 @@
 </div>
 </article>
 </template>
-<template id="custom-html-pane-template">
-<article aria-label="Custom HTML Embed pane" class="sme-pane" data-pane-id="custom-html">
+<template id="custom-url-pane-template">
+<article aria-label="Embedded web page pane" class="sme-pane" data-pane-id="custom-url">
 <header class="sme-pane__header">
 <div class="sme-pane__identity">
 <img alt="" src="logo.svg"/>
-<span>Custom HTML Embed</span>
+<span>Embedded web page</span>
 </div>
 <div class="sme-pane__controls">
-<button aria-label="Maximize Custom HTML Embed pane" data-pane-action="maximize" title="Maximize pane" type="button">□</button>
-<button aria-label="Close Custom HTML Embed pane" data-pane-action="close" title="Close pane" type="button">×</button>
+<button aria-label="Maximize embedded web page pane" data-pane-action="maximize" title="Maximize pane" type="button">□</button>
+<button aria-label="Close embedded web page pane" data-pane-action="close" title="Close pane" type="button">×</button>
 </div>
 </header>
 <div class="sme-pane__body sme-pane__body--custom">
-<iframe sandbox="allow-downloads allow-forms allow-modals allow-popups allow-scripts" title="Custom HTML Embed"></iframe>
+<iframe sandbox="allow-downloads allow-forms allow-modals allow-popups allow-scripts allow-same-origin" referrerpolicy="strict-origin-when-cross-origin" title="Embedded web page"></iframe>
 </div>
 </article>
 </template>

@@ -1,0 +1,741 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bonneville &amp; Brass Sound Editor</title>
+<style>
+  :root{
+    --bg:#160d08;
+    --panel:#2b1a12;
+    --surface:#3d2518;
+    --surface-2:#5a3826;
+    --line:#5a3d25;
+    --text:#e8ddc8;
+    --muted:#9c8663;
+    --accent:#c9a24b;      /* playhead / active */
+    --accent-dim:#8f6b2e;
+    --brass-glow:#f2d47e;
+    --lane:#1e130c;
+    --pps:120px;           /* pixels per second, updated by JS */
+    --headW:172px;
+    --rulerH:32px;
+    --trackH:88px;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    background:
+      radial-gradient(ellipse at 50% -10%, #6a4429 0%, transparent 55%),
+      linear-gradient(160deg,#241610 0%,#160d08 100%);
+    color:var(--text);
+    font:14px/1.4 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    display:flex;flex-direction:column;overflow:hidden;
+  }
+  .mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-variant-numeric:tabular-nums}
+
+  /* ---- top bar ---- */
+  header{
+    display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+    padding:12px 16px;background:linear-gradient(#3a2416,#241610);
+    border-bottom:1px solid var(--line);
+  }
+  .brand{display:flex;align-items:center;gap:10px;margin-right:6px}
+  .brand-raven{width:32px;height:auto;flex:0 0 auto;filter:drop-shadow(0 1px 2px #0009) drop-shadow(0 0 5px rgba(242,212,126,.28))}
+  .brand-title{font-family:Georgia,"Times New Roman",serif;font-size:16px;letter-spacing:.02em;color:var(--brass-glow);white-space:nowrap;text-shadow:0 1px 0 #00000066}
+  .brand-title i{color:#8f6b2e;font-style:italic;padding:0 .06em}
+  .brand-sub{color:var(--muted);font-size:12px;white-space:nowrap;align-self:flex-end;padding-bottom:2px}
+  .group{display:flex;align-items:center;gap:6px}
+  .sep{width:1px;height:26px;background:var(--line);margin:0 2px}
+
+  button.btn{
+    appearance:none;border:1px solid var(--line);background:var(--surface);color:var(--text);
+    padding:7px 12px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;
+    display:inline-flex;align-items:center;gap:7px;transition:background .12s,border-color .12s,transform .04s;
+  }
+  button.btn:hover{background:var(--surface-2);border-color:#7a5836}
+  button.btn:active{transform:translateY(1px)}
+  button.btn:disabled{opacity:.4;cursor:not-allowed}
+  button.icon{padding:7px 9px;font-size:15px;line-height:1}
+  button.primary{background:var(--accent);color:#22160a;border-color:transparent;font-weight:650}
+  button.primary:hover{background:#e0bd6a}
+  .transport button{width:38px;height:34px;justify-content:center;font-size:14px}
+  button.play.on{background:var(--accent);color:#22160a;border-color:transparent}
+
+  .clock{font-size:16px;letter-spacing:.5px;padding:5px 10px;background:#150c07;border:1px solid var(--line);border-radius:8px;min-width:104px;text-align:center;color:#d8cfbb}
+
+  .zoom{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:12px}
+  input[type=range]{accent-color:var(--accent);width:120px}
+
+  /* ---- timeline ---- */
+  main{flex:1;min-height:0;position:relative;overflow:hidden}
+  .scroll{position:absolute;inset:0;overflow:auto}
+  .inner{position:relative;min-width:100%}
+
+  .ruler{
+    position:sticky;top:0;z-index:6;height:var(--rulerH);
+    margin-left:var(--headW);background:#150c07;border-bottom:1px solid var(--line);
+  }
+  .ruler .tick{position:absolute;top:0;bottom:0;border-left:1px solid #3a2817}
+  .ruler .tick.major{border-left-color:#5a4028}
+  .ruler .tick span{position:absolute;top:6px;left:5px;font-size:10.5px;color:var(--muted);white-space:nowrap}
+  /* the corner that sits above the track heads */
+  .corner{position:sticky;left:0;top:0;z-index:8;float:left;width:var(--headW);height:var(--rulerH);
+    margin-left:calc(-1 * var(--headW));background:#150c07;border-bottom:1px solid var(--line);border-right:1px solid var(--line);
+    display:flex;align-items:center;padding:0 12px;color:var(--muted);font-size:11px;letter-spacing:.5px;text-transform:uppercase}
+
+  .track{display:flex;height:var(--trackH);border-bottom:1px solid #2e1e12}
+  .head{
+    position:sticky;left:0;z-index:5;width:var(--headW);flex:0 0 var(--headW);
+    background:var(--panel);border-right:1px solid var(--line);padding:9px 11px;
+    display:flex;flex-direction:column;gap:7px;
+  }
+  .track.sel .head{background:#3a2416;box-shadow:inset 3px 0 0 var(--accent)}
+  .head .row1{display:flex;align-items:center;gap:7px}
+  .swatch{width:11px;height:11px;border-radius:3px;flex:0 0 auto}
+  .tname{background:transparent;border:none;color:var(--text);font-size:13px;font-weight:550;flex:1;padding:2px 0;outline:none;min-width:0}
+  .tname:focus{border-bottom:1px solid var(--line)}
+  .trm{flex:0 0 auto;width:20px;height:20px;border-radius:5px;border:1px solid transparent;background:transparent;
+    color:var(--muted);font-size:13px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .trm:hover{background:#4a1f17;border-color:#6e2f24;color:#ffb59a}
+  .head .row2{display:flex;align-items:center;gap:6px}
+  .tog{width:24px;height:22px;border-radius:6px;border:1px solid var(--line);background:var(--surface);
+    color:var(--muted);font-size:11px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .tog.m.on{background:#c9524b;border-color:transparent;color:#1a0c0c}
+  .tog.s.on{background:#c9a24b;border-color:transparent;color:#22160a}
+  .head input[type=range].vol{width:100%;height:14px}
+
+  .lane{position:relative;flex:1;background:var(--lane);
+    background-image:linear-gradient(90deg,#33210f 1px,transparent 1px);
+    background-size:var(--pps) 100%;background-position:0 0;overflow:hidden}
+
+  .clip{
+    position:absolute;top:8px;height:calc(var(--trackH) - 18px);
+    border-radius:7px;overflow:hidden;cursor:grab;
+    box-shadow:0 1px 0 rgba(255,255,255,.05) inset,0 2px 6px rgba(0,0,0,.35);
+    border:1px solid rgba(0,0,0,.35);user-select:none;
+  }
+  .clip.sel{outline:2px solid var(--accent);outline-offset:-1px;z-index:3}
+  .clip .cap{position:absolute;top:0;left:0;right:0;height:16px;padding:1px 7px;font-size:10.5px;
+    color:rgba(255,255,255,.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none;
+    background:linear-gradient(rgba(0,0,0,.28),transparent)}
+  .clip canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+  .clip .h{position:absolute;top:0;bottom:0;width:9px;cursor:ew-resize;z-index:2}
+  .clip .h.l{left:0}.clip .h.r{right:0}
+  .clip .h::after{content:"";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+    width:2px;height:40%;background:rgba(255,255,255,.5);border-radius:2px;opacity:0;transition:opacity .1s}
+  .clip:hover .h::after{opacity:1}
+
+  .playhead{position:absolute;top:0;bottom:0;width:2px;margin-left:var(--headW);
+    background:var(--accent);z-index:7;pointer-events:none;box-shadow:0 0 6px rgba(201,162,75,.6)}
+  .playhead::before{content:"";position:absolute;top:0;left:-5px;border:6px solid transparent;
+    border-top-color:var(--accent);border-bottom:none}
+
+  .empty{position:absolute;inset:var(--rulerH) 0 0 var(--headW);display:flex;align-items:center;justify-content:center;
+    color:var(--muted);text-align:center;pointer-events:none;padding:20px}
+  .empty div{max-width:340px}
+  .empty b{color:var(--text);font-weight:600}
+
+  .hint{color:var(--muted);font-size:12px;margin-left:auto}
+  a.link{color:var(--accent);text-decoration:none}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <img class="brand-raven" src="musical_raven.svg" alt="Bonneville &amp; Brass raven">
+    <span class="brand-title">Bonneville <i>&amp;</i> Brass</span>
+    <span class="brand-sub">sound editor</span>
+  </div>
+
+  <div class="group transport">
+    <button class="btn icon play" id="play" title="Play / Pause (Space)">▶</button>
+    <button class="btn icon" id="stop" title="Stop (return to start)">■</button>
+  </div>
+  <div class="clock mono" id="clock">00:00.000</div>
+
+  <div class="sep"></div>
+  <div class="group">
+    <button class="btn primary" id="import">＋ Import audio</button>
+    <input type="file" id="file" accept="audio/*" multiple hidden>
+    <button class="btn" id="addTrack">＋ Track</button>
+  </div>
+
+  <div class="sep"></div>
+  <div class="group">
+    <button class="btn" id="undo" title="Undo (Ctrl/Cmd+Z)" disabled>↶ Undo</button>
+    <button class="btn" id="split" title="Split selected clip at playhead (S)">✂ Split</button>
+    <button class="btn" id="del" title="Delete selected clip (Del)">🗑 Delete</button>
+  </div>
+
+  <div class="sep"></div>
+  <div class="group zoom">
+    <span>Zoom</span>
+    <input type="range" id="zoom" min="24" max="480" value="120" step="1">
+  </div>
+
+  <div class="sep"></div>
+  <button class="btn" id="export" title="Render the mix to a .wav file">⭳ Export WAV</button>
+
+  <div class="hint">Drag clip edges to trim · drag body to move / restack</div>
+</header>
+
+<main>
+  <div class="scroll" id="scroll">
+    <div class="inner" id="inner">
+      <div class="corner">Tracks</div>
+      <div class="ruler" id="ruler"></div>
+      <div id="tracks"></div>
+      <div class="playhead" id="ph" style="left:0"></div>
+    </div>
+    <div class="empty" id="empty">
+      <div><b>Nothing loaded yet.</b><br>
+      Hit <b>Import audio</b> to drop a sound in. Select several files at once and each one lands on its own track, ready to layer.</div>
+    </div>
+  </div>
+</main>
+
+<script>
+"use strict";
+
+/* ---------- state ---------- */
+const HUES = ["#3ec9c4","#9b8cff","#ff8fa3","#b6d94c","#5bb8ff","#f0a35e","#e07be0","#7ee0a0"];
+let audioCtx = null;
+let tracks = [];            // {id,name,hue,muted,solo,gain,el,laneEl,clips:[]}
+let clipsById = {};         // id -> clip {id,trackId,name,buffer,peaks,start,offset,duration,el,canvas}
+let pps = 120;              // pixels per second
+let playhead = 0;           // seconds
+let selectedTrackId = null;
+let selectedClipId = null;
+let uid = 1;
+const nid = () => "id"+(uid++);
+
+/* playback */
+let playing = false;
+let liveSources = [];
+let ctxStartTime = 0, playStartHead = 0, rafId = 0;
+
+/* undo history: snapshots share the decoded buffers/peaks by reference */
+let history = [];
+const HISTMAX = 100;
+
+/* dom */
+const $ = s => document.querySelector(s);
+const tracksEl = $("#tracks"), rulerEl = $("#ruler"), phEl = $("#ph"),
+      innerEl = $("#inner"), scrollEl = $("#scroll"), emptyEl = $("#empty"),
+      clockEl = $("#clock");
+
+/* ---------- audio setup ---------- */
+function ac(){
+  if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+  if(audioCtx.state==="suspended") audioCtx.resume();
+  return audioCtx;
+}
+
+/* ---------- tracks ---------- */
+function addTrack(name){
+  const hue = HUES[tracks.length % HUES.length];
+  const t = {id:nid(), name:name||("Track "+(tracks.length+1)), hue,
+             muted:false, solo:false, gain:1, clips:[]};
+  tracks.push(t);
+  if(selectedTrackId===null) selectedTrackId = t.id;
+  render();
+  return t;
+}
+function trackById(id){ return tracks.find(t=>t.id===id); }
+
+function removeTrack(id){
+  const t=trackById(id); if(!t) return;
+  pushHistory();
+  t.clips.forEach(c=>{ delete clipsById[c.id]; });
+  tracks=tracks.filter(x=>x.id!==id);
+  if(selectedTrackId===id) selectedTrackId = tracks.length?tracks[0].id:null;
+  if(selectedClipId && !clipsById[selectedClipId]) selectedClipId=null;
+  stopIfPlaying();
+  render();
+}
+
+/* ---------- undo ---------- */
+function snapshot(){
+  return {
+    selectedTrackId, selectedClipId, playhead,
+    tracks: tracks.map(t=>({
+      id:t.id,name:t.name,hue:t.hue,muted:t.muted,solo:t.solo,gain:t.gain,
+      clips:t.clips.map(c=>({id:c.id,trackId:c.trackId,name:c.name,buffer:c.buffer,
+        peaks:c.peaks,start:c.start,offset:c.offset,duration:c.duration}))
+    }))
+  };
+}
+function pushHistory(){
+  history.push(snapshot());
+  if(history.length>HISTMAX) history.shift();
+  updateUndoBtn();
+}
+function restore(s){
+  stopIfPlaying();
+  clipsById={};
+  tracks = s.tracks.map(st=>{
+    const t={id:st.id,name:st.name,hue:st.hue,muted:st.muted,solo:st.solo,gain:st.gain,clips:[]};
+    st.clips.forEach(sc=>{
+      const c={id:sc.id,trackId:sc.trackId,name:sc.name,buffer:sc.buffer,peaks:sc.peaks,
+               start:sc.start,offset:sc.offset,duration:sc.duration};
+      clipsById[c.id]=c; t.clips.push(c);
+    });
+    return t;
+  });
+  selectedTrackId=s.selectedTrackId; selectedClipId=s.selectedClipId; playhead=s.playhead;
+  render();
+}
+function undo(){
+  if(!history.length) return;
+  restore(history.pop());
+  updateUndoBtn();
+}
+function updateUndoBtn(){ const b=$("#undo"); if(b) b.disabled = history.length===0; }
+
+/* ---------- import ---------- */
+async function importFiles(fileList){
+  const files = [...fileList].filter(f=>f.type.startsWith("audio/")||/\.(wav|mp3|ogg|m4a|aac|flac|webm)$/i.test(f.name));
+  if(!files.length) return;
+  pushHistory();
+  const ctx = ac();
+  const single = files.length===1;
+  for(let i=0;i<files.length;i++){
+    try{
+      const buf = await ctx.decodeAudioData(await files[i].arrayBuffer());
+      let track;
+      if(single){ track = trackById(selectedTrackId) || tracks[0] || addTrack(); }
+      else { track = tracks[i] || addTrack(); }   // one per file -> layered stacks
+      addClip(track, buf, files[i].name.replace(/\.[^.]+$/,""), playhead);
+    }catch(err){
+      alert("Could not decode \""+files[i].name+"\". Try a WAV or MP3.");
+      console.error(err);
+    }
+  }
+  render();
+}
+
+function addClip(track, buffer, name, start){
+  const clip = {
+    id:nid(), trackId:track.id, name, buffer,
+    peaks:computePeaks(buffer),
+    start:Math.max(0,start), offset:0, duration:buffer.duration
+  };
+  clipsById[clip.id]=clip;
+  track.clips.push(clip);
+  selectedClipId = clip.id;
+  selectedTrackId = track.id;
+}
+
+/* peak envelope for waveform drawing */
+function computePeaks(buffer){
+  const N = Math.min(Math.max(Math.floor(buffer.duration*140),600),9000);
+  const chs = [], min=new Float32Array(N), max=new Float32Array(N);
+  for(let c=0;c<buffer.numberOfChannels;c++) chs.push(buffer.getChannelData(c));
+  const per = buffer.length / N;
+  for(let i=0;i<N;i++){
+    const s0=Math.floor(i*per), s1=Math.min(buffer.length,Math.floor((i+1)*per));
+    let mn=1, mx=-1;
+    for(let s=s0;s<s1;s++){
+      let v=0; for(let c=0;c<chs.length;c++) v+=chs[c][s]; v/=chs.length;
+      if(v<mn)mn=v; if(v>mx)mx=v;
+    }
+    if(s1<=s0){mn=0;mx=0}
+    min[i]=mn; max[i]=mx;
+  }
+  return {min,max,N};
+}
+
+/* ---------- layout math ---------- */
+function contentSeconds(){
+  let end = 30;                       // always leave headroom to drop into
+  for(const id in clipsById){ const c=clipsById[id]; end=Math.max(end,c.start+c.duration); }
+  return Math.max(end+4, playhead+4);
+}
+function audioEndSeconds(){          // where the last clip actually ends (no visual headroom)
+  let end=0;
+  for(const id in clipsById){ const c=clipsById[id]; end=Math.max(end,c.start+c.duration); }
+  return end;
+}
+function setVar(k,v){ document.documentElement.style.setProperty(k,v); }
+
+/* ---------- render ---------- */
+function render(){
+  setVar("--pps", pps+"px");
+  const secs = contentSeconds();
+  innerEl.style.width = ("calc(var(--headW) + "+(secs*pps)+"px)");
+
+  // tracks + lanes
+  tracksEl.innerHTML="";
+  for(const t of tracks){
+    const row=document.createElement("div");
+    row.className="track"+(t.id===selectedTrackId?" sel":"");
+    row.dataset.track=t.id;
+
+    const head=document.createElement("div");
+    head.className="head";
+    head.innerHTML=`
+      <div class="row1">
+        <span class="swatch" style="background:${t.hue}"></span>
+        <input class="tname" value="${escapeHtml(t.name)}">
+        <button class="trm" title="Remove this track">✕</button>
+      </div>
+      <div class="row2">
+        <button class="tog m ${t.muted?'on':''}" title="Mute">M</button>
+        <button class="tog s ${t.solo?'on':''}" title="Solo">S</button>
+        <input class="vol" type="range" min="0" max="1.4" step="0.01" value="${t.gain}" title="Volume">
+      </div>`;
+    head.addEventListener("mousedown",e=>{ if(!e.target.closest("input,button")){selectedTrackId=t.id; markSel();}});
+    head.querySelector(".tname").addEventListener("input",e=>t.name=e.target.value);
+    head.querySelector(".m").addEventListener("click",()=>{t.muted=!t.muted;render();});
+    head.querySelector(".s").addEventListener("click",()=>{t.solo=!t.solo;render();});
+    head.querySelector(".vol").addEventListener("input",e=>t.gain=parseFloat(e.target.value));
+    head.querySelector(".trm").addEventListener("click",e=>{e.stopPropagation();removeTrack(t.id);});
+
+    const lane=document.createElement("div");
+    lane.className="lane"; lane.dataset.track=t.id;
+    lane.addEventListener("pointerdown",onLanePointerDown);
+
+    t.laneEl=lane; t.el=row;
+    for(const clip of t.clips) lane.appendChild(buildClip(clip));
+
+    row.appendChild(head); row.appendChild(lane);
+    tracksEl.appendChild(row);
+  }
+
+  buildRuler(secs);
+  positionPlayhead();
+  emptyEl.style.display = tracks.some(t=>t.clips.length) ? "none":"flex";
+  updateClock();
+}
+
+function markSel(){
+  document.querySelectorAll(".track").forEach(r=>r.classList.toggle("sel",r.dataset.track===selectedTrackId));
+  document.querySelectorAll(".clip").forEach(c=>c.classList.toggle("sel",c.dataset.clip===selectedClipId));
+}
+
+function buildClip(clip){
+  const el=document.createElement("div");
+  el.className="clip"+(clip.id===selectedClipId?" sel":"");
+  el.dataset.clip=clip.id;
+  const t=trackById(clip.trackId);
+  el.style.left=(clip.start*pps)+"px";
+  el.style.width=Math.max(2,clip.duration*pps)+"px";
+  el.style.background="linear-gradient("+shade(t.hue,-8)+","+shade(t.hue,-26)+")";
+  const cap=document.createElement("div"); cap.className="cap"; cap.textContent=clip.name;
+  const cv=document.createElement("canvas"); clip.canvas=cv;
+  const hl=document.createElement("div"); hl.className="h l";
+  const hr=document.createElement("div"); hr.className="h r";
+  el.append(cv,cap,hl,hr);
+  el.addEventListener("pointerdown",e=>onClipPointerDown(e,clip));
+  clip.el=el;
+  requestAnimationFrame(()=>drawClip(clip));
+  return el;
+}
+
+function drawClip(clip){
+  const cv=clip.canvas; if(!cv) return;
+  const w=Math.max(2,Math.round(clip.duration*pps));
+  const h=cv.clientHeight||70;
+  const dpr=window.devicePixelRatio||1;
+  cv.width=w*dpr; cv.height=h*dpr;
+  const g=cv.getContext("2d"); g.scale(dpr,dpr);
+  g.clearRect(0,0,w,h);
+  const t=trackById(clip.trackId);
+  const p=clip.peaks, bufDur=clip.buffer.duration;
+  const f0=clip.offset/bufDur, f1=(clip.offset+clip.duration)/bufDur;
+  const mid=h/2, amp=h*0.44;
+  g.fillStyle="rgba(255,255,255,.16)"; g.fillRect(0,mid,w,1);
+  g.strokeStyle=shade(t.hue,42); g.lineWidth=1; g.beginPath();
+  for(let x=0;x<w;x++){
+    const fr=f0+(x/w)*(f1-f0); const idx=Math.min(p.N-1,Math.floor(fr*p.N));
+    const yTop=mid-p.max[idx]*amp, yBot=mid-p.min[idx]*amp;
+    g.moveTo(x+.5,yTop); g.lineTo(x+.5,Math.max(yBot,yTop+1));
+  }
+  g.stroke();
+}
+
+function buildRuler(secs){
+  rulerEl.innerHTML="";
+  rulerEl.style.width=(secs*pps)+"px";
+  const targetPx=88;
+  const cand=[0.1,0.25,0.5,1,2,5,10,15,30,60,120,300];
+  let step=cand.find(c=>c*pps>=targetPx) || 300;
+  const majorEvery = step<1?5:(step<10?5:2);
+  let i=0;
+  for(let s=0;s<=secs;s+=step,i++){
+    const tick=document.createElement("div");
+    const major=(i%majorEvery===0);
+    tick.className="tick"+(major?" major":"");
+    tick.style.left=(s*pps)+"px";
+    if(major){ const lab=document.createElement("span"); lab.className="mono"; lab.textContent=fmt(s,step<1); tick.appendChild(lab); }
+    rulerEl.appendChild(tick);
+  }
+  rulerEl.addEventListener("pointerdown",rulerSeek);
+}
+function rulerSeek(e){
+  const r=rulerEl.getBoundingClientRect();
+  seek((e.clientX-r.left)/pps);
+}
+
+/* ---------- selection / edit ops ---------- */
+function selectClip(id){ selectedClipId=id; const c=clipsById[id]; if(c) selectedTrackId=c.trackId; markSel(); }
+
+function deleteClip(id){
+  const c=clipsById[id]; if(!c) return;
+  pushHistory();
+  const t=trackById(c.trackId); t.clips=t.clips.filter(x=>x.id!==id);
+  delete clipsById[id];
+  if(selectedClipId===id) selectedClipId=null;
+  render();
+}
+
+function splitAtPlayhead(){
+  const c=clipsById[selectedClipId]; if(!c) return;
+  if(playhead<=c.start+0.001 || playhead>=c.start+c.duration-0.001) return; // playhead not inside
+  pushHistory();
+  const t=trackById(c.trackId);
+  const cut=playhead-c.start;                        // seconds into clip
+  const right={
+    id:nid(),trackId:t.id,name:c.name,buffer:c.buffer,peaks:c.peaks,
+    start:c.start+cut, offset:c.offset+cut, duration:c.duration-cut
+  };
+  c.duration=cut;                                    // left shrinks
+  clipsById[right.id]=right;
+  const idx=t.clips.indexOf(c); t.clips.splice(idx+1,0,right);
+  selectedClipId=right.id;
+  render();
+}
+
+/* ---------- pointer: clip move / trim ---------- */
+let drag=null;
+function onClipPointerDown(e,clip){
+  if(e.button!==0) return;
+  e.stopPropagation();
+  stopIfPlaying();
+  selectClip(clip.id);
+  const edge = e.target.classList.contains("h") ? (e.target.classList.contains("l")?"l":"r") : null;
+  drag={clip, mode: edge?("trim-"+edge):"move", pushed:false,
+        startX:e.clientX, startY:e.clientY,
+        oStart:clip.start, oOffset:clip.offset, oDur:clip.duration};
+  clip.el.style.cursor = edge?"ew-resize":"grabbing";
+  if(drag.mode==="move") clip.el.style.pointerEvents="none"; // let elementFromPoint see lanes
+  window.addEventListener("pointermove",onDragMove);
+  window.addEventListener("pointerup",onDragEnd,{once:true});
+}
+function onDragMove(e){
+  if(!drag) return;
+  if(!drag.pushed){ pushHistory(); drag.pushed=true; }   // capture pre-drag state once
+  const c=drag.clip, dSec=(e.clientX-drag.startX)/pps, bufDur=c.buffer.duration;
+  if(drag.mode==="move"){
+    let ns=Math.max(0,drag.oStart+dSec);
+    ns=snap(ns,c);
+    c.start=ns; c.el.style.left=(ns*pps)+"px";
+    // vertical: move to lane under cursor
+    const under=document.elementFromPoint(e.clientX,e.clientY);
+    const lane=under&&under.closest(".lane");
+    if(lane && lane.dataset.track!==c.trackId){
+      const from=trackById(c.trackId), to=trackById(lane.dataset.track);
+      from.clips=from.clips.filter(x=>x.id!==c.id); to.clips.push(c); c.trackId=to.id;
+      lane.appendChild(c.el);
+      c.el.style.background="linear-gradient("+shade(to.hue,-8)+","+shade(to.hue,-26)+")";
+      drawClip(c); selectedTrackId=to.id; markSel();
+    }
+  } else if(drag.mode==="trim-l"){
+    let d=dSec;
+    d=Math.max(d,-drag.oOffset);                          // can't expand before buffer 0
+    d=Math.min(d, drag.oDur-0.02);                        // keep some length
+    if(drag.oStart+d<0) d=-drag.oStart;                   // not before timeline 0
+    c.start=drag.oStart+d; c.offset=drag.oOffset+d; c.duration=drag.oDur-d;
+    c.el.style.left=(c.start*pps)+"px"; c.el.style.width=Math.max(2,c.duration*pps)+"px";
+    drawClip(c);
+  } else if(drag.mode==="trim-r"){
+    let nd=drag.oDur+dSec;
+    nd=Math.max(0.02,nd);
+    nd=Math.min(nd, bufDur-c.offset);                     // can't exceed buffer end
+    c.duration=nd; c.el.style.width=Math.max(2,nd*pps)+"px";
+    drawClip(c);
+  }
+  growContent();
+  updateClock();
+}
+function onDragEnd(){
+  window.removeEventListener("pointermove",onDragMove);
+  if(drag){ drag.clip.el.style.pointerEvents=""; drag.clip.el.style.cursor="grab"; }
+  drag=null;
+  buildRuler(contentSeconds());
+}
+function snap(v,self){
+  const tol=6/pps; // 6px
+  const targets=[0,playhead];
+  for(const id in clipsById){ const c=clipsById[id]; if(c===self)continue; targets.push(c.start,c.start+c.duration); }
+  for(const t of targets){ if(Math.abs(v-t)<tol) return t; }
+  return v;
+}
+function growContent(){ innerEl.style.width=("calc(var(--headW) + "+(contentSeconds()*pps)+"px)"); }
+
+function onLanePointerDown(e){
+  if(e.target.closest(".clip")) return;
+  const r=e.currentTarget.getBoundingClientRect();
+  selectedTrackId=e.currentTarget.dataset.track;
+  selectedClipId=null; markSel();
+  seek((e.clientX-r.left)/pps);
+}
+
+/* ---------- transport ---------- */
+function playPause(){ playing?pause():play(); }
+
+function play(){
+  if(playing) return;
+  const ctx=ac();
+  if(!tracks.some(t=>t.clips.length)) return;
+  if(playhead >= audioEndSeconds()-1e-4){ playhead=0; positionPlayhead(); }  // parked at end -> replay from start
+  const anySolo=tracks.some(t=>t.solo);
+  ctxStartTime=ctx.currentTime+0.06; playStartHead=playhead;
+  liveSources=[];
+  for(const t of tracks){
+    const g=ctx.createGain();
+    const audible = !t.muted && (!anySolo || t.solo);
+    g.gain.value = audible ? t.gain : 0;
+    g.connect(ctx.destination);
+    for(const c of t.clips){
+      const clipEnd=c.start+c.duration;
+      if(clipEnd<=playhead) continue;
+      let when, off, dur;
+      if(c.start>=playhead){ when=ctxStartTime+(c.start-playhead); off=c.offset; dur=c.duration; }
+      else { const into=playhead-c.start; when=ctxStartTime; off=c.offset+into; dur=c.duration-into; }
+      const src=ctx.createBufferSource(); src.buffer=c.buffer;
+      src.connect(g); src.start(when,off,Math.max(0.001,dur));
+      liveSources.push(src);
+    }
+  }
+  playing=true; $("#play").textContent="❚❚"; $("#play").classList.add("on");
+  const end=audioEndSeconds();
+  const step=()=>{
+    playhead=playStartHead+Math.max(0,ac().currentTime-ctxStartTime);
+    if(playhead>=end){ pause(); playhead=end; positionPlayhead(); updateClock(); return; }
+    positionPlayhead(); updateClock(); keepPlayheadVisible();
+    rafId=requestAnimationFrame(step);
+  };
+  rafId=requestAnimationFrame(step);
+}
+function pause(){
+  if(!playing) return;
+  cancelAnimationFrame(rafId);
+  liveSources.forEach(s=>{try{s.stop()}catch(e){}}); liveSources=[];
+  playing=false; $("#play").textContent="▶"; $("#play").classList.remove("on");
+}
+function stop(){ pause(); playhead=0; positionPlayhead(); updateClock(); scrollEl.scrollLeft=0; }
+function stopIfPlaying(){ if(playing) pause(); }
+function seek(s){ stopIfPlaying(); playhead=Math.max(0,s); growContent(); positionPlayhead(); updateClock(); }
+
+function positionPlayhead(){ phEl.style.left="calc(var(--headW) + "+(playhead*pps)+"px)"; }
+function keepPlayheadVisible(){
+  const x=playhead*pps, headW=172;
+  const viewL=scrollEl.scrollLeft, viewR=viewL+scrollEl.clientWidth-headW;
+  if(x>viewR-40) scrollEl.scrollLeft = x-scrollEl.clientWidth+headW+120;
+  else if(x<viewL) scrollEl.scrollLeft = Math.max(0,x-40);
+}
+function updateClock(){ clockEl.textContent=fmt(playhead,true); }
+
+/* ---------- export to WAV ---------- */
+async function exportWav(){
+  if(!tracks.some(t=>t.clips.length)){ alert("Nothing to export yet."); return; }
+  const ctx=ac(); const rate=ctx.sampleRate;
+  const dur=Math.max(0.1, (()=>{let e=0;for(const id in clipsById){const c=clipsById[id];e=Math.max(e,c.start+c.duration);}return e;})());
+  const off=new OfflineAudioContext(2, Math.ceil(dur*rate)+8, rate);
+  const anySolo=tracks.some(t=>t.solo);
+  for(const t of tracks){
+    const g=off.createGain();
+    const audible=!t.muted && (!anySolo||t.solo);
+    g.gain.value=audible?t.gain:0; g.connect(off.destination);
+    for(const c of t.clips){
+      const src=off.createBufferSource(); src.buffer=c.buffer; src.connect(g);
+      src.start(c.start, c.offset, c.duration);
+    }
+  }
+  const btn=$("#export"); const old=btn.textContent; btn.textContent="Rendering…"; btn.disabled=true;
+  try{
+    const rendered=await off.startRendering();
+    const blob=encodeWav(rendered);
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement("a"); a.href=url; a.download="bonneville-brass-mix.wav"; a.click();
+    setTimeout(()=>URL.revokeObjectURL(url),4000);
+  }catch(err){ alert("Export failed: "+err.message); }
+  finally{ btn.textContent=old; btn.disabled=false; }
+}
+function encodeWav(buffer){
+  const n=buffer.numberOfChannels, len=buffer.length, rate=buffer.sampleRate;
+  const chans=[]; for(let c=0;c<n;c++) chans.push(buffer.getChannelData(c));
+  const bytes=len*n*2, out=new DataView(new ArrayBuffer(44+bytes));
+  const w=(o,s)=>{for(let i=0;i<s.length;i++)out.setUint8(o+i,s.charCodeAt(i));};
+  w(0,"RIFF"); out.setUint32(4,36+bytes,true); w(8,"WAVE"); w(12,"fmt ");
+  out.setUint32(16,16,true); out.setUint16(20,1,true); out.setUint16(22,n,true);
+  out.setUint32(24,rate,true); out.setUint32(28,rate*n*2,true);
+  out.setUint16(32,n*2,true); out.setUint16(34,16,true); w(36,"data"); out.setUint32(40,bytes,true);
+  let o=44;
+  for(let i=0;i<len;i++) for(let c=0;c<n;c++){
+    let v=Math.max(-1,Math.min(1,chans[c][i]));
+    out.setInt16(o, v<0?v*0x8000:v*0x7fff, true); o+=2;
+  }
+  return new Blob([out.buffer],{type:"audio/wav"});
+}
+
+/* ---------- helpers ---------- */
+function fmt(s,ms){
+  s=Math.max(0,s); const m=Math.floor(s/60), sec=Math.floor(s%60);
+  const base=String(m).padStart(2,"0")+":"+String(sec).padStart(2,"0");
+  if(ms){ const mmm=Math.floor((s-Math.floor(s))*1000); return base+"."+String(mmm).padStart(3,"0"); }
+  return base;
+}
+function escapeHtml(s){ return s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+function shade(hex,amt){ // amt -100..100 lighten/darken
+  const h=hex.replace("#",""); let r=parseInt(h.slice(0,2),16),g=parseInt(h.slice(2,4),16),b=parseInt(h.slice(4,6),16);
+  const f=amt/100;
+  const mix=(x)=> amt>=0 ? Math.round(x+(255-x)*f) : Math.round(x*(1+f));
+  r=Math.max(0,Math.min(255,mix(r)));g=Math.max(0,Math.min(255,mix(g)));b=Math.max(0,Math.min(255,mix(b)));
+  return "rgb("+r+","+g+","+b+")";
+}
+
+/* ---------- wiring ---------- */
+$("#import").addEventListener("click",()=>$("#file").click());
+$("#file").addEventListener("change",e=>{ importFiles(e.target.files); e.target.value=""; });
+$("#addTrack").addEventListener("click",()=>{ pushHistory(); addTrack(); });
+$("#undo").addEventListener("click",undo);
+$("#play").addEventListener("click",playPause);
+$("#stop").addEventListener("click",stop);
+$("#split").addEventListener("click",splitAtPlayhead);
+$("#del").addEventListener("click",()=>selectedClipId&&deleteClip(selectedClipId));
+$("#export").addEventListener("click",exportWav);
+$("#zoom").addEventListener("input",e=>{
+  const focusSec=playhead;
+  pps=parseFloat(e.target.value);
+  setVar("--pps",pps+"px");
+  render();
+  for(const id in clipsById) drawClip(clipsById[id]);
+  keepPlayheadVisible();
+});
+
+/* drag & drop files anywhere */
+document.addEventListener("dragover",e=>{e.preventDefault();});
+document.addEventListener("drop",e=>{e.preventDefault(); if(e.dataTransfer.files.length) importFiles(e.dataTransfer.files);});
+
+/* keyboard */
+document.addEventListener("keydown",e=>{
+  if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==="z"){ e.preventDefault(); undo(); return; }
+  if(e.target.matches("input,textarea")) return;
+  if(e.code==="Space"){ e.preventDefault(); playPause(); }
+  else if(e.key==="Delete"||e.key==="Backspace"){ if(selectedClipId){ e.preventDefault(); deleteClip(selectedClipId);} }
+  else if(e.key==="s"||e.key==="S"){ splitAtPlayhead(); }
+  else if(e.key==="Home"){ seek(0); }
+});
+
+/* start with two empty tracks so layering is obvious */
+addTrack("Track 1"); addTrack("Track 2");
+selectedTrackId=tracks[0].id;
+render();
+</script>
+</body>
+</html>

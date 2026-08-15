@@ -25,6 +25,11 @@
       defaultWidth: 1040,
       defaultHeight: 760
     },
+    "bonneville-brass-editor": {
+      templateId: "bonneville-brass-editor-pane-template",
+      defaultWidth: 1180,
+      defaultHeight: 760
+    },
     "pubchem-periodic-table": {
       templateId: "pubchem-periodic-table-pane-template",
       defaultWidth: 1120,
@@ -45,8 +50,8 @@
       defaultWidth: 1120,
       defaultHeight: 800
     },
-    "custom-html": {
-      templateId: "custom-html-pane-template",
+    "custom-url": {
+      templateId: "custom-url-pane-template",
       defaultWidth: 960,
       defaultHeight: 720,
       transient: true
@@ -556,22 +561,35 @@
     });
 
     var customEmbedButton = document.getElementById("sme-open-custom-embed");
-    var customEmbedInput = document.getElementById("sme-custom-html");
+    var customEmbedInput = document.getElementById("sme-custom-url");
     if (customEmbedButton && customEmbedInput) {
       customEmbedButton.addEventListener("click", function () {
         var source = customEmbedInput.value.trim();
         if (!source) {
           customEmbedInput.focus();
-          customEmbedInput.setCustomValidity("Paste a complete HTML document or embed snippet first.");
+          customEmbedInput.setCustomValidity("Enter a web address first.");
+          customEmbedInput.reportValidity();
+          return;
+        }
+        var parsed;
+        try {
+          parsed = new URL(source);
+        } catch (error) {
+          customEmbedInput.setCustomValidity("Enter a valid address, including https://");
+          customEmbedInput.reportValidity();
+          return;
+        }
+        if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+          customEmbedInput.setCustomValidity("Only http and https addresses can be embedded.");
           customEmbedInput.reportValidity();
           return;
         }
         customEmbedInput.setCustomValidity("");
-        var existing = workspace.querySelector('[data-pane-id="custom-html"]');
+        var existing = workspace.querySelector('[data-pane-id="custom-url"]');
         if (existing) existing.remove();
-        var pane = createModulePane("custom-html");
+        var pane = createModulePane("custom-url");
         var iframe = pane && pane.querySelector("iframe");
-        if (iframe) iframe.srcdoc = source;
+        if (iframe) iframe.src = parsed.href;
         closeMenus();
       });
       customEmbedInput.addEventListener("input", function () {

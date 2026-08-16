@@ -30,6 +30,11 @@
       defaultWidth: 1180,
       defaultHeight: 760
     },
+    "bonneville-brass-fourier": {
+      templateId: "bonneville-brass-fourier-pane-template",
+      defaultWidth: 1180,
+      defaultHeight: 780
+    },
     "pubchem-periodic-table": {
       templateId: "pubchem-periodic-table-pane-template",
       defaultWidth: 1120,

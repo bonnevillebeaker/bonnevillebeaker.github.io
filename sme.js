@@ -35,6 +35,11 @@
       defaultWidth: 1180,
       defaultHeight: 780
     },
+    "bonneville-brass-sheet-music": {
+      templateId: "bonneville-brass-sheet-music-pane-template",
+      defaultWidth: 1200,
+      defaultHeight: 820
+    },
     "pubchem-periodic-table": {
       templateId: "pubchem-periodic-table-pane-template",
       defaultWidth: 1120,

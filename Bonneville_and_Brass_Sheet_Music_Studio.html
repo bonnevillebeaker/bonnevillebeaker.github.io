@@ -1,0 +1,2743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Bonneville &amp; Brass — Sheet music studio</title>
+<style>
+  /* Bravura is the standard open-licensed (SIL OFL) music font. Used only for the
+     two clef glyphs, positioned by their SMuFL staff registration. Everything else
+     is drawn as SVG, so the tool still works if the font is slow or blocked. */
+  @font-face{
+    font-family:'Bravura';
+    font-style:normal; font-weight:normal; font-display:swap;
+    src:url(https://cdn.jsdelivr.net/npm/@vexflow-fonts/bravura/bravura.woff2) format('woff2'),
+        url(https://unpkg.com/@vexflow-fonts/bravura/bravura.woff2) format('woff2');
+  }
+  :root{
+    --paper:#f6efe0;
+    --paper-edge:#e7dbc2;
+    --ink:#241a12;
+    --ink-soft:#4a3a2b;
+    --muted:#8a755f;
+    --brass:#c9a24b;
+    --brass-glow:#f2d47e;
+    --wood:#3d2518;
+    --wood-dark:#2b1a12;
+    --wood-light:#5a3826;
+    --felt:#7a1f1f;
+    --danger:#a6483a;
+    --line:#3a2c20;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%; width:100%; overflow-x:hidden}
+  body{
+    margin:0; color:#e8ddc8;
+    font-family:Georgia,"Times New Roman",serif;
+    background:
+      radial-gradient(ellipse at 50% -8%, #6a4429 0%, transparent 55%),
+      linear-gradient(160deg,#241610 0%, #160d08 100%);
+    min-height:100vh;
+  }
+
+  header{
+    display:flex; align-items:center; justify-content:space-between; gap:20px;
+    padding:16px 26px;
+    background:linear-gradient(180deg,#4a2f1e,#2c1a11);
+    border-bottom:1px solid var(--wood-light);
+    box-shadow:0 6px 22px rgba(0,0,0,.4);
+  }
+  .brand{display:flex; align-items:center; gap:14px}
+  .brand-raven{width:clamp(44px,6vw,62px); height:auto; flex:0 0 auto; filter:drop-shadow(0 2px 3px #0008)}
+  .brand-text{text-align:left}
+  .brand h1{
+    font-size:clamp(1.15rem,2.6vw,1.55rem); font-weight:400; margin:0; letter-spacing:.02em;
+    color:var(--brass-glow); text-shadow:0 1px 0 #0007;
+  }
+  .brand h1 .amp{color:#8f6b2e; font-style:italic; padding:0 .12em}
+  .brand .sub{
+    font-family:"Helvetica Neue",Arial,sans-serif; font-size:.66rem; letter-spacing:.28em;
+    text-transform:uppercase; color:#9c8663; margin-top:5px;
+  }
+  .status{
+    font-family:"Helvetica Neue",Arial,sans-serif; font-size:.72rem; color:#c8b590;
+    text-align:right; letter-spacing:.04em; max-width:40ch;
+  }
+
+  .app{
+    display:grid; grid-template-columns:288px 1fr; gap:18px;
+    padding:18px; align-items:start;
+  }
+
+  /* ---- control cabinet (walnut) ---- */
+  .panel{
+    background:linear-gradient(180deg,var(--wood-light) 0%, var(--wood) 42%, var(--wood-dark) 100%);
+    border:1px solid #6a4a2f; border-radius:16px; padding:16px;
+    box-shadow:inset 0 1px 0 #ffffff1a, 0 12px 30px #0007;
+    position:sticky; top:18px;
+  }
+  .section{border-bottom:1px solid #ffffff12; padding-bottom:15px; margin-bottom:15px}
+  .section:last-child{border-bottom:0; margin-bottom:0; padding-bottom:0}
+  .section h2{
+    margin:0 0 11px; font-family:"Helvetica Neue",Arial,sans-serif; font-size:.68rem;
+    letter-spacing:.2em; text-transform:uppercase; color:var(--brass);
+  }
+  label{font-family:"Helvetica Neue",Arial,sans-serif; font-size:.72rem; color:#c3ac86; letter-spacing:.02em}
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+  input[type="number"],input[type="text"],select{
+    width:100%; margin-top:4px; padding:7px 9px; border:1px solid #6a4a2f; border-radius:8px;
+    background:#2f1d12; color:#efe0c2; font:inherit; font-size:.85rem;
+    font-family:"Helvetica Neue",Arial,sans-serif;
+  }
+  select:focus-visible,input:focus-visible{outline:2px solid var(--brass-glow); outline-offset:1px}
+  input[type="range"]{width:100%; accent-color:var(--brass)}
+  .readout{
+    display:flex; justify-content:space-between; align-items:baseline; margin-top:6px;
+    font-family:"Helvetica Neue",Arial,sans-serif; color:#c3ac86; font-size:.68rem;
+  }
+  .readout strong{color:var(--brass-glow); font-size:.95rem; letter-spacing:.02em}
+
+  /* note-length palette */
+  .dur-grid{display:grid; grid-template-columns:repeat(6,1fr); gap:7px}
+  .dur{
+    display:flex; flex-direction:column; align-items:center; gap:5px;
+    padding:9px 2px 7px; border:1px solid #6a4a2f; border-radius:9px;
+    background:linear-gradient(180deg,#463022,#2f2015); color:#d8c19a; cursor:pointer;
+    transition:all .13s ease;
+  }
+  .dur svg{display:block}
+  .dur svg .g{fill:#e9d7b3; stroke:#e9d7b3}
+  .dur span{font-family:"Helvetica Neue",Arial,sans-serif; font-size:.56rem; letter-spacing:.03em; color:#a58d6a}
+  .dur:hover{border-color:var(--brass)}
+  .dur.active{
+    background:linear-gradient(180deg,#e7c368,#b9862f); border-color:#7a5417;
+    box-shadow:inset 0 1px 0 #fff5, 0 2px 6px #0006;
+  }
+  .dur.active svg .g{fill:#2a1d0e; stroke:#2a1d0e}
+  .dur.active span{color:#3a280f}
+
+  .toggle-row{display:flex; gap:8px; margin-top:10px; flex-wrap:wrap}
+  .toggle{
+    flex:1 1 72px; padding:8px; border:1px solid #6a4a2f; border-radius:9px; cursor:pointer;
+    background:linear-gradient(180deg,#463022,#2f2015); color:#d8c19a;
+    font-family:"Helvetica Neue",Arial,sans-serif; font-size:.72rem; letter-spacing:.03em;
+    display:flex; align-items:center; justify-content:center; gap:7px; transition:all .13s ease;
+  }
+  .toggle:hover{border-color:var(--brass)}
+  .toggle.on{background:linear-gradient(180deg,#e7c368,#b9862f); color:#3a280f; border-color:#7a5417}
+
+  .btn-row{display:flex; gap:8px; flex-wrap:wrap}
+  button.act{
+    flex:1; min-width:70px; padding:9px 10px; border:1px solid #6a4a2f; border-radius:10px;
+    background:linear-gradient(180deg,#4a2f1e,#331f13); color:#e2cfa4; cursor:pointer;
+    font-family:"Helvetica Neue",Arial,sans-serif; font-size:.76rem; letter-spacing:.04em;
+    box-shadow:inset 0 1px 0 #ffffff16, 0 2px 4px #0006; transition:all .13s ease;
+  }
+  button.act:hover:not(:disabled){border-color:var(--brass); color:var(--brass-glow)}
+  button.act:disabled{opacity:.45; cursor:not-allowed}
+  button.act.primary{background:linear-gradient(180deg,#e7c368,#b9862f); color:#2a1d0e; border-color:#7a5417}
+  button.act.primary:hover:not(:disabled){color:#2a1d0e; filter:brightness(1.06)}
+  button.act.danger{background:linear-gradient(180deg,#7a2f26,#4f201a); color:#f0d3cb}
+  button.act.danger:hover:not(:disabled){border-color:#c56a5b; color:#ffe6df}
+
+  .hint{
+    font-family:"Helvetica Neue",Arial,sans-serif; font-size:.68rem; line-height:1.5;
+    color:#a58d6a; margin:10px 0 0;
+  }
+
+  /* ---- the score, sitting on a music desk ---- */
+  .desk{
+    background:linear-gradient(180deg,var(--wood-light),var(--wood-dark));
+    border:1px solid #6a4a2f; border-radius:16px; padding:14px;
+    box-shadow:inset 0 1px 0 #ffffff1a, 0 12px 30px #0007;
+  }
+  .desk-bar{
+    display:flex; align-items:center; justify-content:space-between; gap:12px; padding:2px 4px 12px;
+    font-family:"Helvetica Neue",Arial,sans-serif;
+  }
+  .desk-bar .t{color:var(--brass-glow); font-size:.78rem; letter-spacing:.12em; text-transform:uppercase}
+  .desk-bar .t small{color:#a58d6a; letter-spacing:.04em; text-transform:none; margin-left:8px; font-size:.72rem}
+  .desk-bar .r{color:#a58d6a; font-size:.68rem}
+  .paper{
+    touch-action:pan-y;
+    user-select:none;
+    -webkit-user-select:none;
+    background:
+      radial-gradient(ellipse at 50% 0%, #fffaf0 0%, transparent 60%),
+      var(--paper);
+    border:1px solid var(--paper-edge); border-radius:10px;
+    box-shadow:inset 0 2px 10px #0002, 0 1px 0 #ffffff60;
+    padding:8px; overflow:auto; max-height:calc(100vh - 150px); min-height:520px;
+  }
+  .paper svg{display:block; margin:0 auto; border-radius:8px}
+  .measure-badge{
+    display:flex; align-items:center; justify-content:space-between; gap:8px;
+    margin:0 0 10px; padding:8px 10px; border:1px solid #6a4a2f; border-radius:9px;
+    background:#2f1d12; color:#d8c19a; font-family:"Helvetica Neue",Arial,sans-serif; font-size:.72rem;
+  }
+  .measure-badge strong{color:var(--brass-glow)}
+  .paper svg text.pitchtag{
+    font-family:"Helvetica Neue",Arial,sans-serif; font-size:22px; fill:#9a6a2c;
+  }
+
+  /* score-edit affordances: invisible until the user hovers the notation */
+  .paper svg .editor-delete-x{opacity:0; transition:opacity .11s ease}
+  .paper svg .technical-delete-target:hover .editor-delete-x{opacity:.95}
+  .paper svg .measure-divider-hit{cursor:ew-resize}
+  .paper svg .measure-divider-hit:hover + .measure-divider-guide{opacity:.55}
+  .empty-tip{
+    text-align:center; color:#9a836a; font-style:italic; padding:30px 10px 6px; font-size:.9rem;
+  }
+
+  .note-text-popover{
+    position:fixed; z-index:10000;
+    width:min(260px,calc(100vw - 20px));
+    padding:7px;
+    border:1px solid #8a6437; border-radius:9px;
+    background:linear-gradient(180deg,#49301f,#2f1d12);
+    box-shadow:0 8px 24px #0009, inset 0 1px 0 #ffffff18;
+  }
+  .note-text-popover input{
+    width:100%; margin:0; min-height:40px;
+    padding:7px 9px; border:1px solid #8a6437; border-radius:7px;
+    background:#21140d; color:#fff0cf;
+    font-family:Georgia,"Times New Roman",serif; font-size:18px;
+  }
+  .note-text-popover input:focus{outline:2px solid var(--brass-glow); outline-offset:1px}
+
+  @media(max-width:880px){
+    header{
+      padding:12px 14px;
+      align-items:flex-start;
+    }
+    .status{
+      display:none;
+    }
+    .app{
+      grid-template-columns:1fr;
+      gap:10px;
+      padding:10px;
+    }
+    .panel{
+      position:static;
+      padding:12px;
+      border-radius:12px;
+    }
+    .section{
+      padding-bottom:12px;
+      margin-bottom:12px;
+    }
+    .desk{
+      padding:8px;
+      border-radius:12px;
+      min-width:0;
+    }
+    .desk-bar{
+      padding:2px 2px 8px;
+    }
+    .desk-bar .r{
+      display:none;
+    }
+    .paper{
+      max-height:none;
+      min-height:420px;
+      padding:4px;
+      overflow-x:hidden;
+      -webkit-overflow-scrolling:touch;
+    }
+    .paper svg{
+      max-width:100%;
+      height:auto;
+    }
+    button.act,.toggle,.dur{
+      min-height:44px;
+    }
+    input[type="number"],input[type="text"],select{
+      min-height:42px;
+      font-size:16px;
+    }
+    input[type="range"]{
+      min-height:34px;
+    }
+  }
+
+
+  /* ---- PDF / print score layout ---- */
+  @page{
+    size: Letter portrait;
+    margin: .55in .5in;
+  }
+
+  @media print{
+    html,body{
+      width:auto !important;
+      height:auto !important;
+      overflow:visible !important;
+      background:#fff !important;
+      color:#000 !important;
+    }
+    header,.panel,.desk-bar{
+      display:none !important;
+    }
+    .app{
+      display:block !important;
+      padding:0 !important;
+      margin:0 !important;
+    }
+    .desk{
+      padding:0 !important;
+      margin:0 !important;
+      border:0 !important;
+      border-radius:0 !important;
+      box-shadow:none !important;
+      background:#fff !important;
+    }
+    .paper{
+      width:100% !important;
+      max-height:none !important;
+      min-height:0 !important;
+      overflow:visible !important;
+      padding:0 !important;
+      margin:0 !important;
+      border:0 !important;
+      border-radius:0 !important;
+      box-shadow:none !important;
+      background:#fff !important;
+    }
+    .paper svg{
+      width:100% !important;
+      max-width:100% !important;
+      height:auto !important;
+      -webkit-print-color-adjust:exact !important;
+      print-color-adjust:exact !important;
+      margin:0 0 .12in 0 !important;
+      border-radius:0 !important;
+      break-inside:avoid;
+      page-break-inside:avoid;
+    }
+  }
+
+  @media(max-width:480px){
+    .brand h1{
+      font-size:1.08rem;
+    }
+    .brand .sub{
+      font-size:.55rem;
+      letter-spacing:.18em;
+    }
+    .grid2{
+      grid-template-columns:1fr 1fr;
+      gap:8px;
+    }
+    .dur-grid{
+      grid-template-columns:repeat(6,minmax(0,1fr));
+      gap:4px;
+    }
+    .dur{
+      padding:7px 0 6px;
+    }
+    .dur span{
+      font-size:.48rem;
+    }
+    .toggle-row{
+      gap:6px;
+    }
+    .desk-bar .t small{
+      display:none;
+    }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <img class="brand-raven" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+CjwhLS0gQ3JlYXRlZCB3aXRoIElua3NjYXBlIChodHRwOi8vd3d3Lmlua3NjYXBlLm9yZy8pIC0tPgoKPHN2ZwogICB2aWV3Qm94PSIwIDAgNjQuMjY1NDk1IDUwLjQxNTcwNyIKICAgcHJlc2VydmVBc3BlY3RSYXRpbz0ieE1pZFlNaWQgbWVldCIKICAgdmVyc2lvbj0iMS4xIgogICBpZD0ic3ZnMSIKICAgaW5rc2NhcGU6dmVyc2lvbj0iMS40LjIgKGViZjBlOTQwLCAyMDI1LTA1LTA4KSIKICAgc29kaXBvZGk6ZG9jbmFtZT0ibXVzaWNhbF9yYXZlbi5zdmciCiAgIHhtbG5zOmlua3NjYXBlPSJodHRwOi8vd3d3Lmlua3NjYXBlLm9yZy9uYW1lc3BhY2VzL2lua3NjYXBlIgogICB4bWxuczpzb2RpcG9kaT0iaHR0cDovL3NvZGlwb2RpLnNvdXJjZWZvcmdlLm5ldC9EVEQvc29kaXBvZGktMC5kdGQiCiAgIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIKICAgeG1sbnM6c3ZnPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPHNvZGlwb2RpOm5hbWVkdmlldwogICAgIGlkPSJuYW1lZHZpZXcxIgogICAgIHBhZ2Vjb2xvcj0iI2ZmZmZmZiIKICAgICBib3JkZXJjb2xvcj0iIzAwMDAwMCIKICAgICBib3JkZXJvcGFjaXR5PSIwLjI1IgogICAgIGlua3NjYXBlOnNob3dwYWdlc2hhZG93PSIyIgogICAgIGlua3NjYXBlOnBhZ2VvcGFjaXR5PSIwLjAiCiAgICAgaW5rc2NhcGU6cGFnZWNoZWNrZXJib2FyZD0iMCIKICAgICBpbmtzY2FwZTpkZXNrY29sb3I9IiNkMWQxZDEiCiAgICAgaW5rc2NhcGU6ZG9jdW1lbnQtdW5pdHM9Im1tIgogICAgIGlua3NjYXBlOnpvb209IjEuNTc1MzcwOCIKICAgICBpbmtzY2FwZTpjeD0iMTQzLjQ1ODI5IgogICAgIGlua3NjYXBlOmN5PSI3OS42NjM3ODYiCiAgICAgaW5rc2NhcGU6d2luZG93LXdpZHRoPSIxNDQwIgogICAgIGlua3NjYXBlOndpbmRvdy1oZWlnaHQ9Ijg3MiIKICAgICBpbmtzY2FwZTp3aW5kb3cteD0iMCIKICAgICBpbmtzY2FwZTp3aW5kb3cteT0iMjgiCiAgICAgaW5rc2NhcGU6d2luZG93LW1heGltaXplZD0iMCIKICAgICBpbmtzY2FwZTpjdXJyZW50LWxheWVyPSJsYXllcjEiIC8+CiAgPGRlZnMKICAgICBpZD0iZGVmczEiIC8+CiAgPGcKICAgICBpbmtzY2FwZTpsYWJlbD0iTGF5ZXIgMSIKICAgICBpbmtzY2FwZTpncm91cG1vZGU9ImxheWVyIgogICAgIGlkPSJsYXllcjEiCiAgICAgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTc2LjIwMDAwMywtMTMzLjg3OTE1KSI+CiAgICA8cGF0aAogICAgICAgaWQ9InBhdGgxMTQiCiAgICAgICBkPSJtIDEyNy40NTAxMSwxMzkuMjQ0NDMgYyAtNS4xMjg2OCwwLjAyNTggLTguMzA0MzksMi43OTgyMyAtOC4zMDQzOSwyLjc5ODIzIC01LjQ5MTY5LC0yLjM5MDA3IC0wLjg4MDUzLC01Ljk5NTEgLTAuODgwNTMsLTUuOTk1MSA1LjI2MDI3LDAuMjk5ODYgOC42MTA5NSwxLjQxNzgxIDkuODQ1NjcsMy40NDIwNSAwLDAgLTIuNTczODYsLTEuNTQ1NTIgLTExLjUxOTYsMC4yNTE4OCIKICAgICAgIHN0eWxlPSJmaWxsOiMxYTFhMWE7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjAuNzA1NTU2O3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2UtbWl0ZXJsaW1pdDoxMDtzdHJva2UtZGFzaGFycmF5Om5vbmU7c3Ryb2tlLW9wYWNpdHk6MSIgLz4KICAgIDxwYXRoCiAgICAgICBpZD0icGF0aDExNSIKICAgICAgIGQ9Im0gMTE4LjI2NTU0LDEzNi4wNDc1NiBjIDAsMCAtMi42OTY2MywtMi44NDY1NyAtNy4yNDMyMywtMS40MjI3NiAtNS4yODYwMywxLjY1NTk0IC00Ljg3MjU3LDcuMDExNDYgLTUuNzIwNjUsOS4xMDk0MyAtMS43NjAwMSw0LjM1NjQ1IC0zLjA0NTE4LDUuMzkxNSAtMy4wNDUxOCw1LjM5MTUiCiAgICAgICBzdHlsZT0iZmlsbDpub25lO3N0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDowLjcwNTU1NjtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7c3Ryb2tlLW1pdGVybGltaXQ6MTA7c3Ryb2tlLWRhc2hhcnJheTpub25lO3N0cm9rZS1vcGFjaXR5OjEiIC8+CiAgICA8cGF0aAogICAgICAgaWQ9InBhdGgxMTYiCiAgICAgICBkPSJtIDk3Ljc5MzQ5MiwxNTguNzMwODIgLTE1LjkzMDc0LDEzLjQ5NjkyIGMgMCwwIDQuOTEyNDMxLDAuMDI3OSA3LjY0NTc1MywtMS44NDc4NSIKICAgICAgIHN0eWxlPSJmaWxsOm5vbmU7c3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjAuNzA1NTU2O3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2UtbWl0ZXJsaW1pdDoxMDtzdHJva2UtZGFzaGFycmF5Om5vbmU7c3Ryb2tlLW9wYWNpdHk6MSIgLz4KICAgIDxwYXRoCiAgICAgICBpZD0icGF0aDExNyIKICAgICAgIGQ9Im0gODcuNzI5NDQ3LDE3MS40OTg5IC0xMS4xNzY3MDYsMTAuMjQyOTEgYyAwLDAgMy4zMTg1OCwwLjY2MzU3IDYuODU5MDU4LC0xLjk5MTQzIDEuMDYxNTA5LC0wLjc5NjIyIDIuNTgzMzkyLC0yLjA2MTY0IDQuMTk0NTI4LC0zLjQ0MzQ3IgogICAgICAgc3R5bGU9ImZpbGw6bm9uZTtzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MC43MDU1NTY7c3Ryb2tlLWxpbmVjYXA6cm91bmQ7c3Ryb2tlLWxpbmVqb2luOnJvdW5kO3N0cm9rZS1taXRlcmxpbWl0OjEwO3N0cm9rZS1kYXNoYXJyYXk6bm9uZTtzdHJva2Utb3BhY2l0eToxIiAvPgogICAgPHBhdGgKICAgICAgIGlkPSJwYXRoMTE4IgogICAgICAgZD0ibSAxMDIuMzY2MiwxNTguNzMwODIgLTE0LjYyMTIzMSwxMy4zMDAwNyAwLjAwMTEsMC4wMDIgYyAwLDAgNi43ODM5MTcsLTAuOTU4MTUgMTEuMTI0ODQ4LC01LjM2OTI4IDQuMzQwOTMzLC00LjQxMTEzIDcuNzMyMTgzLC03Ljg4NDIzIDcuNzMyMTgzLC03Ljg4NDIzIgogICAgICAgc3R5bGU9ImZpbGw6bm9uZTtzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MC43MDU1NTY7c3Ryb2tlLWxpbmVjYXA6cm91bmQ7c3Ryb2tlLWxpbmVqb2luOnJvdW5kO3N0cm9rZS1taXRlcmxpbWl0OjEwO3N0cm9rZS1kYXNoYXJyYXk6bm9uZTtzdHJva2Utb3BhY2l0eToxIiAvPgogICAgPHBhdGgKICAgICAgIGlkPSJwYXRoMTE5IgogICAgICAgZD0ibSA5MC4wMjA3MzksMTY1LjI0MDI3IGMgMCwwIC0xLjg4MzEyOCwwLjYyNzU5IC0zLjUzODM2MiwwLjE3MTEgbCAxMy4wMTE4NTcsLTE0LjA5NTk0IGMgMCwwIDQuMzczMzg2LC01LjAwMDI4IDkuNTg3NDQ2LC0yLjU2ODIzIDUuNzMzNjksMi42NzQ3NyA1LjAyMjE0LDE1Ljk3OTQzIC0xMy4yMzk3NTUsMjAuMzE2ODMiCiAgICAgICBzdHlsZT0iZmlsbDpub25lO3N0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDowLjcwNTU1NjtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7c3Ryb2tlLW1pdGVybGltaXQ6MTA7c3Ryb2tlLWRhc2hhcnJheTpub25lO3N0cm9rZS1vcGFjaXR5OjEiIC8+CiAgICA8cGF0aAogICAgICAgaWQ9InBhdGgxMjAiCiAgICAgICBkPSJtIDExOS4xNDU3MiwxNDIuMDQyMzEgYyAwLDAgLTEuMDYxNTEsMS4zNjIwNyAtMC4xMDMwMSw0LjA1NzY1IDAuOTU4NSwyLjY5NTkzIDUuNTcxNDIsMjAuMzY4MzMgLTEzLjg5ODM5LDI1Ljk5OTM3IgogICAgICAgc3R5bGU9ImZpbGw6bm9uZTtzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MC43MDU1NTY7c3Ryb2tlLWxpbmVjYXA6cm91bmQ7c3Ryb2tlLWxpbmVqb2luOnJvdW5kO3N0cm9rZS1taXRlcmxpbWl0OjEwO3N0cm9rZS1kYXNoYXJyYXk6bm9uZTtzdHJva2Utb3BhY2l0eToxIiAvPgogICAgPHBhdGgKICAgICAgIGlkPSJwYXRoMTIxIgogICAgICAgZD0ibSAxMDYuMzkyMSwxNjkuMzQwMjYgYyAwLDAgLTEuNTQ0NDYsNC41OTEwNSAtNC45ODY1Miw3LjE2MTc0IgogICAgICAgc3R5bGU9ImZpbGw6bm9uZTtzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MC43MDU1NTY7c3Ryb2tlLWxpbmVjYXA6cm91bmQ7c3Ryb2tlLWxpbmVqb2luOnJvdW5kO3N0cm9rZS1taXRlcmxpbWl0OjEwO3N0cm9rZS1kYXNoYXJyYXk6bm9uZTtzdHJva2Utb3BhY2l0eToxIiAvPgogICAgPHBhdGgKICAgICAgIGlkPSJwYXRoMTIyIgogICAgICAgZD0ibSAxMDAuMDM1MDQsMTcyLjQxMDQ4IGMgMCwwIDAuNzAzNzksNS4xNTMwMyA1LjI0MzY5LDEwLjMwNjA1IgogICAgICAgc3R5bGU9ImZpbGw6bm9uZTtzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MC43MDU1NTY7c3Ryb2tlLWxpbmVjYXA6cm91bmQ7c3Ryb2tlLWxpbmVqb2luOnJvdW5kO3N0cm9rZS1taXRlcmxpbWl0OjEwO3N0cm9rZS1kYXNoYXJyYXk6bm9uZTtzdHJva2Utb3BhY2l0eToxIiAvPgogICAgPHBhdGgKICAgICAgIGlkPSJwYXRoMTIzIgogICAgICAgZD0ibSAxMTguMjE3OTIsMTgzLjk0MjA4IC0wLjA4MzMsLTAuMDg2OCBjIC0wLjYxMzgzLC0wLjY0MDY1IC0xLjQ2MjYyLC0xLjAwMjk1IC0yLjM0OTg1LC0xLjAwMjk1IGggLTE0LjA4MzYgYyAtMC44NjMyNSwwIC0xLjY5MTIyLDAuMzQyOSAtMi4zMDE4NzQsMC45NTM1NiB2IDAiCiAgICAgICBzdHlsZT0iZmlsbDpub25lO3N0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDowLjcwNTU1NjtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7c3Ryb2tlLW1pdGVybGltaXQ6MTA7c3Ryb2tlLWRhc2hhcnJheTpub25lO3N0cm9rZS1vcGFjaXR5OjEiIC8+CiAgICA8cGF0aAogICAgICAgaWQ9InBhdGgxMjQiCiAgICAgICBkPSJtIDEwNS41NTcwNywxNzIuMDAwNTUgYyAwLDAgLTAuNDAzMjIsMS43MDU2OCAxLjMwMjQ2LDQuMDYxODkgMS43MDUzMywyLjM1NjkgNS4wNTQ5NSw2LjM4ODQ1IDQuNzc1OSw3LjgxNDczIGwgLTEuMDU0NDUsLTAuODA2NDUiCiAgICAgICBzdHlsZT0iZmlsbDpub25lO3N0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDowLjcwNTU1NjtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7c3Ryb2tlLW1pdGVybGltaXQ6MTA7c3Ryb2tlLWRhc2hhcnJheTpub25lO3N0cm9rZS1vcGFjaXR5OjEiIC8+CiAgICA8cGF0aAogICAgICAgaWQ9InBhdGgxMjUiCiAgICAgICBkPSJtIDEwMC4xMzU5NCwxNzMuMTQzOTEgYyAtMi4yNTA3MjYsMC40OTg4MiAtNC4yMDE1ODcsMC4yMTM0MyAtNS42ODk5NTcsLTEuMjgwNTkiCiAgICAgICBzdHlsZT0iZmlsbDpub25lO3N0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDowLjcwNTU1NjtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7c3Ryb2tlLW1pdGVybGltaXQ6MTA7c3Ryb2tlLWRhc2hhcnJheTpub25lO3N0cm9rZS1vcGFjaXR5OjEiIC8+CiAgICA8cGF0aAogICAgICAgaWQ9InBhdGgxMjYiCiAgICAgICBkPSJtIDgwLjczODgwMiwxODEuMjI3NDYgYyAwLDAgMC4yNTYxMTcsMC4wNjA3IDAuNjg4NjIyLDAuMTEyMTggMi43NTU5LDAuMzI4NzkgNS41MDc5MiwtMC42NDk0NiA3LjQ5MTIzNywtMi41OTA0NSBsIDIuOTY2NTA4LC0yLjkwNDA2IgogICAgICAgc3R5bGU9ImZpbGw6bm9uZTtzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MC43MDU1NTY7c3Ryb2tlLWxpbmVjYXA6cm91bmQ7c3Ryb2tlLWxpbmVqb2luOnJvdW5kO3N0cm9rZS1taXRlcmxpbWl0OjEwO3N0cm9rZS1kYXNoYXJyYXk6bm9uZTtzdHJva2Utb3BhY2l0eToxIiAvPgogICAgPHBhdGgKICAgICAgIGlkPSJwYXRoMTI3IgogICAgICAgZD0ibSA4Ni4zNDUxNDcsMTgwLjUzOTg5IGMgMCwwIDQuMzIyMjMzLDAuNTAzNDIgNy4zNDIwMTEsLTIuNzgyNzEgbCA0LjEzMjA4NywtNC4zODYwOSIKICAgICAgIHN0eWxlPSJmaWxsOm5vbmU7c3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjAuNzA1NTU2O3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2UtbWl0ZXJsaW1pdDoxMDtzdHJva2UtZGFzaGFycmF5Om5vbmU7c3Ryb2tlLW9wYWNpdHk6MSIgLz4KICAgIDxwYXRoCiAgICAgICBpZD0icGF0aDEyOCIKICAgICAgIGQ9Im0gMTEzLjY3NjI1LDEzNy44NTQ4NCBjIC0wLjAyMjksMC4zMTExNSAtMC4yMDk1NSwwLjU1MTA0IC0wLjQxNjk4LDAuNTM1ODcgLTAuMjA3NDMsLTAuMDE1NSAtMC4zNTcwMSwtMC4yODAxMSAtMC4zMzQwOCwtMC41OTA5MSAwLjAyMjksLTAuMzExMTUgMC4yMDk1NSwtMC41NTEwNCAwLjQxNjk4LC0wLjUzNTg3IDAuMjA3NDQsMC4wMTUyIDAuMzU3MDEsMC4yNzk3NiAwLjMzNDA4LDAuNTkwOTEgeiIKICAgICAgIHN0eWxlPSJmaWxsOm5vbmU7c3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjAuNzA1NTU2O3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2UtbWl0ZXJsaW1pdDoxMDtzdHJva2UtZGFzaGFycmF5Om5vbmU7c3Ryb2tlLW9wYWNpdHk6MSIgLz4KICAgIDxwYXRoCiAgICAgICBpZD0icGF0aDEyOSIKICAgICAgIGQ9Im0gMTI4LjM2NTU3LDE1OS42MTEgYyAwLDAgMC4zNDcxMywtMS4zODI1NCAtMS4zMDU2MywtMS45OTE3OSAtMS42NTMxMiwtMC42MDg1NCAtMi44NzA1NSwtMS45MTM4MiAtMC4xNzM5MiwtMi45MTQyOSAyLjY5NjI4LC0wLjk5OTc4IDQuMzA1NjUsLTAuNjA4NTUgNC43NDA2MywtMS4zMDQ1OCIKICAgICAgIHN0eWxlPSJmaWxsOm5vbmU7c3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjAuNzA1NTU2O3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2UtbWl0ZXJsaW1pdDoxMDtzdHJva2UtZGFzaGFycmF5Om5vbmU7c3Ryb2tlLW9wYWNpdHk6MSIgLz4KICAgIDxwYXRoCiAgICAgICBpZD0icGF0aDEzMCIKICAgICAgIGQ9Im0gMTI3LjQ3NzYzLDE1NC41MDAzIDkuOTc1NDksLTE3LjIyNzkgYyAwLjE0NzgyLC0wLjI0ODcxIDAuNDY0OTcsLTAuMzM2OSAwLjcxNzU1LC0wLjE5MjI2IDAuMTY4MjgsMC4wOTU5IDAuMjY0NTksMC4yNzY1NyAwLjI2NDU5LDAuNDU2ODQgMCwwLjA4ODIgLTAuMDI0LDAuMTc2MzkgLTAuMDY4MSwwLjI1NjQ3IGwgLTkuMTY5MDUsMTYuMjg1OTkgdiAwLjAwNCIKICAgICAgIHN0eWxlPSJmaWxsOm5vbmU7c3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjAuNzA1NTU2O3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2UtbWl0ZXJsaW1pdDoxMDtzdHJva2UtZGFzaGFycmF5Om5vbmU7c3Ryb2tlLW9wYWNpdHk6MSIgLz4KICAgIDxwYXRoCiAgICAgICBpZD0icGF0aDEzMSIKICAgICAgIGQ9Im0gMTI1Ljk5MDMyLDE1Ny4wNzQxNyAtMS4xODI4NywyLjA0MDgyIGMgLTAuMTQ0MjgsMC4yNDQ0OCAtMC4wNjM5LDAuNTYxMjcgMC4xNzYzOSwwLjcwOTQ0IGwgMC4yNjA3LDAuMTYwNTEgYyAwLjI1NjQ3LDAuMTYwNTEgMC41ODk1LDAuMDcyIDAuNzM3NjYsLTAuMTg4MzggbCAxLjE5ODc0LC0yLjEyOTAyIgogICAgICAgc3R5bGU9ImZpbGw6bm9uZTtzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MC43MDU1NTY7c3Ryb2tlLWxpbmVjYXA6cm91bmQ7c3Ryb2tlLWxpbmVqb2luOnJvdW5kO3N0cm9rZS1taXRlcmxpbWl0OjEwO3N0cm9rZS1kYXNoYXJyYXk6bm9uZTtzdHJva2Utb3BhY2l0eToxIiAvPgogICAgPHBhdGgKICAgICAgIGlkPSJwYXRoMTMyIgogICAgICAgZD0ibSAxMzAuMjUyMjIsMTUyLjIwNjkgYyAwLjk1MDA0LDAuMTU2MjggMS41MzE0MSwwLjY1NzU3IDEuNDU5NDUsMS42MzU4MyAtMC4xNjg2MywyLjIyMTA5IC00LjI5NDAyLDEwLjQwNDEyIC0xNC44NDYzLDEwLjgyODg2IgogICAgICAgc3R5bGU9ImZpbGw6bm9uZTtzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MC43MDU1NTY7c3Ryb2tlLWxpbmVjYXA6cm91bmQ7c3Ryb2tlLWxpbmVqb2luOnJvdW5kO3N0cm9rZS1taXRlcmxpbWl0OjEwO3N0cm9rZS1kYXNoYXJyYXk6bm9uZTtzdHJva2Utb3BhY2l0eToxIiAvPgogICAgPHBhdGgKICAgICAgIGlkPSJwYXRoMTMzIgogICAgICAgZD0ibSAxMjAuMzMzMTcsMTUzLjY3NDQ1IGMgMCwwIDEuOTY0NjIsMC41MDUxOCA1LjEzOTk3LC0wLjY1NzkzIDEuMTYyNzYsLTAuNDI1MSAyLjMzMzI4LC0wLjcyNTY2IDMuMzM5NzUsLTAuODI1ODUiCiAgICAgICBzdHlsZT0iZmlsbDpub25lO3N0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDowLjcwNTU1NjtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7c3Ryb2tlLW1pdGVybGltaXQ6MTA7c3Ryb2tlLWRhc2hhcnJheTpub25lO3N0cm9rZS1vcGFjaXR5OjEiIC8+CiAgICA8cGF0aAogICAgICAgaWQ9InBhdGgxMzQiCiAgICAgICBkPSJtIDEyMS45ODczNSwxNzMuOTQ2MTIgYyAwLDAuNjM1MzYgLTAuNTE1MDYsMS4xNTA3NiAtMS4xNTA3NiwxLjE1MDc2IC0wLjYzNTM2LDAgLTEuMTUwNDEsLTAuNTE1NCAtMS4xNTA0MSwtMS4xNTA3NiAwLC0wLjYzNTM1IDAuNTE1MDUsLTEuMTUwNzYgMS4xNTA0MSwtMS4xNTA3NiAwLjYzNTcsMCAxLjE1MDc2LDAuNTE1NDEgMS4xNTA3NiwxLjE1MDc2IHoiCiAgICAgICBzdHlsZT0iZmlsbDojMDAwMDAwO2ZpbGwtb3BhY2l0eToxO3N0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDowLjcwNTU1NjtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7c3Ryb2tlLW1pdGVybGltaXQ6MTA7c3Ryb2tlLWRhc2hhcnJheTpub25lO3N0cm9rZS1vcGFjaXR5OjEiIC8+CiAgICA8cGF0aAogICAgICAgaWQ9InBhdGgxMzUiCiAgICAgICBkPSJtIDEyNi44NjM0NCwxNzIuNjg2NzEgYyAwLDAuNjM1MzUgLTAuNTE0NywxLjE1MDc2IC0xLjE1MDc2LDEuMTUwNzYgLTAuNjM1MzUsMCAtMS4xNTA0MSwtMC41MTU0MSAtMS4xNTA0MSwtMS4xNTA3NiAwLC0wLjYzNTM2IDAuNTE1MDYsLTEuMTUxMTIgMS4xNTA0MSwtMS4xNTExMiAwLjYzNjA2LDAgMS4xNTA3NiwwLjUxNTc2IDEuMTUwNzYsMS4xNTExMiB6IgogICAgICAgc3R5bGU9ImZpbGw6IzAwMDAwMDtmaWxsLW9wYWNpdHk6MTtzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MC43MDU1NTY7c3Ryb2tlLWxpbmVjYXA6cm91bmQ7c3Ryb2tlLWxpbmVqb2luOnJvdW5kO3N0cm9rZS1taXRlcmxpbWl0OjEwO3N0cm9rZS1kYXNoYXJyYXk6bm9uZTtzdHJva2Utb3BhY2l0eToxIiAvPgogICAgPHBhdGgKICAgICAgIGlkPSJwYXRoMTM2IgogICAgICAgZD0ibSAxMjEuOTgyNDEsMTY4LjA4MzMxIDQuODgwMzMsLTEuMTYyMDUgdiA1Ljc2NTgiCiAgICAgICBzdHlsZT0iZmlsbDpub25lO3N0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDowLjcwNTU1NjtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7c3Ryb2tlLW1pdGVybGltaXQ6MTA7c3Ryb2tlLWRhc2hhcnJheTpub25lO3N0cm9rZS1vcGFjaXR5OjEiIC8+CiAgICA8cGF0aAogICAgICAgaWQ9InBhdGgxMzciCiAgICAgICBkPSJtIDEyMS45ODI0MSwxNzMuNzg4NDMgdiAtNS43MDUxMiIKICAgICAgIHN0eWxlPSJmaWxsOm5vbmU7c3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjAuNzA1NTU2O3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2UtbWl0ZXJsaW1pdDoxMDtzdHJva2UtZGFzaGFycmF5Om5vbmU7c3Ryb2tlLW9wYWNpdHk6MSIgLz4KICAgIDxwYXRoCiAgICAgICBpZD0icGF0aDEzOCIKICAgICAgIGQ9Im0gMTI2Ljg1NzA5LDE2OC41Njg3MyAtNC41OTE3NSwxLjE1ODE3IgogICAgICAgc3R5bGU9ImZpbGw6IzAwMDAwMDtmaWxsLW9wYWNpdHk6MTtzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MC43MDU1NTY7c3Ryb2tlLWxpbmVjYXA6cm91bmQ7c3Ryb2tlLWxpbmVqb2luOnJvdW5kO3N0cm9rZS1taXRlcmxpbWl0OjEwO3N0cm9rZS1kYXNoYXJyYXk6bm9uZTtzdHJva2Utb3BhY2l0eToxIiAvPgogICAgPHBhdGgKICAgICAgIGlkPSJwYXRoMTM5IgogICAgICAgZD0ibSAxMjYuMzA0OTksMTQ3LjIyNDk3IGMgMCwwLjQ5NzQxIC0wLjQwMzIyLDAuOTAwNjQgLTAuOTAwNjQsMC45MDA2NCAtMC40OTc3NywwIC0wLjkwMDk5LC0wLjQwMzIzIC0wLjkwMDk5LC0wLjkwMDY0IDAsLTAuNDk3NDIgMC40MDMyMiwtMC45MDA2NCAwLjkwMDk5LC0wLjkwMDY0IDAuNDk3NDIsMCAwLjkwMDY0LDAuNDAzMjIgMC45MDA2NCwwLjkwMDY0IHoiCiAgICAgICBzdHlsZT0iZmlsbDojMDAwMDAwO3N0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDowLjcwNTU1NjtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7c3Ryb2tlLW1pdGVybGltaXQ6MTA7c3Ryb2tlLWRhc2hhcnJheTpub25lO3N0cm9rZS1vcGFjaXR5OjEiIC8+CiAgICA8cGF0aAogICAgICAgaWQ9InBhdGgxNDAiCiAgICAgICBkPSJtIDEyNi4zMDE0NywxNDMuMTI3NDUgYyAwLjQ1NjE0LDAuNjg1NDUgMC45NDk2NywxLjMwNDU4IDEuNzI3NTUsMS40MTUzNSIKICAgICAgIHN0eWxlPSJmaWxsOiMwMDAwMDA7c3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjAuNzA1NTU2O3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2UtbWl0ZXJsaW1pdDoxMDtzdHJva2UtZGFzaGFycmF5Om5vbmU7c3Ryb2tlLW9wYWNpdHk6MSIgLz4KICAgIDxwYXRoCiAgICAgICBpZD0icGF0aDE0MSIKICAgICAgIGQ9Im0gMTI2LjMwMTQ3LDE0Ny4xMDExNCB2IC0zLjk3MzY5IgogICAgICAgc3R5bGU9ImZpbGw6IzAwMDAwMDtzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MC43MDU1NTY7c3Ryb2tlLWxpbmVjYXA6cm91bmQ7c3Ryb2tlLWxpbmVqb2luOnJvdW5kO3N0cm9rZS1taXRlcmxpbWl0OjEwO3N0cm9rZS1kYXNoYXJyYXk6bm9uZTtzdHJva2Utb3BhY2l0eToxIiAvPgogICAgPHBhdGgKICAgICAgIGlkPSJwYXRoMTQyIgogICAgICAgZD0ibSAxMzcuOTMzMjYsMTUyLjgzOTA3IGMgMCwwLjYyOTAxIC0wLjUwOTc3LDEuMTM4NzcgLTEuMTM4NzcsMS4xMzg3NyAtMC42MjksMCAtMS4xMzkxMiwtMC41MDk3NiAtMS4xMzkxMiwtMS4xMzg3NyAwLC0wLjYyOSAwLjUxMDEyLC0xLjEzOTEyIDEuMTM5MTIsLTEuMTM5MTIgMC42MjksMCAxLjEzODc3LDAuNTEwMTIgMS4xMzg3NywxLjEzOTEyIHoiCiAgICAgICBzdHlsZT0iZmlsbDojMDAwMDAwO3N0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDowLjcwNTU1NjtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7c3Ryb2tlLW1pdGVybGltaXQ6MTA7c3Ryb2tlLWRhc2hhcnJheTpub25lO3N0cm9rZS1vcGFjaXR5OjEiIC8+CiAgICA8cGF0aAogICAgICAgaWQ9InBhdGgxNDMiCiAgICAgICBkPSJtIDEzNy45MjgzMiwxNDcuNjU4NTMgYyAwLjU3NjQ0LDAuODY3MTMgMS4yMDA1LDEuNjQ5MjQgMi4xODQ0LDEuNzg5NjQiCiAgICAgICBzdHlsZT0iZmlsbDojMDAwMDAwO3N0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDowLjcwNTU1NjtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7c3Ryb2tlLW1pdGVybGltaXQ6MTA7c3Ryb2tlLWRhc2hhcnJheTpub25lO3N0cm9rZS1vcGFjaXR5OjEiIC8+CiAgICA8cGF0aAogICAgICAgaWQ9InBhdGgxNDQiCiAgICAgICBkPSJtIDEzNy45MjgzMiwxNTIuNjgyNDQgdiAtNS4wMjM5MSIKICAgICAgIHN0eWxlPSJmaWxsOiMwMDAwMDA7c3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjAuNzA1NTU2O3N0cm9rZS1saW5lY2FwOnJvdW5kO3N0cm9rZS1saW5lam9pbjpyb3VuZDtzdHJva2UtbWl0ZXJsaW1pdDoxMDtzdHJva2UtZGFzaGFycmF5Om5vbmU7c3Ryb2tlLW9wYWNpdHk6MSIgLz4KICAgIDxwYXRoCiAgICAgICBzdHlsZT0iZmlsbDojMzIzNjQzO2ZpbGwtb3BhY2l0eToxO3N0cm9rZS13aWR0aDowLjMwMzE1NyIKICAgICAgIGQ9Im0gODMuODE2NTMxLDE3MS40MTM0MyBjIDAuMDk1NDQsLTAuMTU0MzggMy4zODI5MzYsLTIuOTkxNCA3LjMwNTYyMiwtNi4zMDQ0OCAzLjkyMjY2LC0zLjMxMzA5IDcuMTMyMTA4LC02LjE5NjczIDcuMTMyMTA4LC02LjQwODA5IDAsLTAuODMzODYgLTAuOTM1MzU1LC0wLjI1NzMgLTQuNTYxMDcyLDIuODExNDcgLTMuNjE4MjU3LDMuMDYyNDcgLTQuNTY4MDMyLDMuNjUwOTggLTUuNTI3MDY3LDMuNDI0NzQgLTAuMjY4NTI1LC0wLjA2MzMgMi4wODY2NjMsLTIuODI5ODggNi4xNTIyNTEsLTcuMjI2ODEgNS41OTgyNjUsLTYuMDU0NSA2Ljg3MDE5NywtNy4yNzIxMiA4LjQ3MTI0NywtOC4xMDk0NCA0LjY3MDU4LC0yLjQ0MjY2IDguODY4MzMsLTAuMDQwOCA4Ljg0MzkzLDUuMDYwMzcgLTAuMDE1OSwzLjMxMTg3IC0yLjA0NzcxLDYuNjg4MDcgLTUuNjI1NDYsOS4zNDc0MSAtMS44OTc1NCwxLjQxMDQ0IC02LjA0NjczNywzLjUxNjk2IC02LjU3ODMxMSwzLjMzOTc3IC0wLjE2NDkxNSwtMC4wNTUgMS40ODEyMjEsLTEuOTYwNjYgMy42NTgxMDEsLTQuMjM0ODcgMi4xNzY4NiwtMi4yNzQyMSAzLjk1NzkzLC00LjI4Mzg4IDMuOTU3OTMsLTQuNDY1OTMgMCwtMC44OTU1NiAtMS4xNzM0OCwwLjA0NiAtNS4zMDM4NCw0LjI1NTcxIC0yLjQ3NTEyMiwyLjUyMjY4IC01LjExMDI2Niw0Ljk3MzU2IC01Ljg1NTgzNSw1LjQ0NjM5IC0xLjQyNjY4NywwLjkwNDc5IC01Ljc5NTY0NSwyLjgyMTk4IC01Ljk4OTM0NywyLjYyODI3IC0wLjA2MjM0LC0wLjA2MjMgMi44MTU3NzUsLTIuNzU1OTIgNi4zOTU3NDcsLTUuOTg1OCA2LjAxMTI1NSwtNS40MjMzOCA3LjE1ODgzNSwtNi42NzU1NyA2LjExNzg4NSwtNi42NzU1NyAtMC4yMTUxNCwwIC0zLjMxNDg5LDIuNjYxNzIgLTYuODg4Mjk5LDUuOTE0OTQgLTUuMTEyOTE0LDQuNjU0NzggLTYuODIxODU4LDYuMDM0NzQgLTguMDIxMzk5LDYuNDc3MjEgLTEuODk2NDAxLDAuNjk5NTMgLTMuOTIwMjI2LDEuMDg2NjUgLTMuNjg0MTkxLDAuNzA0NzEgeiIKICAgICAgIGlkPSJwYXRoMTg2IiAvPgogICAgPHBhdGgKICAgICAgIHN0eWxlPSJmaWxsOiMxYTFhMWE7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlLXdpZHRoOjAuMzAzMTU3IgogICAgICAgZD0ibSA3OC41NDkwNzQsMTgwLjY3MjA1IGMgMC40MTY4NTEsLTAuNDA4NDQgMi41MDAwNzQsLTIuMzQ2MDcgNC42MjkzODgsLTQuMzA1ODUgMy44MDQxMjYsLTMuNTAxMjcgMy45MTE4MTIsLTMuNTczNTcgNi4xOTAyNzEsLTQuMTU3MjcgMS4yNzUzNzEsLTAuMzI2NzEgMy4yMTY1MzksLTEuMDA0NjMgNC4zMTM3NjYsLTEuNTA2NDggMS4wOTcyMDEsLTAuNTAxODQgMy40MjczMzQsLTEuMzg0MzIgNS4xNzgwODEsLTEuOTYxMDUgNi4xOTM1MywtMi4wNDAzIDEwLjcwMDk0LC01LjQ0OTUyIDEyLjc1MTYyLC05LjY0NDggMC44ODcyOCwtMS44MTUyIDEuMDI3NTEsLTIuNDExMjUgMS4wMzQyMywtNC4zOTU3NyAwLjAxLC0yLjg5NzkgLTAuODQwNTMsLTQuODI1NzcgLTIuNjU5NDEsLTYuMDI5NDggLTEuMDEyNjksLTAuNjcwMTggLTEuNjQ1ODYsLTAuODMyNjIgLTMuNTkwMjYsLTAuOTIxMDcgbCAtMi4zNjA3MiwtMC4xMDc0IDAuNzU5MywtMS40OTg0MiBjIDAuNDE3NjIsLTAuODI0MTMgMS4wOTg5NSwtMi44MjIxMSAxLjUxNDA1LC00LjQzOTk1IDAuOTEzMzcsLTMuNTU5NjkgMS44NzM0NCwtNS4wNTc4OSAzLjkxNDIyLC02LjEwODEyIDEuODI4NTksLTAuOTQxMDIgNC42MDMzNiwtMS4wNDU1OSA2LjEyOTYzLC0wLjIzMSBsIDAuOTcwNjMsMC41MTgwNCAtMC43NzQzNiwxLjQ5MjU1IGMgLTAuNjkwMjIsMS4zMzAzMiAtMC43MzU2NywxLjYwOTg0IC0wLjQxODI4LDIuNTcxNTEgMC4xOTU4NSwwLjU5MzQyIDAuNzU1NTIsMS4zNjMzOCAxLjI0MzczLDEuNzExMDEgMC43NjkwOSwwLjU0NzY2IDAuODg3NjIsMC44MjUyNCAwLjg4NzYyLDIuMDc4NzEgMCwwLjc5NTY1IDAuMjg3NiwyLjUyNTcyIDAuNjM5MSwzLjg0NDYgMC44Mjk0MiwzLjExMiAwLjkwNzg3LDguMjE4OTMgMC4xNjkwNSwxMS4wMDM2OSAtMS4yMTg3OCw0LjU5MzY4IC00LjQ4Nzk3LDguNjAyNzEgLTguODQxOCwxMC44NDI3IC0xLjMzMzg3LDAuNjg2MjYgLTIuNzQwNiwxLjM0MzU5IC0zLjEyNjAyLDEuNDYwNzEgLTAuNjY0MTEsMC4yMDE4MSAtMC42OTAxMiwwLjE1NjA1IC0wLjQ5Njc4LC0wLjg3NDQ1IDAuMzI2NTIsLTEuNzQwNTMgLTAuNDkzNzIsLTEuMzI2NDIgLTEuNDc0OSwwLjc0NDYxIC0xLjA5MzcxLDIuMzA4NjIgLTMuMTk2Myw1LjAwMTQ4IC0zLjU5NDM2LDQuNjAzNDIgLTAuMTYxNjEsLTAuMTYxNjIgLTAuNDYzNjMsLTAuOTU5MzQgLTAuNjcxMTIsLTEuNzcyNzIgLTAuMjQxMzIsLTAuOTQ2MDEgLTAuNTYxMzEsLTEuNTE0MzEgLTAuODg4MDcyLC0xLjU3NzI0IC0wLjMxNzI2MiwtMC4wNjExIC0wLjUxMDgwNSwwLjA5NjkgLTAuNTEwODA1LDAuNDE3MTYgMCwwLjQzNjgzIC0wLjIzNDM2OCwwLjQ5MzAxIC0xLjUzNTIxOCwwLjM2ODAyIC0wLjg5ODEyOCwtMC4wODYzIC0xLjg5OTQ3LC0wLjQxNjgyIC0yLjQxMjk3NCwtMC43OTY0NiAtMS4wMjEsLTAuNzU0ODcgLTEuNTA4NjAxLC0wLjgyNDc1IC0xLjUwODYwMSwtMC4yMTYyMiAwLDAuNTA1ODUgMS40MDkxMTgsMS42ODkzNyAyLjAxMTM4OSwxLjY4OTM3IDAuNzk1NzM0LDAgMC4zOTgxOTgsMC42ODE1OSAtMS42MzI0NTMsMi43OTg3OSAtMS44MzA0MTQsMS45MDg0MSAtNC4zMzYwOTcsMy41NTUyMiAtNS40MjM1ODgsMy41NjQ1MyAtMC4xOTAxNTYsMC4wMDIgMC41NjAxNSwtMC44NzY3OSAxLjY2NzM1MiwtMS45NTIwNCAxLjU3NDg3OSwtMS41Mjk0NCAxLjkzMzI4NCwtMi4wMzQ4OCAxLjY0NjQ0OSwtMi4zMjIgLTAuMjg2ODg4LC0wLjI4NzE1IC0wLjgzOTc4OCwwLjA3OTMgLTIuNTQxMjcsMS42ODQ0MyAtMi4xNzIxNzYsMi4wNDkxMSAtNC42NDQ2NTUsMy40OTM0OSAtNS45ODk3MTcsMy40OTkwOCAtMC41NjkwMzksMC4wMDIgLTAuMjIyNDM1LC0wLjM5MjY0IDEuNzIyMzA1LC0xLjk2MjggMi43NTQxMjgsLTIuMjIzNjMgMy4wMDMxMjcsLTIuNTE0ODIgMi4zNjExNDIsLTIuNzYxMTcgLTAuMjgzODE5LC0wLjEwODkyIC0xLjQxMDYsMC41OTc3NiAtMi45NzUwMDIsMS44NjU4MyAtMi41NzA1MzIsMi4wODM2MiAtNC4xMTk2MTUsMi45Mzg2NSAtNi4wMDQ0NTQsMy4zMTQxOSBsIC0xLjA2MTAzMiwwLjIxMTQyIHogbSAzNS40MTQ2MDYsLTQyLjI1NTI5IGMgMC40NDM0NSwtMC43OTIzNiAwLjA3MTEsLTEuNjY5OCAtMC42NjM4MSwtMS41NjQ0MiAtMC42NTgxOCwwLjA5NDQgLTAuOTc2NTgsMC44NTQ0NSAtMC42ODA4MiwxLjYyNTE4IDAuMjI1OTUsMC41ODg4MiAxLjAwMDcsMC41NTM4MSAxLjM0NDYzLC0wLjA2MDggeiIKICAgICAgIGlkPSJwYXRoMTg3IiAvPgogICAgPHBhdGgKICAgICAgIHN0eWxlPSJmaWxsOiMzMzM5NDk7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlLXdpZHRoOjAuMzAzMTU3IgogICAgICAgZD0ibSA4NC43NjM3OTIsMTcwLjgyMjMgYyAwLjMzMzQ4MSwtMC4zMjQwOSAzLjUwNTI1MywtMy4wNzU2NCA3LjA0ODM5NCwtNi4xMTQ1NyAzLjU0MzE0MiwtMy4wMzg5MyA2LjQ0MjA3NSwtNS43MjAxNCA2LjQ0MjA3NSwtNS45NTgyNSAwLC0wLjkwMjg1IC0wLjk5ODI0NiwtMC4zMzY4NSAtNC44NTA1LDIuNzUwMjMgLTMuNTM0MjI1LDIuODMyMiAtNS4zNDQ5MDEsMy45MjUxNyAtNC42NTU5NTIsMi44MTA0NSAwLjQ4OTE2MSwtMC43OTE0OCA1LjgwNDc5OSwtNi42MjEgOS4zMTIxNjksLTEwLjIxMjQyIDQuMzcxOTcyLC00LjQ3NjcxIDUuODE5NTkyLC01LjMyNzQyIDguNzA5NzkyLC01LjExODM2IDEuNDY4NzMsMC4xMDYyMyAxLjk2MTUxLDAuMjkwNCAyLjcyODY1LDEuMDE5NzUgMC41MTQ5MywwLjQ4OTU2IDEuMTEyNTQsMS4yMzExNSAxLjMyODA1LDEuNjQ4IDEuNjg3NTYsMy4yNjQyIC0wLjE0Njc3LDguMjgzMTMgLTQuMjM1OCwxMS41ODk1OSAtMS42NTA3OCwxLjMzNDg1IC02LjQyNTY0LDQuMDY0MjggLTYuNjc0NTYxLDMuODE1MzUgLTAuMDYwOTMsLTAuMDYwOSAxLjUxODMxMSwtMS44ODAzMyAzLjUwOTQzMSwtNC4wNDMwOCAxLjk5MTE1LC0yLjE2Mjc1IDMuNjIwMjcsLTQuMTAzMzEgMy42MjAyNywtNC4zMTIzNSAwLC0wLjk5NDY1IC0xLjMwNDAzLC0wLjAwOCAtNS44NzgzOCw0LjQ0NzE5IC00LjI1NjUxMSw0LjE0NTczIC01LjMwMzI4Miw1LjAwMTc0IC03LjQxNDI4Nyw2LjA2MzEzIC0xLjM1MTkxNSwwLjY3OTczIC0yLjU5NjkxMiwxLjIzNTg3IC0yLjc2NjY2OCwxLjIzNTg3IC0wLjE2OTc1NywwIDIuMzYyMDY3LC0yLjQ3MzI1IDUuNjI2MjU4LC01LjQ5NjExIDUuNzA3ODI3LC01LjI4NTgyIDYuNDg5MzI3LC02LjEyNzU5IDYuMDc0Mjc3LC02LjU0MjYzIC0wLjM2NDg5LC0wLjM2NDkgLTEuNTk5MjUsMC42MDIzIC03LjQ2NDMxOCw1Ljg0ODc5IC01LjgwNjk0Myw1LjE5NDUgLTcuNzAyNTIzLDYuNTEyMjggLTEwLjAwNDE2LDYuOTU0NzEgLTEuMDU1NTgyLDAuMjAyOSAtMS4wNTc5MzcsMC4yMDA5MSAtMC40NTQ3NCwtMC4zODUyOSB6IgogICAgICAgaWQ9InBhdGgxODgiIC8+CiAgICA8cGF0aAogICAgICAgc3R5bGU9ImZpbGw6IzMwMzQ0MTtmaWxsLW9wYWNpdHk6MTtzdHJva2Utd2lkdGg6MC4xNjA2OTIiCiAgICAgICBkPSJtIDc4Ljk2OTE3OSwxODAuNDE5NjYgYyA0LjMxMTM4NiwtNC4wMjY1MiA3LjI2NzIzMSwtNi42NzU3NyA3LjkzOTkzNCwtNy4xMTYzNCAwLjQ5MjYwMiwtMC4zMjI2MSAxLjU3OTMyNSwtMC43NTM0MSAyLjgwODczOCwtMS4xMTM0MyAxLjEwMjkxNSwtMC4zMjI5OCAzLjEyNzYzOSwtMS4wNDI3OCA0LjQ5OTM3MSwtMS41OTk1NSAxLjM3MTc1OSwtMC41NTY3OCAzLjQ3MDI3NSwtMS4zNTM1MyA0LjY2MzQxNCwtMS43NzA1NSA0LjQyNTgxNCwtMS41NDY5MyA3LjMyNDExNCwtMy4yMzI4MiA5LjgxMjQ5NCwtNS43MDc3NyAxLjcyNTg4LC0xLjcxNjU2IDIuNTM0MjksLTIuODYxNzIgMy4zNDY3MiwtNC43NDA4OSAwLjQ4MTIyLC0xLjExMzA0IDAuNTY1NTQsLTEuNTAzOTcgMC42MjgyLC0yLjkxMjUzIDAuMTMzMjcsLTIuOTk2ODQgLTAuNDM3NzMsLTQuODY4NjEgLTEuOTAzNDQsLTYuMjM5NjIgLTEuMTI5MTYsLTEuMDU2MiAtMS45NTIyLC0xLjM4MDcgLTMuNzM2NTgsLTEuNDczMjIgLTAuODEzMjgsLTAuMDQyMiAtMS43ODA5MSwtMC4xMTMyMiAtMi4xNTAzLC0wLjE1NzkgbCAtMC42NzE2NCwtMC4wODEyIDAuNjI0MTUsLTEuMzE3NTYgYyAwLjM0MzMsLTAuNzI0NjUgMC45OTU0NywtMi41NDY4NSAxLjQ0OTMxLC00LjA0OTMxIDAuOTY1MDksLTMuMTk1MTMgMS4zNjg3NywtNC4xMTEyOCAyLjI1NTE4LC01LjExODI5IDEuNjYzMDksLTEuODg5MzcgNS4yMDM1MywtMi42NTA4OSA3LjYyMzU0LC0xLjYzOTc1IDEuMDc4MjYsMC40NTA1MyAxLjA4MDc0LDAuNDYyMjUgMC4zODU2NiwxLjgyMTM5IC0wLjcyOTQ4LDEuNDI2NDIgLTAuNzk3MDMsMi4xNjAwNyAtMC4yOTQ0NiwzLjE5ODIzIDAuMTg0NTIsMC4zODExOSAwLjY2MzcxLDAuOTczNiAxLjA2NDgyLDEuMzE2NDYgbCAwLjcyOTMsMC42MjM0IDAuMTQ1MTIsMS41Nzg1NyBjIDAuMDc5OCwwLjg2ODIxIDAuMzIxMSwyLjM0Mjc2IDAuNTM2MiwzLjI3Njc3IDAuNTkzOTEsMi41Nzg4NyAwLjc3NDgxLDQuNTU4OTMgMC42ODEzNiw3LjQ1Nzg1IC0wLjA5OTksMy4wOTg3MSAtMC4zOTkzNiw0LjQxNTE0IC0xLjUzOTYxLDYuNzY4MzYgLTEuODU2MTEsMy44MzA1MyAtNC42NDUyOSw2LjQ3OTE4IC05LjA1NzE2LDguNjAwODIgLTIuMTg1NDEsMS4wNTA5NSAtMi4yMTgxMSwxLjA0ODQyIC0yLjEyODk1LC0wLjE2NDUxIDAuMDYyMywtMC44NDc5NiAwLjAzNiwtMC45NjQxNCAtMC4yMTg3MywtMC45NjQxNCAtMC4zNTMzNSwwIC0wLjc5MDc2LDAuNTcyOTIgLTEuNDc5NjUsMS45MzgwOSAtMS4wMzMwMiwyLjA0NzA3IC0yLjk5Njg2LDQuNjM5NyAtMy4zNDkzOSw0LjQyMTgyIC0wLjA4NTcsLTAuMDUyOSAtMC4zNTE2MywtMC42OTIxIC0wLjU5MSwtMS40MjAzMiAtMC4yMzkzNywtMC43MjgyMiAtMC41NDU0OSwtMS40NTA1OCAtMC42ODAzLC0xLjYwNTI0IC0wLjM1MzgsLTAuNDA1OSAtMC44MTk5OTQsLTAuMzQ5NjUgLTAuOTk4NzczLDAuMTIwNTIgLTAuMTMxMjM0LDAuMzQ1MTcgLTAuMjUzMDc0LDAuNDAxNzMgLTAuODY1NTA1LDAuNDAxNzMgLTAuOTI2MDk1LDAgLTIuNDIyMzE0LC0wLjQ3NTYyIC0zLjIyNDU1NywtMS4wMjUwMyAtMC42OTgzNDEsLTAuNDc4MjcgLTEuMjU5NDk2LC0wLjQ5OTg4IC0xLjM0NDkzLC0wLjA1MTggLTAuMDc3NjYsMC40MDczNiAxLjI1MDYzMywxLjY5NDIgMS44NzgzODMsMS44MTk3NSAwLjI3NjkxMywwLjA1NTQgMC41MDM0NzYsMC4xNDc4OCAwLjUwMzQ3NiwwLjIwNTU1IDAsMC40MTgzOSAtMS45NzM3OTIsMi41ODIxMSAtMy41NTE5NzgsMy44OTM3MyAtMS4zMzA2MTcsMS4xMDU4OCAtMy4wNjMzNzMsMi4xMzg4NyAtMy4zOTk3MTEsMi4wMjY3NiAtMC4xMDY0MTUsLTAuMDM1NSAwLjU0NjQ0NCwtMC44MzQ3MSAxLjQ1MDgxNiwtMS43NzYxIDEuNjcyODU1LC0xLjc0MTM2IDIuMDA4MzczLC0yLjM2MTEyIDEuMjc4MTc2LC0yLjM2MTEyIC0wLjQ0ODU0OCwwIC0wLjk4MzY5NSwwLjM3ODggLTIuNjg4ODU1LDEuOTAzMjIgLTEuNTk0MjQ3LDEuNDI1MjkgLTMuNDEzMDE5LDIuNjM3NjUgLTQuNDk3MDk2LDIuOTk3NzMgLTEuNTkyNzM5LDAuNTI5MDMgLTEuNDU4NzAxLDAuMjM1OTkgMC43MjM5MjYsLTEuNTgyMzcgMi4xODAzMjYsLTEuODE2NDYgMi43NDA4NDUsLTIuMzk5MDUgMi41NzE1OTEsLTIuNjcyOSAtMC4yOTkwNTgsLTAuNDgzODkgLTEuMjkwMDI4LDAuMDMwNyAtMy42OTc3MSwxLjkyMDAyIC0yLjI4NDc4MywxLjc5MjkyIC00LjI1MjcyOCwyLjgzNzUgLTUuODY1MjMxLDMuMTEzMjggbCAtMC41NjI0MjQsMC4wOTYyIHogbSAzNC42ODg3NTEsLTQxLjU3MDcgYyAwLjYxMTA4LC0wLjMyNzAzIDAuNzA4MjcsLTEuNjI2OTUgMC4xNDgwOSwtMS45ODAzMiAtMC42ODIxMiwtMC40MzAyNyAtMS42MDQ1OSwwLjUwNjM5IC0xLjM0MTg2LDEuMzYyNDkgMC4yMzE5MSwwLjc1NTY0IDAuNTg5OTksMC45NDA5NiAxLjE5Mzc3LDAuNjE3ODMgeiIKICAgICAgIGlkPSJwYXRoMTg5IiAvPgogICAgPHBhdGgKICAgICAgIHN0eWxlPSJmaWxsOiMzMzM5NDk7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlLXdpZHRoOjAuMTYwNjkyIgogICAgICAgZD0ibSAxMTguNDgyNTMsMTYyLjc0ODQ2IGMgMS4yMTUxNSwtMi4zMjU1OCAyLjA5MTQ4LC01LjU4NDM5IDIuMDkxNDgsLTcuNzc3NDkgMCwtMC44MjI2NSAwLjAxODIsLTAuODYxMiAwLjM2ODc1LC0wLjc3MzI3IDAuNjUzNjUsMC4xNjQwNiAyLjg3NDkzLC0wLjIxNDU3IDQuODE5OTEsLTAuODIxNTYgMS4wNDE5OCwtMC4zMjUxOCAxLjkzNjQ0LC0wLjU0OTMgMS45ODc3MSwtMC40OTgwNCAwLjI1MTc1LDAuMjUxNzcgLTAuNTgzMTEsMS4xODA1OSAtMS40MjM4LDEuNTgzOTkgLTAuNDk0MTksMC4yMzcxMyAtMS4wMTQ0OSwwLjU5NjcgLTEuMTU2MiwwLjc5OTA0IC0wLjMyOTQ2LDAuNDcwMzMgLTAuMzMwNTUsMS4yMzUwNyAtMC4wMDMsMS41OTc3OCAwLjIzNTY0LDAuMjYwMzggMC4yMDk0NywwLjM2NDM1IC0wLjMzNzY5LDEuMzQyOCAtMC42ODg1MiwxLjIzMTE5IC0wLjY2NTM3LDEuNzA5NTYgMC4xMDE5MiwyLjEwNjM1IDAuNzY2NzksMC4zOTY1MiAxLjEyMTA0LDAuMjAzNjUgMS44MTk3LC0wLjk5MDY4IGwgMC42Mjc4OCwtMS4wNzMzNCAwLjI5Mjk1LDAuMzYxOCBjIDAuNDUxOTksMC41NTgxNiAwLjM1NzM0LDAuODg0MzIgLTAuNDcwMzMsMS42MjExNyAtMi4wODk3NSwxLjg2MDQ2IC01LjAyMjI5LDMuMjYwNDEgLTcuNzM5MTksMy42OTQ2IC0wLjU4MjI3LDAuMDkzMSAtMS4yMTU4OSwwLjIwMTYgLTEuNDA4MDYsMC4yNDEyMiAtMC4zMTcxLDAuMDY1NCAtMC4yNzc2MywtMC4wNjUzIDAuNDI3MjUsLTEuNDE0MzcgeiIKICAgICAgIGlkPSJwYXRoMTkwIiAvPgogICAgPHBhdGgKICAgICAgIHN0eWxlPSJmaWxsOiMwOTBhMGM7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlLXdpZHRoOjAuMTYwNjkyIgogICAgICAgZD0ibSAxMTguMDAyOTUsMTYzLjk4OTggYyAwLC0wLjA0NjQgMC4yNDM5OSwtMC41NzA2NSAwLjU0MjIzLC0xLjE2NTAyIDEuMDY0MzcsLTIuMTIxMjggMi4wMTczNywtNS4zNjExMyAyLjAyNTM2LC02Ljg4NTY0IDAuMDAzLC0wLjM2NDU3IDAuMDQ4NywtMC44ODg4MiAwLjEwMzksLTEuMTY1MDEgMC4wOTU4LC0wLjQ3ODkgMC4xMzYyNCwtMC41MDIxNiAwLjg3MzMxLC0wLjUwMjE2IDAuOTAyNjMsMCAyLjU0NTExLC0wLjMyMzI3IDQuNTQ4NTQsLTAuODk1MjIgMC43ODM1MywtMC4yMjM3IDEuNDY1MjMsLTAuMzY2MTIgMS41MTQ4NCwtMC4zMTY1IDAuMTQ3OCwwLjE0Nzc5IC0wLjgwMzk0LDEuMDU2NTIgLTEuNDU5NzYsMS4zOTM3OSAtMC45NjkwNiwwLjQ5ODM5IC0xLjIzODY3LDAuODUzOTggLTEuMjM4NjcsMS42MzM3NCAwLDAuMzgwMDQgMC4wNzc4LDAuNzY4ODMgMC4xNzMwMSwwLjg2Mzk5IDAuMTIzNTMsMC4xMjM1NSAwLjAzMTcsMC40NTI5OCAtMC4zMjEzOSwxLjE1MjQgLTAuMjcxOTEsMC41Mzg2NiAtMC40OTQ0LDEuMTU2OTcgLTAuNDk0NCwxLjM3NDAzIDAsMC41MDEzMyAwLjY5Mjc2LDEuMDYwNzQgMS4zMTM1OCwxLjA2MDc0IDAuMzk4OTQsMCAwLjU2MzI5LC0wLjE1MTM3IDEuMTMwNjcsLTEuMDQxMzUgMC41MjA5MSwtMC44MTcwOCAwLjcwOTg3LC0xLjAwMzE4IDAuODc3NDMsLTAuODY0MTMgMC4zNjI5NiwwLjMwMTIzIDAuMjM3MzQsMC44NTYxNiAtMC4zMDg3MSwxLjM2Mzg2IC0yLjAzODM4LDEuODk1MjMgLTQuODM2NTgsMy4yNTc3IC03Ljg3Mzk1LDMuODMzODcgLTEuNDU5NDQsMC4yNzY4NiAtMS40MDU5OSwwLjI3MDgzIC0xLjQwNTk5LDAuMTU4NjEgeiIKICAgICAgIGlkPSJwYXRoMTkxIiAvPgogICAgPHBhdGgKICAgICAgIHN0eWxlPSJmaWxsOiMxYTFhMWE7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlLXdpZHRoOjAuMTYwNjkyIgogICAgICAgZD0ibSA4NC40MTg0MDUsMTcxLjI1MTY5IGMgMCwtMC4xMDkwOSAyLjY1OTUxMiwtMi40OTI1OSA1LjU4ODE4NSwtNS4wMDgyIDAuMzA4NjYzLC0wLjI2NTE0IDAuNjc5OTgsLTAuNTkwNTQgMC44MjUxMywtMC43MjMxMSAwLjE0NTE1LC0wLjEzMjU3IDAuNTE1MDkxLC0wLjQ0OTQ4IDAuODIyMDYsLTAuNzA0MjMgMS40MDc4NDgsLTEuMTY4MzMgMy45ODcyMTgsLTMuNDY5NDkgNS40OTkzMTIsLTQuOTA2MTcgMS4wMTU1MjQsLTAuOTY0ODggMS4zNjcwNDksLTEuNjIwNzIgMC44Njg2NTMsLTEuNjIwNzIgLTAuMjY4OTIyLDAgLTEuNzc3NTIzLDAuOTkyNzYgLTMuMTU4Mzg0LDIuMDc4NDMgLTQuMTQyNzY2LDMuMjU3MTYgLTUuOTc3ODYzLDQuNTMxMjMgLTYuMjAyNzA2LDQuMzA2MzkgLTAuMjA5NzA5LC0wLjIwOTcyIDEuODg2MDgyLC0yLjYxNDM0IDcuMTk0NjAzLC04LjI1NDg1IDYuMTY5NzYyLC02LjU1NTU5IDcuNjM5MDcyLC03LjU3NTQ4IDEwLjY1ODIzMiwtNy4zOTgyMyAwLjc5NTQyLDAuMDQ2NyAxLjU4NzMyLDAuMTA4MzcgMS43NTk3NSwwLjEzNzA0IDAuNTUwMTUsMC4wOTE1IDIuMTUwNTYsMS43MzM0NCAyLjYxODY5LDIuNjg2NjYgMC4zOTczNSwwLjgwOTE1IDAuNDQyMzMsMS4wNzIxOCAwLjQ0MjMzLDIuNTg3OTYgMCwxLjQ2NjE4IC0wLjA2MTUsMS44NTQ0MyAtMC40NjkzMiwyLjk2MzA2IC0wLjU5OTg5LDEuNjMwNzYgLTIuMDU0NDcsMy44MDU3MiAtMy4zNDM2NSw0Ljk5OTYzIC0wLjU1NDMsMC41MTMzMSAtMS43NjcwNywxLjQzMzY3IC0yLjY5NTA0LDIuMDQ1MjQgLTAuOTI4LDAuNjExNTggLTEuNzQwNDEsMS4xOTUxMSAtMS44MDUzMywxLjI5Njc0IC0wLjA2NDksMC4xMDE2MyAtMC4xMTkxNywwLjEyOTA4IC0wLjEyMDUyLDAuMDYxIC0wLjAwMywtMC4wNjgxIC0wLjMwOTc4LDAuMDM2OSAtMC42ODU0MSwwLjIzMzI1IC0xLjM4NDc1LDAuNzIzOTMgLTIuMjA5NSwxLjA3NzQzIC0yLjIwOTUsMC45NDcgMCwtMC4wNzM3IDAuNTM1NjcsLTAuNzM5MjEgMS4xOTAzOCwtMS40NzkgMC42NTQ3MSwtMC43Mzk3OSAyLjI0NDgxLC0yLjUzODIxIDMuNTMzNTcsLTMuOTk2NDkgMS4yODg3NSwtMS40NTgyNyAyLjM0Mzk0LC0yLjc3Nzk2IDIuMzQ0ODQsLTIuOTMyNjIgMC4wMDUsLTAuODk5ODMgLTEuMzg1ODYsMC4yMDQ2MyAtNi41ODY3Miw1LjIyOTUxIC0xLjQ1ODI4MSwxLjQwODkzIC0zLjIyOTkwNSwzLjAyNTQ3IC0zLjkzNjk1MSwzLjU5MjMgLTEuMjkzMDcxLDEuMDM2NjUgLTUuMTA5MTA0LDMuMTE1NzcgLTUuMzI0MTA0LDIuOTAwNzggLTAuMTI0NjcyLC0wLjEyNDY4IDAuNTk0MTc0LC0wLjg0NjI0IDQuNDM4MiwtNC40NTQ5MiA0Ljc0MDg1NSwtNC40NTA1OCA3LjA3MjU1NSwtNi44MjQzMSA3LjA3MjU1NSwtNy4yMDAxMSAwLC0wLjE5MTgyIC0wLjA5OTcsLTAuMzQ4NzcgLTAuMjIxNTQsLTAuMzQ4NzcgLTAuMjY2MiwwIC0yLjIzNDAxLDEuNDkwOTggLTMuNzQ2Njg1LDIuODM4ODIgLTAuNjAxNDc4LDAuNTM1OTIgLTIuMDcwMjg2LDEuODMzODIgLTMuMjY0MDA2LDIuODg0MjEgLTUuNzM4NjI3LDUuMDQ5NTQgLTcuMDUzODcxLDYuMDQ5MzMgLTguOTE3MzA1LDYuNzc4NjEgLTAuODIxODQ5LDAuMzIxNjQgLTIuMTY5MzE5LDAuNjA3ODYgLTIuMTY5MzE5LDAuNDYwNzkgeiIKICAgICAgIGlkPSJwYXRoMTkyIiAvPgogICAgPHBhdGgKICAgICAgIHN0eWxlPSJmaWxsOiMwMDAwMDA7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlLXdpZHRoOjAuMTYwNjkyIgogICAgICAgZD0ibSAxMjguNjE1MjgsMTU4LjQzNzc5IGMgLTAuMDEsLTAuMzU4MjggLTAuNTcyNDMsLTAuODI0OTIgLTEuNzIzMzEsLTEuNDI4NDEgLTEuMTk0NDYsLTAuNjI2MzYgLTEuMzU2MjYsLTAuOTIwNDYgLTAuNzY1NSwtMS4zOTE1MSAwLjcwOTE0LC0wLjU2NTQ2IDQuNjk4NjksLTEuNTkzMjkgNS4wMDMwNCwtMS4yODg5NCAwLjE2Nzk1LDAuMTY3OTYgLTEuMzE2MjMsMy4wMTQyIC0xLjkzOTQyLDMuNzE5MjkgLTAuMzYxMjksMC40MDg3OCAtMC41NzA1NSwwLjU1MDYgLTAuNTc0ODEsMC4zODk1NyB6IgogICAgICAgaWQ9InBhdGgxOTMiIC8+CiAgICA8cGF0aAogICAgICAgc3R5bGU9ImZpbGw6IzMzMzk0OTtmaWxsLW9wYWNpdHk6MTtzdHJva2Utd2lkdGg6MC4wNDA1MDU2IgogICAgICAgZD0ibSAxMzAuMDA1NjksMTUzLjQxMzI2IGMgMC4wNTY0LC0wLjA5NjUgMC4xNzA4OSwtMC4zMDAwOCAwLjI1NDQ1LC0wLjQ1MjM0IDAuMDgzNSwtMC4xNTIyNSAwLjE3NDkyLC0wLjI4NTY3IDAuMjAzMDksLTAuMjk2NDggMC4wOTc1LC0wLjAzNzQgMC40NjI3NiwwLjE1NzY3IDAuNjI1MjcsMC4zMzM5NyAwLjA4OTYsMC4wOTcyIDAuMTYyOTMsMC4xOTQ5OSAwLjE2MjkzLDAuMjE3MjUgMCwwLjExMzExIC0wLjQ1NTc1LDAuMjUwMTQgLTEuMTUwMDksMC4zNDU3OSBsIC0wLjE5ODIsMC4wMjczIHoiCiAgICAgICBpZD0icGF0aDE5NCIgLz4KICAgIDxwYXRoCiAgICAgICBzdHlsZT0iZmlsbDojMDAwMDAwO2ZpbGwtb3BhY2l0eToxO3N0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDowLjE3MjA2ODtzdHJva2Utb3BhY2l0eToxIgogICAgICAgZD0ibSAxMjYuNDk4NDMsMTY3Ljg4MDk4IGMgMCwtMC4yMzY1OSAwLjAzOTEsLTAuMzMzMzggMC4wODY4LC0wLjIxNTA4IDAuMDQ3NywwLjExODI5IDAuMDQ3NywwLjMxMTg3IDAsMC40MzAxNyAtMC4wNDc3LDAuMTE4MyAtMC4wODY4LDAuMDIxNSAtMC4wODY4LC0wLjIxNTA5IHoiCiAgICAgICBpZD0icGF0aDE5NSIgLz4KICAgIDxwYXRoCiAgICAgICBzdHlsZT0iZmlsbDojMDAwMDAwO2ZpbGwtb3BhY2l0eToxO3N0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDowLjE3MjA2ODtzdHJva2Utb3BhY2l0eToxIgogICAgICAgZD0ibSAxMjIuMzQxNjEsMTY4Ljg3NDQgYyAwLC0wLjM3NTE4IDAuMTQ4MzMsLTAuNDQyMjMgMS45MzU3NywtMC44NzUwOSAxLjA2NDY4LC0wLjI1NzgzIDEuOTkzODUsLTAuNDY3MzYgMi4wNjQ4MSwtMC40NjU2MiAwLjA3MSwwLjAwMiAwLjEyOTA2LDAuMTU1MDQgMC4xMjkwNiwwLjM0MDY2IDAsMC4zNTIzOSAtMC4wMSwwLjM1NjEzIC0yLjQwODk1LDAuOTUxNjYgLTAuNjE1MTUsMC4xNTI2NyAtMS4yNTM5NCwwLjMxNzQzIC0xLjQxOTU3LDAuMzY2MTQgLTAuMjI2NzcsMC4wNjY3IC0wLjMwMTEyLC0wLjAxMTcgLTAuMzAxMTIsLTAuMzE3NzUgeiIKICAgICAgIGlkPSJwYXRoMTk2IiAvPgogICAgPHBhdGgKICAgICAgIHN0eWxlPSJmaWxsOiMwMDAwMDA7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjAuMTcyMDY4O3N0cm9rZS1vcGFjaXR5OjEiCiAgICAgICBkPSJtIDEyMC4yOTA4OCwxNzQuMzUwNDkgYyAtMC4yNzk3NSwtMC4zMzcwOCAtMC4wODkxLC0wLjkxNjMyIDAuMzQ3MSwtMS4wNTQ3OCAwLjQ3MTYsLTAuMTQ5NjcgMC44NzEzNiwwLjIyODM3IDAuODA4OTcsMC43NjQ5OSAtMC4wMzg4LDAuMzMzNiAtMC4xNjMwMSwwLjQ1Nzg0IC0wLjQ5NjYsMC40OTY2MiAtMC4yNDQ2OSwwLjAyODQgLTAuNTQxNDcsLTAuMDY0NiAtMC42NTk0NywtMC4yMDY4MyB6IgogICAgICAgaWQ9InBhdGgxOTciIC8+CiAgICA8cGF0aAogICAgICAgc3R5bGU9ImZpbGw6IzAwMDAwMDtmaWxsLW9wYWNpdHk6MTtzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MC4xNzIwNjg7c3Ryb2tlLW9wYWNpdHk6MSIKICAgICAgIGQ9Im0gMTI1LjI3NDY1LDE3My4xMzg1MyBjIC0wLjExMzUxLC0wLjEzNjc1IC0wLjE4MTA2LC0wLjQyNzExIC0wLjE1MDEzLC0wLjY0NTI1IDAuMDcyNSwtMC41MTE2NiAwLjgwMTE5LC0wLjY0Njc0IDEuMTIyLC0wLjIwODAxIDAuMjg4ODcsMC4zOTUwMyAwLjI4Mjk0LDAuNTAyOSAtMC4wNDU3LDAuODMxNSAtMC4zMzcwMywwLjMzNzAzIC0wLjY1ODMxLDAuMzQ0NTggLTAuOTI2MiwwLjAyMTcgeiIKICAgICAgIGlkPSJwYXRoMTk4IiAvPgogICAgPHBhdGgKICAgICAgIHN0eWxlPSJmaWxsOiMwMDAwMDA7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjAuMTcyMDY4O3N0cm9rZS1vcGFjaXR5OjEiCiAgICAgICBkPSJtIDEzNi4zNjg4NywxNTMuMzIwMzUgYyAtMC4zMzUzOSwtMC4zMzUzOCAtMC4yODUwNywtMC43MzM3NSAwLjEyNTM2LC0wLjk5MjIgMC4zNTA4NiwtMC4yMjA5NyAwLjg3MDg0LDAuMDI0OCAwLjk1NDk2LDAuNDUxNDIgMC4wNTI3LDAuMjY3NDggLTAuMzg3NzgsMC44MTk3NyAtMC42NTM4NywwLjgxOTc3IC0wLjA4MTEsMCAtMC4yNzMwMiwtMC4xMjU1NSAtMC40MjY0NSwtMC4yNzg5OSB6IgogICAgICAgaWQ9InBhdGgxOTkiIC8+CiAgICA8cGF0aAogICAgICAgc3R5bGU9ImZpbGw6IzAwMDAwMDtmaWxsLW9wYWNpdHk6MTtzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MC4xNzIwNjg7c3Ryb2tlLW9wYWNpdHk6MSIKICAgICAgIGQ9Im0gMTI1LjA3OTA0LDE0Ny40NzIwNiBjIC0wLjE3MTM3LC0wLjIwNjUxIC0wLjE2MDI4LC0wLjMwOTExIDAuMDU2OSwtMC41MjYzNCAwLjMxNTQ2LC0wLjMxNTQ0IDAuNjQ3MDEsLTAuMTcyNTUgMC42NDcwMSwwLjI3ODg0IDAsMC40MTc1IC0wLjQzNTcxLDAuNTcwNjkgLTAuNzAzOTUsMC4yNDc1IHoiCiAgICAgICBpZD0icGF0aDIwMCIgLz4KICAgIDxwYXRoCiAgICAgICBzdHlsZT0iZmlsbDojYTA1YTJjO2ZpbGwtb3BhY2l0eToxO3N0cm9rZS13aWR0aDowLjA2NTI4NTciCiAgICAgICBkPSJtIDEzMy4wNjMwMywxNDUuNjM3NjUgYyAyLjYxNzE4LC00LjUxODI3IDQuNzk3NTYsLTguMjE1MDQgNC44NDUyOSwtOC4yMTUwNCAwLjA0NzcsMCAwLjA4NDIsMC4wNTg4IDAuMDgxMiwwLjEzMDU3IC0wLjAwNiwwLjEzMTA1IC04LjkwODg2LDE1Ljk5NDQxIC05LjA1NTk3LDE2LjEzNTQ4IC0wLjA0MzEsMC4wNDE0IC0wLjIwMjMsMC4wOTUyIC0wLjM1MzcsMC4xMTk2MiBsIC0wLjI3NTMsMC4wNDQ0IHoiCiAgICAgICBpZD0icGF0aDIwMiIgLz4KICAgIDxwYXRoCiAgICAgICBzdHlsZT0iZmlsbDojMmIyMjAwO2ZpbGwtb3BhY2l0eToxO3N0cm9rZS13aWR0aDowLjA2NTI4NTciCiAgICAgICBkPSJtIDEyNS4zMTcxNCwxNTkuNTc0NCBjIC0wLjA3ODcsLTAuMDM4IC0wLjE1NTY4LC0wLjEwMjE0IC0wLjE3MTA1LC0wLjE0MjQ3IC0wLjAxNTMsLTAuMDQwMyAwLjE4NzMsLTAuNDQwNTcgMC40NTA0MiwtMC44ODk0MSAwLjI2MzE2LC0wLjQ0ODg0IDAuNDg4MzIsLTAuODQxOTggMC41MDAzOCwtMC44NzM2NiAwLjAxNzIsLTAuMDQ1MiAwLjM4ODYsMC4wOTg0IDAuNDk1NTcsMC4xOTE2NCAwLjA0OSwwLjA0MjggLTAuOTgzMjcsMS43OTE1OCAtMS4wNTUxMywxLjc4NzQ2IC0wLjA0MjQsLTAuMDAyIC0wLjE0MTQ4LC0wLjAzNTUgLTAuMjIwMTksLTAuMDczNiB6IgogICAgICAgaWQ9InBhdGgyMDMiIC8+CiAgPC9nPgo8L3N2Zz4K" alt="Bonneville and Brass raven">
+    <div class="brand-text">
+      <h1>Bonneville <span class="amp">&amp;</span> Brass</h1>
+      <div class="sub">Sheet music studio</div>
+    </div>
+  </div>
+  <div class="status" id="status">Ready</div>
+</header>
+
+<main class="app">
+  <aside class="panel">
+    <div class="section">
+      <h2>Selected measure</h2>
+      <div class="measure-badge">
+        <span>Editing</span>
+        <strong id="measureLabel">Measure 1</strong>
+      </div>
+
+      <label for="tempoBase">Tempo note</label>
+      <select id="tempoBase">
+        <option value="2">Half note</option>
+        <option value="4" selected>Quarter note</option>
+        <option value="8">Eighth note</option>
+        <option value="16">16th note</option>
+      </select>
+
+      <label for="bpm" style="display:block; margin-top:10px">Tempo</label>
+      <input id="bpm" type="range" min="40" max="220" value="100" aria-label="Tempo value">
+      <div class="readout"><span>40</span><strong><span id="tempoReadout">♩ = 100</span></strong><span>220</span></div>
+
+      <div style="margin-top:12px">
+        <label for="keySignature">Key signature</label>
+        <select id="keySignature">
+          <option value="-7">C♭ major — 7 flats</option>
+          <option value="-6">G♭ major — 6 flats</option>
+          <option value="-5">D♭ major — 5 flats</option>
+          <option value="-4">A♭ major — 4 flats</option>
+          <option value="-3">E♭ major — 3 flats</option>
+          <option value="-2">B♭ major — 2 flats</option>
+          <option value="-1">F major — 1 flat</option>
+          <option value="0" selected>C major — no sharps/flats</option>
+          <option value="1">G major — 1 sharp</option>
+          <option value="2">D major — 2 sharps</option>
+          <option value="3">A major — 3 sharps</option>
+          <option value="4">E major — 4 sharps</option>
+          <option value="5">B major — 5 sharps</option>
+          <option value="6">F♯ major — 6 sharps</option>
+          <option value="7">C♯ major — 7 sharps</option>
+        </select>
+      </div>
+
+      <div class="grid2" style="margin-top:12px">
+        <div>
+          <label for="beats">Beats / measure</label>
+          <input id="beats" type="number" min="1" max="12" value="4">
+        </div>
+        <div>
+          <label for="beatUnit">Beat unit</label>
+          <select id="beatUnit">
+            <option value="2">2</option>
+            <option value="4" selected>4</option>
+            <option value="8">8</option>
+            <option value="16">16</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid2" style="margin-top:12px">
+        <div>
+          <label for="dynamicMark">Dynamics</label>
+          <select id="dynamicMark">
+            <option value="">Inherit</option>
+            <option value="pp">pp</option>
+            <option value="p">p</option>
+            <option value="mp">mp</option>
+            <option value="mf">mf</option>
+            <option value="f">f</option>
+            <option value="ff">ff</option>
+          </select>
+        </div>
+        <div>
+          <label for="codaMark">Coda marking</label>
+          <select id="codaMark">
+            <option value="">None</option>
+            <option value="coda">Coda</option>
+            <option value="toCoda">To Coda</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid2" style="margin-top:12px">
+        <div>
+          <label for="pauseMark">Pause mark</label>
+          <select id="pauseMark">
+            <option value="">None</option>
+            <option value="fermata">Fermata 𝄐</option>
+            <option value="caesura">Caesura //</option>
+          </select>
+        </div>
+        <div>
+          <label for="pauseBeats">Extra hold (beats)</label>
+          <input id="pauseBeats" type="number" min="0" max="32" step="0.25" value="1">
+        </div>
+      </div>
+
+      <div class="grid2" style="margin-top:12px">
+        <div>
+          <label for="repeatMark">Repeat marking</label>
+          <select id="repeatMark">
+            <option value="">None</option>
+            <option value="start">Start repeat |:</option>
+            <option value="end">End repeat :|</option>
+            <option value="measure">Repeat previous measure %</option>
+          </select>
+        </div>
+        <div>
+          <label for="repeatTimes">Play total (times)</label>
+          <input id="repeatTimes" type="number" min="2" max="16" step="1" value="2" disabled>
+        </div>
+      </div>
+
+      <button class="act" id="inheritBtn" style="width:100%; margin-top:10px" disabled>Use previous measure settings</button>
+      <p class="hint">Select a measure to edit its settings.</p>
+    </div>
+
+    <div class="section">
+      <h2>Tool</h2>
+      <div class="toggle-row" style="margin-top:0">
+        <button class="toggle" id="selectTool" aria-pressed="false">↖ Select</button>
+        <button class="toggle on" id="noteTool" aria-pressed="true">♪ Note</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Note length</h2>
+      <div class="dur-grid" id="durGrid"></div>
+      <div style="margin-bottom:10px">
+        <label for="accidentalSelect">Accidental for next note</label>
+        <select id="accidentalSelect">
+          <option value="key" selected>Follow key signature</option>
+          <option value="sharp">♯ Sharp</option>
+          <option value="flat">♭ Flat</option>
+          <option value="natural">♮ Natural</option>
+          <option value="doubleSharp">𝄪 Double sharp</option>
+          <option value="doubleFlat">𝄫 Double flat</option>
+        </select>
+      </div>
+
+      <div class="toggle-row">
+        <button class="toggle" id="dotToggle" aria-pressed="false">
+          <svg width="30" height="20" viewBox="0 0 30 20"><g class="g"><ellipse cx="11" cy="12" rx="6" ry="4.4" transform="rotate(-20 11 12)"/><circle cx="23" cy="12" r="2.1"/></g></svg>
+          Dotted
+        </button>
+        <button class="toggle" id="restToggle" aria-pressed="false">Rest</button>
+      </div>
+      <p class="hint">Choose a note value, then click the staff.</p>
+    </div>
+
+    <div class="section">
+      <h2>Editing</h2>
+      <div class="btn-row">
+        <button class="act" id="undoBtn">↶ Undo</button>
+        <button class="act" id="redoBtn">↷ Redo</button>
+        <button class="act danger" id="clearBtn">Clear</button>
+      </div>
+      <p class="hint">Use Select to edit a measure without adding notes. In Select, click a note to add or edit its text. Drag barlines to resize measures; use × to clear or remove items.</p>
+    </div>
+
+    <div class="section">
+      <h2>Playback</h2>
+      <div class="btn-row">
+        <button class="act primary" id="playBtn">▶ Play</button>
+        <button class="act" id="stopBtn">■ Stop</button>
+      </div>
+      <label for="volume" style="display:block; margin-top:12px">Piano volume</label>
+      <input id="volume" type="range" min="0" max="1" step=".01" value=".55">
+    </div>
+
+    <div class="section">
+      <h2>Export</h2>
+      <button class="act primary" id="exportPdfBtn" style="width:100%">PDF Export</button>
+    </div>
+
+  </aside>
+
+  <section class="desk">
+    <div class="desk-bar">
+      <div class="t">Grand staff</div>
+    </div>
+    <div class="paper" id="paper"></div>
+  </section>
+</main>
+
+<script>
+(() => {
+  "use strict";
+  const SVGNS = "http://www.w3.org/2000/svg";
+
+  /* ---------------- element refs ---------------- */
+  const paperEl = document.getElementById('paper');
+  const bpmEl = document.getElementById('bpm');
+  const tempoReadoutEl = document.getElementById('tempoReadout');
+  const tempoBaseEl = document.getElementById('tempoBase');
+  const beatsEl = document.getElementById('beats');
+  const beatUnitEl = document.getElementById('beatUnit');
+  const keySignatureEl = document.getElementById('keySignature');
+  const dynamicMarkEl = document.getElementById('dynamicMark');
+  const codaMarkEl = document.getElementById('codaMark');
+  const pauseMarkEl = document.getElementById('pauseMark');
+  const pauseBeatsEl = document.getElementById('pauseBeats');
+  const repeatMarkEl = document.getElementById('repeatMark');
+  const repeatTimesEl = document.getElementById('repeatTimes');
+  const measureLabelEl = document.getElementById('measureLabel');
+  const inheritBtn = document.getElementById('inheritBtn');
+  const statusEl = document.getElementById('status');
+  const volumeEl = document.getElementById('volume');
+  const durGrid = document.getElementById('durGrid');
+  const dotToggle = document.getElementById('dotToggle');
+  const restToggle = document.getElementById('restToggle');
+  const selectTool = document.getElementById('selectTool');
+  const noteTool = document.getElementById('noteTool');
+  const accidentalSelectEl = document.getElementById('accidentalSelect');
+
+  /* ---------------- state ---------------- */
+  const BOOT_STATE = window.__BONNEVILLE_PRINT_STATE || null;
+
+  // A note: { staff:'treble'|'bass', step:int, midi:int, base:4|2|1|0.5|0.25|0.125, dotted:bool, rest:bool, stack:bool, accidental:'key'|'sharp'|'flat'|'natural'|'doubleSharp'|'doubleFlat', lyric?:string }
+  let notes = BOOT_STATE?.notes ? BOOT_STATE.notes.map(n=>({...n})) : [];
+  let selectedBase = BOOT_STATE?.selectedBase ?? 1;
+  let dotted = BOOT_STATE?.dotted ?? false;
+  let restMode = BOOT_STATE?.restMode ?? false;
+  let selectedAccidental = BOOT_STATE?.selectedAccidental ?? 'key';
+  let selectedMeasure = BOOT_STATE?.selectedMeasure ?? 0;
+  let activeTool = 'note'; // editor-only; PDF frames do not need tool state
+  let activeTextEditor = null;
+
+  function closeNoteTextEditor(save=true){
+    const ed=activeTextEditor;
+    if(!ed) return;
+    activeTextEditor=null;
+    const value=ed.input.value.trim();
+    try{ ed.wrap.remove(); }catch(_){}
+    if(save && notes[ed.leader]){
+      const old=notes[ed.leader].lyric || '';
+      if(value!==old){
+        pushHistory();
+        notes[ed.leader].lyric=value;
+        if(!isPlaying) render();
+      }
+    }
+  }
+
+  function openNoteTextEditor(noteIndex, anchorRect){
+    const leader=onsetLeaderIndex(noteIndex);
+    if(!notes[leader] || notes[leader].rest) return;
+    closeNoteTextEditor(true);
+
+    const wrap=document.createElement('div');
+    wrap.className='note-text-popover';
+    wrap.setAttribute('data-editor-control','1');
+    const input=document.createElement('input');
+    input.type='text';
+    input.maxLength=80;
+    input.placeholder='Lyric / text';
+    input.value=notes[leader].lyric || '';
+    input.setAttribute('aria-label','Text for selected note');
+    wrap.appendChild(input);
+    document.body.appendChild(wrap);
+
+    const w=Math.min(260,Math.max(160,window.innerWidth-20));
+    let left=(anchorRect.left + anchorRect.right)/2 - w/2;
+    left=Math.max(10,Math.min(window.innerWidth-w-10,left));
+    let top=anchorRect.bottom+8;
+    if(top+58>window.innerHeight) top=Math.max(10,anchorRect.top-56);
+    wrap.style.left=left+'px';
+    wrap.style.top=top+'px';
+
+    activeTextEditor={wrap,input,leader};
+    wrap.addEventListener('pointerdown',e=>e.stopPropagation());
+    wrap.addEventListener('click',e=>e.stopPropagation());
+    input.addEventListener('keydown',e=>{
+      if(e.key==='Enter'){ e.preventDefault(); closeNoteTextEditor(true); }
+      else if(e.key==='Escape'){ e.preventDefault(); closeNoteTextEditor(false); }
+    });
+    input.addEventListener('blur',()=>{
+      setTimeout(()=>{ if(activeTextEditor?.input===input) closeNoteTextEditor(true); },0);
+    });
+    requestAnimationFrame(()=>{ input.focus(); input.select(); });
+  }
+
+  // Measure 0 is the score's initial tempo/meter. Later measures inherit until explicitly changed.
+  const measureOverrides = new Map(BOOT_STATE?.measureOverrides || [[0,{ bpm:100, tempoBase:4, beats:4, beatUnit:4 }]]);
+  const dynamicOverrides = new Map(BOOT_STATE?.dynamicOverrides || [[0,'mf']]);
+  const keyOverrides = new Map(BOOT_STATE?.keyOverrides || [[0,0]]); // -7 flats ... 0 ... +7 sharps
+  const codaMarks = new Map(BOOT_STATE?.codaMarks || []);
+  const pauseMarks = new Map(BOOT_STATE?.pauseMarks || []); // measure -> {kind, beats}
+  const repeatMarks = new Map(BOOT_STATE?.repeatMarks || []); // measure -> 'start'|'end'|'measure'
+  const repeatCounts = new Map(BOOT_STATE?.repeatCounts || []); // measure -> total times to play an end-repeat section (>=2)
+  // Relative width preferences live on the measures themselves. Systems normalize
+  // the weights they contain, so the same edits survive 2-up mobile, 4-up desktop,
+  // and matching PDF layouts without changing the default measure count.
+  const measureWidthWeights = new Map(BOOT_STATE?.measureWidthWeights || []);
+  let audioCtx = null, activeNodes = [], playTimer = null, isPlaying = false;
+
+  /* ---------------- undo / redo ---------------- */
+  let undoStack = [], redoStack = [], pendingEdit = null;
+  const HIST_MAX = 200;
+  const cloneEntries = m => [...m.entries()].map(([k,v]) => [k, (v && typeof v==='object') ? {...v} : v]);
+  // A full snapshot: notes AND every score-level map, so undo/redo/clear cover them all.
+  function snapshotState(){
+    return {
+      notes: notes.map(n => ({ ...n })),
+      measureOverrides: cloneEntries(measureOverrides),
+      dynamicOverrides: cloneEntries(dynamicOverrides),
+      keyOverrides: cloneEntries(keyOverrides),
+      codaMarks: cloneEntries(codaMarks),
+      pauseMarks: cloneEntries(pauseMarks),
+      repeatMarks: cloneEntries(repeatMarks),
+      repeatCounts: cloneEntries(repeatCounts),
+      measureWidthWeights: cloneEntries(measureWidthWeights),
+      selectedMeasure
+    };
+  }
+  function fillMap(map, entries){ map.clear(); for(const [k,v] of (entries||[])) map.set(k, (v && typeof v==='object') ? {...v} : v); }
+  function restoreState(st){
+    notes = st.notes.map(n => ({ ...n }));
+    fillMap(measureOverrides, st.measureOverrides);
+    fillMap(dynamicOverrides, st.dynamicOverrides);
+    fillMap(keyOverrides, st.keyOverrides);
+    fillMap(codaMarks, st.codaMarks);
+    fillMap(pauseMarks, st.pauseMarks);
+    fillMap(repeatMarks, st.repeatMarks);
+    fillMap(repeatCounts, st.repeatCounts);
+    fillMap(measureWidthWeights, st.measureWidthWeights);
+    if(typeof st.selectedMeasure==='number') selectedMeasure = st.selectedMeasure;
+  }
+  function pushHistory(){ undoStack.push(snapshotState()); if(undoStack.length>HIST_MAX) undoStack.shift(); redoStack.length = 0; }
+  // For continuous edits (a slider drag): capture the pre-edit state once, commit on release.
+  function armEdit(){ if(!pendingEdit) pendingEdit = snapshotState(); }
+  function commitEdit(){ if(pendingEdit){ undoStack.push(pendingEdit); if(undoStack.length>HIST_MAX) undoStack.shift(); redoStack.length = 0; pendingEdit = null; updateHistoryButtons(); } }
+  function undo(){ if(!undoStack.length) return; stopPlayback(); redoStack.push(snapshotState()); restoreState(undoStack.pop()); syncMeasureControls(); render(); }
+  function redo(){ if(!redoStack.length) return; stopPlayback(); undoStack.push(snapshotState()); restoreState(redoStack.pop()); syncMeasureControls(); render(); }
+  function deleteLast(){ if(!notes.length) return; pushHistory(); notes.pop(); render(); }
+  function updateHistoryButtons(){
+    const u = document.getElementById('undoBtn'), r = document.getElementById('redoBtn');
+    if(u) u.disabled = !undoStack.length;
+    if(r) r.disabled = !redoStack.length;
+  }
+
+  /* ---------------- layout constants ---------------- */
+  const DESKTOP_MEASURES_PER_SYSTEM = 4;
+  const PRINT_SYSTEM_WIDTH = 720; // 7.5in printable width at 96 CSS px/in
+  const IS_PDF_EXPORT_FRAME = document.body?.dataset?.pdfExportFrame === '1';
+  let printLayout = IS_PDF_EXPORT_FRAME;
+  let printMeasuresPerSystem = 4;
+
+  function measuresPerSystem(){
+    if(printLayout) return printMeasuresPerSystem;
+    return window.innerWidth <= 600 ? 2 : DESKTOP_MEASURES_PER_SYSTEM;
+  }
+  const S = 12;                    // staff line spacing (px)
+  const HALF = S / 2;             // one diatonic step
+  const PAD_L = 18, PAD_R = 26;   // system side margins
+  const LEAD = 135;               // room for clef + key signature + time signature
+  const NOTE_PAD = 16;           // inset of notes within a measure's note area
+  const TREBLE_TOP = 46;          // y of treble top line
+  const BASS_TOP   = 150;         // y of bass top line
+  const STAFF_H = 4 * S;          // 48
+  const TREBLE_BOTTOM = TREBLE_TOP + STAFF_H;   // E4 anchor (step 0)
+  const BASS_BOTTOM   = BASS_TOP + STAFF_H;     // G2 anchor (step 0)
+  const SYSTEM_H = BASS_BOTTOM + 46;            // total system height
+  const SYSTEM_GAP = 14;
+  const STAFF_SPLIT_Y = (TREBLE_BOTTOM + BASS_TOP) / 2; // treble vs bass hit boundary
+
+  function currentSystemWidth(){
+    if(printLayout) return PRINT_SYSTEM_WIDTH;
+    const available = Math.max(300, paperEl.clientWidth - (window.innerWidth<=600 ? 8 : 20));
+    return window.innerWidth<=600 ? available : Math.max(680, Math.min(1080, available));
+  }
+
+  function measureWidthWeight(index){
+    const w=Number(measureWidthWeights.get(index));
+    return Number.isFinite(w) && w>0 ? w : 1;
+  }
+
+  function systemMeasureBoxes(systemIndex, mps=measuresPerSystem(), systemWidth=currentSystemWidth()){
+    const noteArea=Math.max(40,systemWidth-PAD_L-PAD_R-LEAD);
+    const first=systemIndex*mps;
+    const weights=Array.from({length:mps},(_,i)=>measureWidthWeight(first+i));
+    const sum=Math.max(.001,weights.reduce((a,b)=>a+b,0));
+    let cursor=PAD_L+LEAD;
+    return weights.map((weight,i)=>{
+      const width=noteArea*(weight/sum);
+      const noteStart=cursor;
+      const rightBar=cursor+width;
+      const box={
+        local:i, globalMeasure:first+i,
+        leftBar:i===0 ? PAD_L : cursor,
+        noteStart,rightBar,noteWidth:width
+      };
+      cursor=rightBar;
+      return box;
+    });
+  }
+
+  function measureQuarterStart(index){
+    let q=0;
+    for(let m=0;m<index;m++) q+=measureCapacity(m);
+    return q;
+  }
+
+  function choosePrintMeasuresPerSystem(){
+    assignTimeline();
+
+    const leaders = notes.filter(n=>!n.stack && n.lyric);
+    if(!leaders.length) return 4;
+
+    // Test lyric fit against a normal four-measure system. If neighboring
+    // lyric extents collide, give the printed score three measures per line.
+    const testMps=4;
+    const baseW=(PRINT_SYSTEM_WIDTH-PAD_L-PAD_R-LEAD)/testMps;
+    const usable=Math.max(20,baseW-NOTE_PAD*2);
+    const byMeasure=new Map();
+
+    for(const n of leaders){
+      const cap=measureCapacity(n.measure);
+      const x=NOTE_PAD + (cap>0 ? n.offset/cap : 0)*usable;
+      const width=Math.max(44,n.lyric.length*11.6); // ~20px print lyric font
+      if(!byMeasure.has(n.measure)) byMeasure.set(n.measure,[]);
+      byMeasure.get(n.measure).push({x,width});
+    }
+
+    for(const items of byMeasure.values()){
+      items.sort((a,b)=>a.x-b.x);
+      for(let i=0;i<items.length;i++){
+        const item=items[i];
+        if(item.x-item.width/2 < 0 || item.x+item.width/2 > baseW) return 3;
+        if(i){
+          const prev=items[i-1];
+          if(item.x-prev.x < (prev.width+item.width)/2+10) return 3;
+        }
+      }
+    }
+    return 4;
+  }
+
+  // Diatonic anchors: treble bottom line = E4, bass bottom line = G2.
+  const ANCHOR = {
+    treble:{ bottomLetterIdx:2, bottomOct:4 },  // E4
+    bass:  { bottomLetterIdx:4, bottomOct:2 }   // G2
+  };
+  const NAT_SEMI = [0,2,4,5,7,9,11]; // C D E F G A B
+  const LETTERS = ['C','D','E','F','G','A','B'];
+
+  /* ---------------- music helpers ---------------- */
+  function cloneSetting(s){ return { bpm:s.bpm, tempoBase:s.tempoBase, beats:s.beats, beatUnit:s.beatUnit }; }
+
+  function measureSetting(index){
+    for(let i=index; i>=0; i--){
+      if(measureOverrides.has(i)) return measureOverrides.get(i);
+    }
+    return measureOverrides.get(0);
+  }
+
+  function meterForMeasure(index){
+    const s = measureSetting(index);
+    const num = Math.max(1, Math.min(12, Number(s.beats)||4));
+    const den = Number(s.beatUnit)||4;
+    return { num, den, cap:num*(4/den) };
+  }
+
+  function tempoSymbol(den){
+    return ({2:'𝅗𝅥',4:'♩',8:'♪',16:'𝅘𝅥𝅯'})[Number(den)] || '♩';
+  }
+
+  function sameMeter(a,b){ return !!a && !!b && a.num===b.num && a.den===b.den; }
+  function sameTempo(a,b){ return !!a && !!b && Number(a.bpm)===Number(b.bpm) && Number(a.tempoBase)===Number(b.tempoBase); }
+
+
+  function keyName(fifths){
+    return ({
+      '-7':'C♭','-6':'G♭','-5':'D♭','-4':'A♭','-3':'E♭','-2':'B♭','-1':'F',
+      '0':'C','1':'G','2':'D','3':'A','4':'E','5':'B','6':'F♯','7':'C♯'
+    })[String(Number(fifths)||0)] || 'C';
+  }
+
+  function dynamicForMeasure(index){
+    for(let i=index;i>=0;i--){
+      if(dynamicOverrides.has(i)) return dynamicOverrides.get(i);
+    }
+    return '';
+  }
+
+  function dynamicGain(mark){
+    return ({pp:.42,p:.55,mp:.72,mf:.88,f:1.05,ff:1.22})[mark] || .88;
+  }
+
+  const SHARP_ORDER = [3,0,4,1,5,2,6]; // F C G D A E B
+  const FLAT_ORDER  = [6,2,5,1,4,0,3]; // B E A D G C F
+
+  function keyForMeasure(index){
+    for(let i=index;i>=0;i--){
+      if(keyOverrides.has(i)) return Number(keyOverrides.get(i))||0;
+    }
+    return 0;
+  }
+
+  function keyAlterForLetter(letterIdx, fifths){
+    fifths=Number(fifths)||0;
+    if(fifths>0) return SHARP_ORDER.slice(0,fifths).includes(letterIdx) ? 1 : 0;
+    if(fifths<0) return FLAT_ORDER.slice(0,-fifths).includes(letterIdx) ? -1 : 0;
+    return 0;
+  }
+
+  function noteLetterIndex(staff, step){
+    const a=ANCHOR[staff];
+    return ((a.bottomLetterIdx + step)%7 + 7)%7;
+  }
+
+  function effectiveMidi(n){
+    const natural=stepToMidi(n.staff,n.step);
+    if(n.rest) return natural;
+    const acc=n.accidental || 'key';
+    if(acc==='sharp') return natural+1;
+    if(acc==='flat') return natural-1;
+    if(acc==='doubleSharp') return natural+2;
+    if(acc==='doubleFlat') return natural-2;
+    if(acc==='natural') return natural;
+    return natural + keyAlterForLetter(noteLetterIndex(n.staff,n.step), keyForMeasure(n.measure||0));
+  }
+
+  function keySigSteps(staff, kind){
+    if(staff==='treble') return kind==='sharp' ? [8,5,9,6,3,7,4] : [4,7,3,6,2,5,1];
+    return kind==='sharp' ? [6,3,7,4,1,5,2] : [2,5,1,4,0,3,-1];
+  }
+
+  function keySigWidth(prevFifths,newFifths){
+    const oldN=Math.abs(Number(prevFifths)||0), newN=Math.abs(Number(newFifths)||0);
+    if(prevFifths==null) return newN ? newN*7+3 : 0;
+    const cross=(Math.sign(prevFifths)!==Math.sign(newFifths) && oldN && newN);
+    const cancel = cross ? oldN : Math.max(0, oldN-newN);
+    return (cancel+newN)*7 + ((cancel&&newN)?4:0);
+  }
+
+  function drawKeySignature(g,staff,x,prevFifths,newFifths){
+    prevFifths = prevFifths==null ? null : Number(prevFifths);
+    newFifths = Number(newFifths)||0;
+    let cursor=x;
+
+    if(prevFifths!=null && prevFifths!==newFifths){
+      const oldKind=prevFifths>0?'sharp':'flat';
+      const oldSteps=keySigSteps(staff,oldKind);
+      const oldOrder=prevFifths>0?SHARP_ORDER:FLAT_ORDER;
+      const newAffected=new Set(
+        newFifths>0 ? SHARP_ORDER.slice(0,newFifths) :
+        newFifths<0 ? FLAT_ORDER.slice(0,-newFifths) : []
+      );
+      const cancelCount=Math.abs(prevFifths);
+      for(let i=0;i<cancelCount;i++){
+        const li=oldOrder[i];
+        const stillSame=(Math.sign(prevFifths)===Math.sign(newFifths) && newAffected.has(li));
+        if(stillSame) continue;
+        const t=el('text',{x:cursor,y:noteY(staff,oldSteps[i])+7,'font-family':'Georgia,serif','font-size':20,fill:INK});
+        t.textContent='♮'; g.appendChild(t); cursor+=7;
+      }
+      if(cursor>x && newFifths!==0) cursor+=4;
+    }
+
+    if(newFifths!==0){
+      const kind=newFifths>0?'sharp':'flat';
+      const glyph=kind==='sharp'?'♯':'♭';
+      const steps=keySigSteps(staff,kind);
+      for(let i=0;i<Math.abs(newFifths);i++){
+        const t=el('text',{x:cursor,y:noteY(staff,steps[i])+7,'font-family':'Georgia,serif','font-size':20,fill:INK});
+        t.textContent=glyph; g.appendChild(t); cursor+=7;
+      }
+    }
+    return cursor-x;
+  }
+
+  function syncMeasureControls(){
+    const s = measureSetting(selectedMeasure);
+    measureLabelEl.textContent = `Measure ${selectedMeasure+1}`;
+    bpmEl.value = s.bpm;
+    tempoBaseEl.value = s.tempoBase;
+    beatsEl.value = s.beats;
+    beatUnitEl.value = s.beatUnit;
+    keySignatureEl.value = String(keyForMeasure(selectedMeasure));
+    dynamicMarkEl.value = dynamicOverrides.has(selectedMeasure) ? dynamicOverrides.get(selectedMeasure) : '';
+    codaMarkEl.value = codaMarks.get(selectedMeasure) || '';
+    const pm = pauseMarks.get(selectedMeasure);
+    pauseMarkEl.value = pm ? pm.kind : '';
+    pauseBeatsEl.value = pm ? pm.beats : 1;
+    pauseBeatsEl.disabled = !pm;
+    repeatMarkEl.value = repeatMarks.get(selectedMeasure) || '';
+    const isEnd = repeatMarkEl.value==='end';
+    repeatTimesEl.disabled = !isEnd;
+    if(isEnd) repeatTimesEl.value = repeatCounts.get(selectedMeasure) || 2;
+    tempoReadoutEl.textContent = `${tempoSymbol(s.tempoBase)} = ${s.bpm}`;
+    inheritBtn.disabled = selectedMeasure===0 || (!measureOverrides.has(selectedMeasure) && !dynamicOverrides.has(selectedMeasure) && !keyOverrides.has(selectedMeasure));
+  }
+
+  function writeSelectedMeasureSetting(){
+    const next = {
+      bpm:Math.max(40,Math.min(220,Number(bpmEl.value)||100)),
+      tempoBase:Number(tempoBaseEl.value)||4,
+      beats:Math.max(1,Math.min(12,Number(beatsEl.value)||4)),
+      beatUnit:Number(beatUnitEl.value)||4
+    };
+    measureOverrides.set(selectedMeasure,next);
+    tempoReadoutEl.textContent = `${tempoSymbol(next.tempoBase)} = ${next.bpm}`;
+    inheritBtn.disabled = selectedMeasure===0;
+  }
+
+  function writeSelectedKey(){
+    const value=Number(keySignatureEl.value)||0;
+    if(selectedMeasure===0) keyOverrides.set(0,value);
+    else {
+      const prev=keyForMeasure(selectedMeasure-1);
+      if(value===prev) keyOverrides.delete(selectedMeasure);
+      else keyOverrides.set(selectedMeasure,value);
+    }
+  }
+
+  function writeSelectedDynamic(){
+    const value=dynamicMarkEl.value;
+    if(value) dynamicOverrides.set(selectedMeasure,value);
+    else dynamicOverrides.delete(selectedMeasure);
+    inheritBtn.disabled = selectedMeasure===0 || (!measureOverrides.has(selectedMeasure) && !dynamicOverrides.has(selectedMeasure) && !keyOverrides.has(selectedMeasure));
+  }
+
+  function writeSelectedCoda(){
+    const value=codaMarkEl.value;
+    if(value) codaMarks.set(selectedMeasure,value);
+    else codaMarks.delete(selectedMeasure);
+  }
+
+  function writeSelectedPause(){
+    const kind=pauseMarkEl.value;
+    const beats=Math.max(0,Math.min(32,Number(pauseBeatsEl.value)||0));
+    if(kind){
+      pauseMarks.set(selectedMeasure,{kind,beats});
+      pauseBeatsEl.disabled=false;
+    }else{
+      pauseMarks.delete(selectedMeasure);
+      pauseBeatsEl.disabled=true;
+    }
+  }
+
+  function writeSelectedRepeat(){
+    const value=repeatMarkEl.value;
+    if(value) repeatMarks.set(selectedMeasure,value);
+    else repeatMarks.delete(selectedMeasure);
+    if(value==='end'){
+      repeatCounts.set(selectedMeasure, Math.max(2,Math.min(16,Math.floor(Number(repeatTimesEl.value)||2))));
+      repeatTimesEl.disabled=false;
+    }else{
+      repeatCounts.delete(selectedMeasure);
+      repeatTimesEl.disabled=true;
+    }
+  }
+
+  function selectMeasure(index, rerender=true){
+    if(index<0) return;
+    selectedMeasure=index;
+    syncMeasureControls();
+    if(rerender && !isPlaying) render();
+  }
+
+  function durQuarters(base, dot){ return base*(dot?1.5:1); }
+  function stepToMidi(staff, step){
+    const a = ANCHOR[staff];
+    const bottomAbs = a.bottomOct*7 + a.bottomLetterIdx;
+    const abs = bottomAbs + step;
+    const oct = Math.floor(abs/7), li = ((abs%7)+7)%7;
+    return (oct+1)*12 + NAT_SEMI[li];
+  }
+  function midiToName(m){
+    const names=['C','C♯','D','D♯','E','F','F♯','G','G♯','A','A♯','B'];
+    return names[((m%12)+12)%12] + (Math.floor(m/12)-1);
+  }
+  function noteY(staff, step){ return (staff==='treble'?TREBLE_BOTTOM:BASS_BOTTOM) - step*HALF; }
+  function yToStep(staff, y){
+    const bottom = staff==='treble'?TREBLE_BOTTOM:BASS_BOTTOM;
+    return Math.max(-8, Math.min(18, Math.round((bottom - y)/HALF)));
+  }
+  function onsetLeaderIndex(index){
+    let i=index;
+    while(i>0 && notes[i].stack) i--;
+    return i;
+  }
+
+  function chordGroups(){
+    const groups=[];
+    for(const n of notes){
+      if(!groups.length || !n.stack) groups.push([n]);
+      else groups[groups.length-1].push(n);
+    }
+    return groups;
+  }
+
+  function chordDuration(group){
+    return Math.max(...group.map(n=>durQuarters(n.base,n.dotted)));
+  }
+
+  function totalBeats(){
+    return chordGroups().reduce((sum,group)=>sum+chordDuration(group),0);
+  }
+
+  function measureCapacity(measureIndex){
+    return meterForMeasure(measureIndex).cap;
+  }
+
+  function assignTimeline(){
+    let t=0, measure=0, measureStart=0, cap=measureCapacity(0);
+    for(const group of chordGroups()){
+      // Clearing an earlier measure can create a real blank region. The first
+      // later onset is anchored to its old absolute quarter so subsequent music
+      // does not collapse left into the cleared bar.
+      const anchor=Number(group[0]?.anchorQ);
+      if(Number.isFinite(anchor) && anchor>t+1e-9) t=anchor;
+      while(t >= measureStart + cap - 1e-9){
+        measureStart += cap;
+        measure++;
+        cap = measureCapacity(measure);
+      }
+      const groupDur=chordDuration(group);
+      for(const n of group){
+        n.start=t;
+        n.measure=measure;
+        n.offset=t-measureStart;
+      }
+      t += groupDur;
+    }
+    return t;
+  }
+
+  const ENGRAVE_DURS = [
+    {q:6,base:4,dotted:true},
+    {q:4,base:4,dotted:false},
+    {q:3,base:2,dotted:true},
+    {q:2,base:2,dotted:false},
+    {q:1.5,base:1,dotted:true},
+    {q:1,base:1,dotted:false},
+    {q:.75,base:.5,dotted:true},
+    {q:.5,base:.5,dotted:false},
+    {q:.375,base:.25,dotted:true},
+    {q:.25,base:.25,dotted:false},
+    {q:.125,base:.125,dotted:false}
+  ];
+
+  function decomposeEngravedDuration(q){
+    const out=[];
+    let rem=Math.max(0,q);
+    for(const d of ENGRAVE_DURS){
+      while(rem >= d.q-1e-9){
+        out.push({base:d.base,dotted:d.dotted,dur:d.q});
+        rem -= d.q;
+        if(rem<1e-9){ rem=0; break; }
+      }
+    }
+    // This should only be reachable for durations finer than a 32nd.
+    // Keep the score usable rather than dropping the continuation.
+    if(rem>1e-7) out.push({base:.125,dotted:false,dur:rem});
+    return out;
+  }
+
+  function engravedSegmentsForNote(n, noteIndex){
+    const segments=[];
+    let remaining=durQuarters(n.base,n.dotted);
+    let q=n.start;
+    let first=true;
+    let guard=0;
+
+    while(remaining>1e-9 && guard++<200){
+      const loc=locateQuarterPosition(q);
+      const avail=Math.max(0,loc.cap-loc.offset);
+      const piece=Math.min(remaining,avail);
+
+      let localOffset=loc.offset;
+      const bits=decomposeEngravedDuration(piece);
+      for(const bit of bits){
+        segments.push({
+          noteIndex,
+          source:n,
+          measure:loc.measure,
+          offset:localOffset,
+          base:bit.base,
+          dotted:bit.dotted,
+          dur:bit.dur,
+          first,
+          rest:n.rest,
+          staff:n.staff,
+          step:n.step,
+          midi:n.midi,
+          accidental:first ? n.accidental : 'key'
+        });
+        first=false;
+        localOffset += bit.dur;
+      }
+
+      q += piece;
+      remaining -= piece;
+      if(piece<1e-9) break;
+    }
+
+    segments.forEach((seg,i)=>{
+      seg.segmentIndex=i;
+      seg.hasTieIn=!seg.rest && i>0;
+      seg.hasTieOut=!seg.rest && i<segments.length-1;
+    });
+    return segments;
+  }
+
+  function allEngravedSegments(){
+    const out=[];
+    notes.forEach((n,idx)=>out.push(...engravedSegmentsForNote(n,idx)));
+    return out;
+  }
+
+  function tieArc(g,x1,y1,x2,y2,below=true){
+    const lift=below ? 9 : -9;
+    const mx=(x1+x2)/2;
+    const d=`M ${x1} ${y1} Q ${mx} ${y1+lift} ${x2} ${y2}`;
+    g.appendChild(el('path',{
+      d,fill:'none',stroke:INK,'stroke-width':1.35,'stroke-linecap':'round'
+    }));
+  }
+
+  function countMeasuresForQuarterLength(q){
+    let count=1, covered=measureCapacity(0);
+    while(covered < q - 1e-9){
+      covered += measureCapacity(count);
+      count++;
+      if(count>10000) break;
+    }
+    return Math.max(measuresPerSystem(),count);
+  }
+
+  function locateQuarterPosition(q){
+    let measure=0, start=0, cap=measureCapacity(0);
+    while(q >= start + cap - 1e-9){
+      start += cap;
+      measure++;
+      cap = measureCapacity(measure);
+      if(measure>10000) break;
+    }
+    return { measure, offset:Math.max(0,q-start), cap };
+  }
+
+  function secPerQuarterForMeasure(measureIndex){
+    const s=measureSetting(measureIndex);
+    return 60 * Number(s.tempoBase) / (4 * Number(s.bpm));
+  }
+
+  function pauseSecondsForMeasure(measure){
+    const p=pauseMarks.get(measure);
+    return p ? p.beats*secPerQuarterForMeasure(measure) : 0;
+  }
+
+  function quarterPositionToSeconds(q){
+    let sec=0, remaining=Math.max(0,q), measure=0;
+    while(remaining>1e-9){
+      const cap=measureCapacity(measure);
+      const take=Math.min(cap,remaining);
+      sec += take*secPerQuarterForMeasure(measure);
+      remaining -= take;
+      if(remaining>1e-9) sec += pauseSecondsForMeasure(measure);
+      measure++;
+      if(measure>10000) break;
+    }
+    return sec;
+  }
+
+  function secondsToQuarterPosition(sec){
+    let q=0, remaining=Math.max(0,sec), measure=0;
+    while(remaining>1e-9){
+      const cap=measureCapacity(measure);
+      const spq=secPerQuarterForMeasure(measure);
+      const measureSec=cap*spq;
+      if(remaining < measureSec){
+        q += remaining/spq;
+        break;
+      }
+      q += cap;
+      remaining -= measureSec;
+
+      const pauseSec=pauseSecondsForMeasure(measure);
+      if(pauseSec>0){
+        if(remaining < pauseSec) break;
+        remaining -= pauseSec;
+      }
+
+      measure++;
+      if(measure>10000) break;
+    }
+    return q;
+  }
+
+  /* ---------------- SVG helpers ---------------- */
+  function el(name, attrs){
+    const e = document.createElementNS(SVGNS, name);
+    for(const k in attrs) e.setAttribute(k, attrs[k]);
+    return e;
+  }
+  const INK = '#241a12';
+  // A tilted ellipse drawn as an arc path (no transform attribute), because Chromium's
+  // print/PDF path drops SVG shapes that rely on a transform presentation attribute.
+  function ellipsePath(cx,cy,rx,ry,deg){
+    const t=deg*Math.PI/180, c=Math.cos(t), s2=Math.sin(t);
+    const p1x=cx+rx*c, p1y=cy+rx*s2, p2x=cx-rx*c, p2y=cy-rx*s2;
+    return `M ${p1x} ${p1y} A ${rx} ${ry} ${deg} 0 1 ${p2x} ${p2y} A ${rx} ${ry} ${deg} 0 1 ${p1x} ${p1y} Z`;
+  }
+
+  // A notehead: rotated ellipse, filled (quarter/eighth/16th) or hollow (half/whole).
+  function noteGlyph(g, staff, n, x, opts={}){
+    const y = noteY(staff, n.step);
+    const rx = 6.6, ry = 4.8, tilt = -22;
+    const hollow = n.base >= 2;
+    const whole = n.base === 4;
+
+    // ledger lines through the head when outside the staff
+    const bottomStep = 0, topStep = 8;
+    if(n.step < bottomStep-1){
+      for(let s=-2; s>=n.step; s-=2)
+        g.appendChild(el('line',{x1:x-11,y1:noteY(staff,s),x2:x+11,y2:noteY(staff,s),stroke:INK,'stroke-width':1.5}));
+    }
+    if(n.step > topStep+1){
+      for(let s=10; s<=n.step; s+=2)
+        g.appendChild(el('line',{x1:x-11,y1:noteY(staff,s),x2:x+11,y2:noteY(staff,s),stroke:INK,'stroke-width':1.5}));
+    }
+
+    // stem direction: down when on/above the middle line (step >= 4)
+    const stemDown = (opts.forceStemDown===undefined) ? (n.step >= 4) : !!opts.forceStemDown;
+    const stemLen = opts.stemLen || 34;
+    let sx = null, y2 = null;
+    if(!whole && !opts.suppressStem){
+      sx = stemDown ? x - rx + 0.6 : x + rx - 0.6;
+      const y1 = y; y2 = stemDown ? y + stemLen : y - stemLen;
+      g.appendChild(el('line',{x1:sx,y1:y1,x2:sx,y2:y2,stroke:INK,'stroke-width':1.7,'stroke-linecap':'round'}));
+
+      // flags for eighth (1), sixteenth (2), and 32nd (3)
+      if(!opts.suppressFlags){
+        const flags = n.base===0.5 ? 1 : (n.base===0.25 ? 2 : (n.base===0.125 ? 3 : 0));
+        for(let i=0;i<flags;i++){
+          const fy = stemDown ? y2 - i*8 : y2 + i*8;
+          g.appendChild(flagPath(sx, fy, stemDown));
+        }
+      }
+    }
+
+    // explicit accidental immediately to the left of the notehead.
+    if(!n.rest && n.accidental && n.accidental!=='key'){
+      const sym =
+        n.accidental==='sharp' ? '♯' :
+        n.accidental==='flat' ? '♭' :
+        n.accidental==='doubleSharp' ? '𝄪' :
+        n.accidental==='doubleFlat' ? '𝄫' : '♮';
+      const isDouble = n.accidental==='doubleSharp' || n.accidental==='doubleFlat';
+      const at=el('text',{
+        x:isDouble ? x-21 : x-17,
+        y:y+6,
+        'font-family':'Bravura,Georgia,serif',
+        'font-size':isDouble ? 19 : 20,
+        fill:INK,
+        'text-anchor':'middle'
+      });
+      at.textContent=sym;
+      g.appendChild(at);
+    }
+
+    // the head
+    const head = el('path',{d: ellipsePath(x,y,rx,ry,tilt)});
+    if(hollow){ head.setAttribute('fill','none'); head.setAttribute('stroke',INK); head.setAttribute('stroke-width', whole?2.4:2.2); }
+    else head.setAttribute('fill',INK);
+    g.appendChild(head);
+
+    // augmentation dot: to the right, nudged into the nearest space
+    if(n.dotted){
+      const dy = (n.step % 2 === 0) ? y - HALF : y;  // on a line -> lift into the space above
+      g.appendChild(el('circle',{cx:x+rx+5,cy:dy,r:2.1,fill:INK}));
+    }
+    return { y, stemX:sx, stemTipY:y2, stemDown };
+  }
+
+  // Eighth/sixteenth flag as a filled pennant hanging off the stem tip.
+  function flagPath(sx, y, stemDown){
+    let d;
+    if(!stemDown){
+      d = `M ${sx} ${y}
+           C ${sx+11} ${y+4}, ${sx+13} ${y+13}, ${sx+5} ${y+20}
+           C ${sx+12} ${y+12}, ${sx+9} ${y+5}, ${sx} ${y+8} Z`;
+    }else{
+      d = `M ${sx} ${y}
+           C ${sx+11} ${y-4}, ${sx+13} ${y-13}, ${sx+5} ${y-20}
+           C ${sx+12} ${y-12}, ${sx+9} ${y-5}, ${sx} ${y-8} Z`;
+    }
+    return el('path',{d, fill:INK});
+  }
+
+  function beamLevel(base){
+    return base===0.5 ? 1 : (base===0.25 ? 2 : (base===0.125 ? 3 : 0));
+  }
+
+  function beamRect(g, x1, y1, x2, y2, thickness=4.6){
+    const dx=x2-x1, dy=y2-y1;
+    const len=Math.hypot(dx,dy)||1;
+    const nx=-(dy/len)*(thickness/2), ny=(dx/len)*(thickness/2);
+    const pts=`${x1+nx},${y1+ny} ${x2+nx},${y2+ny} ${x2-nx},${y2-ny} ${x1-nx},${y1-ny}`;
+    g.appendChild(el('polygon',{points:pts, fill:INK}));
+  }
+
+  function rhythmUnitsForSystem(systemSegments){
+    const units=[];
+    for(const staff of ['treble','bass']){
+      const buckets=new Map();
+      for(const seg of systemSegments){
+        if(seg.staff!==staff || seg.rest) continue;
+        const key=`${seg.measure}:${seg.offset.toFixed(6)}:${seg.base}:${seg.dotted?1:0}`;
+        if(!buckets.has(key)) buckets.set(key,[]);
+        buckets.get(key).push(seg);
+      }
+      for(const segs of buckets.values()){
+        // A shared chord stem is valid only when every note at that onset has
+        // the same written duration. If another duration exists at the same
+        // onset, this unit remains independent to preserve mixed rhythms.
+        const allAtOnset=systemSegments.filter(s=>
+          s.staff===staff && !s.rest && s.measure===segs[0].measure && Math.abs(s.offset-segs[0].offset)<1e-6
+        );
+        const sameRhythm=allAtOnset.every(s=>s.base===segs[0].base && !!s.dotted===!!segs[0].dotted);
+        const shared=sameRhythm && segs.length>1;
+        const avgStep=segs.reduce((sum,s)=>sum+s.step,0)/segs.length;
+        units.push({
+          staff, measure:segs[0].measure, offset:segs[0].offset,
+          base:segs[0].base, dotted:segs[0].dotted, dur:segs[0].dur,
+          segments:segs, shared, stemDown:avgStep>=4
+        });
+      }
+    }
+    return units.sort((a,b)=>a.measure-b.measure || a.offset-b.offset || a.staff.localeCompare(b.staff));
+  }
+
+  function beamGroupsForSystem(units){
+    const out=[];
+
+    function preferredStemDown(unit){
+      const total = unit.segments.reduce((sum,seg)=>sum+seg.step,0);
+      const avg = total / Math.max(1, unit.segments.length);
+      return avg >= 4;
+    }
+
+    for(const staff of ['treble','bass']){
+      const arr=units.filter(u=>
+        u.staff===staff && !u.dotted && beamLevel(u.base)>0 &&
+        u.segments.every(s=>!s.hasTieIn && !s.hasTieOut)
+      ).sort((a,b)=>a.measure-b.measure || a.offset-b.offset);
+
+      let group=[];
+      let groupStemDown=null;
+      const flush=()=>{
+        if(group.length>=2) out.push(group);
+        group=[];
+        groupStemDown=null;
+      };
+
+      for(const unit of arr){
+        const thisStemDown = preferredStemDown(unit);
+
+        if(!group.length){
+          group=[unit];
+          groupStemDown=thisStemDown;
+          continue;
+        }
+
+        const prev=group[group.length-1];
+        const sameMeasure=unit.measure===prev.measure;
+        const sameLevel=beamLevel(unit.base)===beamLevel(prev.base);
+        const contiguous=Math.abs(unit.offset-(prev.offset+prev.dur))<1e-6;
+
+        // Separate beam groups if the next rhythmic unit would flip the overall
+        // stem direction from up-stem to down-stem (or vice versa).
+        if(sameMeasure && sameLevel && contiguous && thisStemDown===groupStemDown){
+          group.push(unit);
+        }else{
+          flush();
+          group=[unit];
+          groupStemDown=thisStemDown;
+        }
+      }
+      flush();
+    }
+    return out;
+  }
+
+  function solveBeamLine(unitGeoms, stemDown){
+    if(!unitGeoms.length) return { stemDown, slope:0, x0:0, y0:0 };
+    const first=unitGeoms[0], last=unitGeoms[unitGeoms.length-1];
+    const dx=(last.stemX-first.stemX)||1;
+    const rawSlope=(last.defaultTipY-first.defaultTipY)/dx;
+    const slope=Math.max(-0.35, Math.min(0.35, rawSlope));
+    const x0=first.stemX;
+    let y0=first.defaultTipY;
+
+    const provisionalY = geom => y0 + slope*(geom.stemX-x0);
+    if(stemDown){
+      let shift=0;
+      for(const geom of unitGeoms) shift=Math.max(shift, geom.defaultTipY - provisionalY(geom));
+      y0 += shift;
+    }else{
+      let shift=0;
+      let firstShift=true;
+      for(const geom of unitGeoms){
+        const need=geom.defaultTipY - provisionalY(geom);
+        if(firstShift){ shift=need; firstShift=false; }
+        else shift=Math.min(shift, need);
+      }
+      y0 += shift;
+    }
+    return { stemDown, slope, x0, y0 };
+  }
+
+  function beamYAt(line, x){
+    return line.y0 + line.slope*(x-line.x0);
+  }
+
+  function lyricGlyph(g,x,y,textValue){
+    const t=el('text',{
+      x:x,y:y,
+      'font-family':'Georgia,Times New Roman,serif',
+      'font-size':14,
+      'text-anchor':'middle',
+      fill:INK
+    });
+    t.textContent=textValue;
+    g.appendChild(t);
+  }
+
+  function dynamicGlyph(g,x,y,mark){
+    const t=el('text',{x:x,y:y,'font-family':'Georgia,Times New Roman,serif','font-size':20,'font-style':'italic','font-weight':'bold',fill:INK});
+    t.textContent=mark; g.appendChild(t);
+  }
+
+  function codaGlyph(g,x,y,kind){
+    const t=el('text',{x:x,y:y,'font-family':'Bravura,Georgia,serif','font-size':kind==='coda'?28:14,'font-style':kind==='toCoda'?'italic':'normal',fill:INK});
+    t.textContent=kind==='toCoda'?'To Coda 𝄌':'𝄌'; g.appendChild(t);
+  }
+
+  function pauseGlyph(g,x,y,kind,beats){
+    const sign=el('text',{
+      x:x,y:y,'font-family':kind==='fermata'?'Bravura,Georgia,serif':'Georgia,serif',
+      'font-size':kind==='fermata'?28:20,'font-weight':kind==='caesura'?'bold':'normal',
+      fill:INK,'text-anchor':'middle'
+    });
+    sign.textContent=kind==='fermata'?'𝄐':'//';
+    g.appendChild(sign);
+
+    const label=el('text',{
+      x:x,y:y+14,'font-family':'Helvetica Neue,Arial,sans-serif',
+      'font-size':9,fill:'#8a5f32','text-anchor':'middle'
+    });
+    label.textContent='+'+beats+' beat'+(Math.abs(beats-1)<1e-9?'':'s');
+    g.appendChild(label);
+  }
+
+  function repeatGlyph(g, box, kind){
+    if(kind==='measure'){
+      const t=el('text',{
+        x:(box.noteStart+box.rightBar)/2,
+        y:(TREBLE_BOTTOM+BASS_TOP)/2+6,
+        'font-family':'Georgia,Times New Roman,serif',
+        'font-size':24,'font-weight':'bold','text-anchor':'middle',fill:INK
+      });
+      t.textContent='%';
+      g.appendChild(t);
+      return;
+    }
+
+    const x = kind==='start' ? box.noteStart+3 : box.rightBar-3;
+    const dir = kind==='start' ? 1 : -1;
+
+    // Heavy + thin repeat bar pair.
+    g.appendChild(el('line',{
+      x1:x,y1:TREBLE_TOP,x2:x,y2:BASS_BOTTOM,stroke:INK,'stroke-width':3
+    }));
+    g.appendChild(el('line',{
+      x1:x+dir*5,y1:TREBLE_TOP,x2:x+dir*5,y2:BASS_BOTTOM,stroke:INK,'stroke-width':1.2
+    }));
+
+    // Dots on both staves, around the middle staff line.
+    for(const top of [TREBLE_TOP,BASS_TOP]){
+      const dx=x+dir*10;
+      g.appendChild(el('circle',{cx:dx,cy:top+S*1.5,r:1.9,fill:INK}));
+      g.appendChild(el('circle',{cx:dx,cy:top+S*2.5,r:1.9,fill:INK}));
+    }
+  }
+
+  function tempoMark(g, x, y, den, bpm){
+    const grp=el('g',{});
+    const base=Number(den);
+    const headY=y+3, headX=x+6;
+    const hollow=base===2;
+    const head=el('path',{d:ellipsePath(headX,headY,4.4,3.2,-20),fill:hollow?'none':INK,stroke:INK,'stroke-width':hollow?1.4:0});
+    grp.appendChild(head);
+    const stemX=headX+4.1, stemTop=headY-16;
+    grp.appendChild(el('line',{x1:stemX,y1:headY,x2:stemX,y2:stemTop,stroke:INK,'stroke-width':1.35,'stroke-linecap':'round'}));
+    const flags=base===8?1:(base===16?2:0);
+    for(let i=0;i<flags;i++){
+      const fy=stemTop+i*5.5;
+      grp.appendChild(el('path',{d:`M ${stemX} ${fy} C ${stemX+7} ${fy+2}, ${stemX+9} ${fy+8}, ${stemX+3} ${fy+12} C ${stemX+8} ${fy+7}, ${stemX+6} ${fy+3}, ${stemX} ${fy+5} Z`,fill:INK}));
+    }
+    const eq=el('text',{x:x+21,y:y+5,'font-family':'Georgia,serif','font-size':14,fill:INK});
+    eq.textContent=`= ${bpm}`;
+    grp.appendChild(eq);
+    g.appendChild(grp);
+  }
+
+  function restGlyph(g, staff, n, x){
+    const midY = (staff==='treble'?TREBLE_TOP:BASS_TOP) + STAFF_H/2;
+    const line = (i)=> (staff==='treble'?TREBLE_TOP:BASS_TOP) + i*S; // line 0..4 top->bottom
+    if(n.base===4){ // whole rest: block hanging under the 2nd line from top
+      g.appendChild(el('rect',{x:x-7,y:line(1)-0.5,width:14,height:S*0.5,fill:INK}));
+    }else if(n.base===2){ // half rest: block sitting on the middle line
+      g.appendChild(el('rect',{x:x-7,y:line(2)-S*0.5,width:14,height:S*0.5,fill:INK}));
+    }else if(n.base===1){ // quarter rest (zig-zag)
+      g.appendChild(el('path',{d:`M ${x-4} ${midY-13} q 9 6 3 12 q -8 5 -1 12 q -8 -3 -4 -10 q 7 -4 2 -9 q -6 -4 0 -12 Z`,fill:INK}));
+    }else{ // eighth / sixteenth rest: slanted stroke with hook(s)
+      const hooks = n.base===0.125?3:(n.base===0.25?2:1);
+      g.appendChild(el('line',{x1:x-5,y1:midY+9,x2:x+5,y2:midY-11,stroke:INK,'stroke-width':1.7,'stroke-linecap':'round'}));
+      for(let i=0;i<hooks;i++){
+        const hy = midY-8 + i*6;
+        g.appendChild(el('circle',{cx:x-5,cy:hy,r:2.2,fill:INK}));
+        g.appendChild(el('path',{d:`M ${x-5} ${hy} q 6 1 8 6`,fill:'none',stroke:INK,'stroke-width':1.6}));
+      }
+    }
+    if(n.dotted) g.appendChild(el('circle',{cx:x+11,cy:midY,r:2.1,fill:INK}));
+  }
+
+  /* ---------------- direct score editing helpers ---------------- */
+  function settingsEqual(a,b){
+    return !!a && !!b && Number(a.bpm)===Number(b.bpm) && Number(a.tempoBase)===Number(b.tempoBase) &&
+      Number(a.beats)===Number(b.beats) && Number(a.beatUnit)===Number(b.beatUnit);
+  }
+
+  function deleteMeterChange(measure){
+    if(measure===0) return;
+    pushHistory();
+    const prev=cloneSetting(measureSetting(measure-1));
+    const cur=cloneSetting(measureSetting(measure));
+    cur.beats=prev.beats; cur.beatUnit=prev.beatUnit;
+    if(settingsEqual(cur,prev)) measureOverrides.delete(measure); else measureOverrides.set(measure,cur);
+    syncMeasureControls(); render();
+  }
+
+  function deleteTempoChange(measure){
+    if(measure===0) return;
+    pushHistory();
+    const prev=cloneSetting(measureSetting(measure-1));
+    const cur=cloneSetting(measureSetting(measure));
+    cur.bpm=prev.bpm; cur.tempoBase=prev.tempoBase;
+    if(settingsEqual(cur,prev)) measureOverrides.delete(measure); else measureOverrides.set(measure,cur);
+    syncMeasureControls(); render();
+  }
+
+  function deleteTechnical(kind,measure){
+    if((kind==='key'||kind==='meter'||kind==='tempo'||kind==='dynamic') && measure===0) return;
+    if(kind==='meter'){ deleteMeterChange(measure); return; }
+    if(kind==='tempo'){ deleteTempoChange(measure); return; }
+    pushHistory();
+    if(kind==='key') keyOverrides.delete(measure);
+    else if(kind==='dynamic') dynamicOverrides.delete(measure);
+    else if(kind==='coda') codaMarks.delete(measure);
+    else if(kind==='pause') pauseMarks.delete(measure);
+    else if(kind==='repeat'){ repeatMarks.delete(measure); repeatCounts.delete(measure); }
+    syncMeasureControls(); render();
+  }
+
+  function addDeleteHotspot(svg,{x,y,w=30,h=24,kind,measure,label}){
+    if(printLayout) return;
+    const grp=el('g',{class:'technical-delete-target','data-editor-control':'1'});
+    const hit=el('rect',{x,y,width:w,height:h,rx:5,fill:'transparent','pointer-events':'all'});
+    grp.appendChild(hit);
+    const cx=x+w+3, cy=y+2;
+    const xg=el('g',{class:'editor-delete-x','pointer-events':'all',style:'cursor:pointer'});
+    xg.appendChild(el('circle',{cx,cy,r:13,fill:'transparent','pointer-events':'all'}));
+    xg.appendChild(el('circle',{cx,cy,r:7.5,fill:'#f6efe0',stroke:'#a6483a','stroke-width':1.1}));
+    xg.appendChild(el('line',{x1:cx-3,y1:cy-3,x2:cx+3,y2:cy+3,stroke:'#8b3028','stroke-width':1.5,'stroke-linecap':'round'}));
+    xg.appendChild(el('line',{x1:cx+3,y1:cy-3,x2:cx-3,y2:cy+3,stroke:'#8b3028','stroke-width':1.5,'stroke-linecap':'round'}));
+    const title=el('title',{}); title.textContent=label||'Remove marking'; xg.appendChild(title);
+    xg.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();});
+    xg.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();deleteTechnical(kind,measure);});
+    hit.addEventListener('click',e=>{e.stopPropagation();selectMeasure(measure);});
+    grp.appendChild(xg);
+    svg.appendChild(grp);
+  }
+
+  function clearMeasureNotes(measure){
+    assignTimeline();
+    const start=measureQuarterStart(measure), end=start+measureCapacity(measure);
+    const groups=[];
+    let group=[];
+    notes.forEach((n,idx)=>{
+      if(!group.length || !n.stack){ if(group.length) groups.push(group); group=[idx]; }
+      else group.push(idx);
+    });
+    if(group.length) groups.push(group);
+
+    const remove=new Set(), anchors=[];
+    let changed=false;
+    for(const ids of groups){
+      const leader=notes[ids[0]];
+      const gStart=Number(leader.start)||0;
+      const gEnd=gStart+chordDuration(ids.map(i=>notes[i]));
+      if(gStart < end-1e-9 && gEnd > start+1e-9){ ids.forEach(i=>remove.add(i)); changed=true; }
+      else if(gStart>=end-1e-9){
+        // Lower-bound anchor: later music remains where it was after this bar is emptied.
+        anchors.push([leader,gStart]);
+      }
+    }
+    if(!changed) return;
+    pushHistory();
+    anchors.forEach(([leader,gStart])=>{ leader.anchorQ=Math.max(Number(leader.anchorQ)||0,gStart); });
+    notes=notes.filter((_,idx)=>!remove.has(idx));
+    render();
+  }
+
+  function addMeasureClearControl(svg,box,measure){
+    if(printLayout) return;
+    const cx=box.noteStart+9, cy=TREBLE_TOP+9;
+    const grp=el('g',{
+      class:'measure-clear-control','data-measure-clear':measure,'data-editor-control':'1',
+      opacity:(window.innerWidth<=600 && selectedMeasure===measure)?.86:0,
+      style:'cursor:pointer'
+    });
+    grp.appendChild(el('circle',{cx,cy,r:14,fill:'transparent','pointer-events':'all'}));
+    grp.appendChild(el('circle',{cx,cy,r:8,fill:'#fff8eb','fill-opacity':.96,stroke:'#a6483a','stroke-width':1.1}));
+    grp.appendChild(el('line',{x1:cx-3.2,y1:cy-3.2,x2:cx+3.2,y2:cy+3.2,stroke:'#8b3028','stroke-width':1.6,'stroke-linecap':'round'}));
+    grp.appendChild(el('line',{x1:cx+3.2,y1:cy-3.2,x2:cx-3.2,y2:cy+3.2,stroke:'#8b3028','stroke-width':1.6,'stroke-linecap':'round'}));
+    const title=el('title',{}); title.textContent=`Clear notes from measure ${measure+1}`; grp.appendChild(title);
+    grp.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();});
+    grp.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();selectMeasure(measure,false);clearMeasureNotes(measure);});
+    svg.appendChild(grp);
+  }
+
+  function showMeasureClearForPointer(svg,measure,hide=false){
+    svg.querySelectorAll('[data-measure-clear]').forEach(node=>{
+      const on=!hide && Number(node.dataset.measureClear)===measure;
+      node.setAttribute('opacity',on?.9:0);
+    });
+  }
+
+  function beginMeasureResize(e,svg,systemIndex,boundaryLocal,boxes){
+    if(printLayout || isPlaying) return;
+    e.preventDefault(); e.stopPropagation();
+    const left=boxes[boundaryLocal], right=boxes[boundaryLocal+1];
+    if(!left||!right) return;
+    const leftMeasure=left.globalMeasure, rightMeasure=right.globalMeasure;
+    const leftW0=left.noteWidth, rightW0=right.noteWidth, pairPx=leftW0+rightW0;
+    const leftWeight0=measureWidthWeight(leftMeasure), rightWeight0=measureWidthWeight(rightMeasure);
+    const pairWeight=leftWeight0+rightWeight0;
+    const rect=svg.getBoundingClientRect();
+    const scale=currentSystemWidth()/Math.max(1,rect.width);
+    const startClientX=e.clientX;
+    const minPx=window.innerWidth<=600 ? 38 : 62;
+    armEdit();
+
+    const move=ev=>{
+      const dx=(ev.clientX-startClientX)*scale;
+      const lo=Math.min(minPx,pairPx*.46);
+      const newLeft=Math.max(lo,Math.min(pairPx-lo,leftW0+dx));
+      const frac=newLeft/pairPx;
+      measureWidthWeights.set(leftMeasure,pairWeight*frac);
+      measureWidthWeights.set(rightMeasure,pairWeight*(1-frac));
+      render();
+    };
+    const end=()=>{
+      window.removeEventListener('pointermove',move);
+      window.removeEventListener('pointerup',end);
+      window.removeEventListener('pointercancel',end);
+      commitEdit();
+    };
+    window.addEventListener('pointermove',move,{passive:true});
+    window.addEventListener('pointerup',end,{once:true});
+    window.addEventListener('pointercancel',end,{once:true});
+  }
+
+  function addMeasureDividerHandle(svg,systemIndex,boundaryLocal,boxes){
+    if(printLayout) return;
+    const box=boxes[boundaryLocal];
+    if(!box || !boxes[boundaryLocal+1]) return;
+    const x=box.rightBar;
+    const hit=el('line',{
+      x1:x,y1:TREBLE_TOP-11,x2:x,y2:BASS_BOTTOM+11,stroke:'transparent','stroke-width':14,
+      class:'measure-divider-hit','data-editor-control':'1','pointer-events':'stroke'
+    });
+    const guide=el('line',{x1:x,y1:TREBLE_TOP-11,x2:x,y2:BASS_BOTTOM+11,stroke:'#c9a24b','stroke-width':1.4,opacity:0,class:'measure-divider-guide','pointer-events':'none'});
+    hit.addEventListener('pointerdown',e=>beginMeasureResize(e,svg,systemIndex,boundaryLocal,boxes));
+    svg.appendChild(hit); svg.appendChild(guide);
+  }
+
+  /* ---------------- rendering ---------------- */
+  let systemGeom = []; // {y0, index} for playhead / hit-testing
+
+  function render(){
+    paperEl.innerHTML = '';
+    systemGeom = [];
+    const totalQ = assignTimeline();
+    const usedMeasureCount = countMeasuresForQuarterLength(totalQ);
+    // Always show complete four-measure systems, including editable empty measures.
+    const measureCount = Math.max(measuresPerSystem(), Math.ceil(usedMeasureCount/measuresPerSystem())*measuresPerSystem());
+    const systemCount = Math.max(1, Math.ceil(measureCount/measuresPerSystem()));
+
+    if(selectedMeasure>=measureCount){
+      selectedMeasure=measureCount-1;
+      syncMeasureControls();
+    }
+
+    const systemWidth = currentSystemWidth();
+
+    function buildPrintOnsetXOverrides(){
+      // PDF export preserves the workspace engraving exactly. Measure widths are
+      // user-controlled, so print never shifts note onsets to make lyrics fit.
+      return new Map();
+    }
+
+    for(let s=0; s<systemCount; s++){
+      const boxes=systemMeasureBoxes(s,measuresPerSystem(),systemWidth);
+      const measureBox=i=>boxes[i];
+      const svg = el('svg',{
+        width: systemWidth, height: SYSTEM_H,
+        viewBox:`0 0 ${systemWidth} ${SYSTEM_H}`,
+        preserveAspectRatio:'xMinYMin meet',
+        'data-system': s
+      });
+      if(!printLayout && window.innerWidth<=600){
+        svg.style.width='100%';
+        svg.style.height='auto';
+        svg.style.touchAction='manipulation';
+      }
+      svg.style.marginBottom = SYSTEM_GAP+'px';
+      systemGeom.push({ index:s });
+
+      // staff lines
+      for(const [name, top] of [['treble',TREBLE_TOP],['bass',BASS_TOP]]){
+        for(let i=0;i<5;i++){
+          svg.appendChild(el('line',{
+            x1:PAD_L, y1:top+i*S, x2:systemWidth-PAD_R, y2:top+i*S,
+            stroke:'#4a3a2b','stroke-width':1
+          }));
+        }
+      }
+
+      // left system barline + brace (bracket) joining both staves
+      svg.appendChild(el('line',{x1:PAD_L,y1:TREBLE_TOP,x2:PAD_L,y2:BASS_BOTTOM,stroke:INK,'stroke-width':2}));
+      svg.appendChild(braceGlyph(PAD_L-6, TREBLE_TOP, BASS_BOTTOM));
+
+      // clefs (Bravura). gClef sits on the G line; fClef on the F line.
+      const gLineY = noteY('treble', 2);   // G4 = step 2
+      const fLineY = noteY('bass', 6);      // F3 = step 6
+      const tc = el('text',{x:PAD_L+10, y:gLineY, 'font-family':'Bravura', 'font-size':48, fill:INK});
+      tc.textContent = '\uE050';
+      svg.appendChild(tc);
+      const bc = el('text',{x:PAD_L+10, y:fLineY, 'font-family':'Bravura', 'font-size':48, fill:INK});
+      bc.textContent = '\uE062';
+      svg.appendChild(bc);
+
+      // measure selection, barlines, numbers, and per-measure changes
+      for(let i=0;i<measuresPerSystem();i++){
+        const box = measureBox(i);
+        const globalMeasure = s*measuresPerSystem()+i;
+        if(globalMeasure>=measureCount) continue;
+
+        const m = meterForMeasure(globalMeasure);
+        const setting = measureSetting(globalMeasure);
+        const prevMeter = globalMeasure>0 ? meterForMeasure(globalMeasure-1) : null;
+        const prevSetting = globalMeasure>0 ? measureSetting(globalMeasure-1) : null;
+        const keyNow = keyForMeasure(globalMeasure);
+        const keyPrev = globalMeasure>0 ? keyForMeasure(globalMeasure-1) : null;
+        const keyChanged = globalMeasure===0 || keyNow!==keyPrev;
+        const meterChanged = globalMeasure===0 || !sameMeter(m,prevMeter);
+        const tempoChanged = globalMeasure===0 || !sameTempo(setting,prevSetting);
+
+        // Selected measure gets a subtle brass wash behind both staves.
+        if(!printLayout && globalMeasure===selectedMeasure){
+          const selX = box.noteStart;
+          svg.insertBefore(el('rect',{
+            x:selX,y:TREBLE_TOP-13,width:box.rightBar-selX,height:BASS_BOTTOM-TREBLE_TOP+26,
+            rx:6,fill:'#c9a24b','fill-opacity':.08,stroke:'#b9862f','stroke-opacity':.55,'stroke-width':1.2
+          }), svg.firstChild);
+        }
+
+        // Key signature appears at the beginning and wherever the key changes.
+        let signatureInset=0;
+        if(keyChanged){
+          const kx = globalMeasure===0 ? PAD_L+45 : box.noteStart+7;
+          const w1=drawKeySignature(svg,'treble',kx,keyPrev,keyNow);
+          drawKeySignature(svg,'bass',kx,keyPrev,keyNow);
+          signatureInset=w1+6;
+          if(globalMeasure>0) addDeleteHotspot(svg,{x:kx-4,y:TREBLE_TOP-13,w:Math.max(18,w1+8),h:BASS_BOTTOM-TREBLE_TOP+20,kind:'key',measure:globalMeasure,label:'Remove key-signature change'});
+        }
+
+        // Time signature follows the key signature when both change together.
+        if(meterChanged){
+          const tsx = globalMeasure===0
+            ? PAD_L+108
+            : box.noteStart+17+signatureInset;
+          for(const top of [TREBLE_TOP,BASS_TOP]){
+            const num = el('text',{x:tsx,y:top+S*1.52,'text-anchor':'middle','font-family':'Georgia,serif','font-weight':'bold','font-size':24,fill:INK});
+            num.textContent = m.num;
+            const den = el('text',{x:tsx,y:top+S*3.67,'text-anchor':'middle','font-family':'Georgia,serif','font-weight':'bold','font-size':24,fill:INK});
+            den.textContent = m.den;
+            svg.appendChild(num); svg.appendChild(den);
+          }
+          if(globalMeasure>0) addDeleteHotspot(svg,{x:tsx-13,y:TREBLE_TOP-4,w:27,h:BASS_BOTTOM-TREBLE_TOP+8,kind:'meter',measure:globalMeasure,label:'Remove time-signature change'});
+        }
+
+        // Tempo marking appears above the exact measure where tempo changes.
+        if(tempoChanged){
+          const tx = globalMeasure===0 ? PAD_L+LEAD+5 : box.noteStart+5;
+          tempoMark(svg, tx, TREBLE_TOP-24, setting.tempoBase, setting.bpm);
+          if(globalMeasure>0) addDeleteHotspot(svg,{x:tx-4,y:TREBLE_TOP-43,w:60,h:26,kind:'tempo',measure:globalMeasure,label:'Remove tempo change'});
+        }
+
+        const dyn = dynamicForMeasure(globalMeasure);
+        const prevDyn = globalMeasure>0 ? dynamicForMeasure(globalMeasure-1) : null;
+        if(dyn && (globalMeasure===0 || dyn!==prevDyn)){
+          const dx=box.noteStart+8;
+          dynamicGlyph(svg, dx, BASS_BOTTOM+27, dyn);
+          if(globalMeasure>0) addDeleteHotspot(svg,{x:dx-5,y:BASS_BOTTOM+8,w:28,h:25,kind:'dynamic',measure:globalMeasure,label:'Remove dynamic marking'});
+        }
+
+        const coda = codaMarks.get(globalMeasure);
+        if(coda){
+          const cx=box.rightBar-58;
+          codaGlyph(svg, cx, TREBLE_TOP-18, coda);
+          addDeleteHotspot(svg,{x:cx-6,y:TREBLE_TOP-39,w:coda==='toCoda'?72:32,h:29,kind:'coda',measure:globalMeasure,label:'Remove coda marking'});
+        }
+
+        const pause = pauseMarks.get(globalMeasure);
+        if(pause){
+          const px=box.noteStart+(box.rightBar-box.noteStart)*0.72;
+          pauseGlyph(svg, px, TREBLE_TOP-18, pause.kind, pause.beats);
+          addDeleteHotspot(svg,{x:px-22,y:TREBLE_TOP-42,w:44,h:39,kind:'pause',measure:globalMeasure,label:'Remove pause marking'});
+        }
+
+        const repeat = repeatMarks.get(globalMeasure);
+        if(repeat){
+          repeatGlyph(svg, box, repeat);
+          if(repeat==='end'){
+            const rtimes=repeatCounts.get(globalMeasure)||2;
+            const rt=el('text',{x:box.rightBar-12,y:TREBLE_TOP-8,'font-family':'Georgia,serif','font-size':11,'font-weight':'bold','text-anchor':'end',fill:INK});
+            rt.textContent='×'+rtimes;
+            svg.appendChild(rt);
+          }
+          const rx=repeat==='start' ? box.noteStart-5 : (repeat==='end' ? box.rightBar-18 : (box.noteStart+box.rightBar)/2-18);
+          const rw=repeat==='measure'?36:28;
+          addDeleteHotspot(svg,{x:rx,y:repeat==='measure'?STAFF_SPLIT_Y-22:TREBLE_TOP-9,w:rw,h:repeat==='measure'?42:BASS_BOTTOM-TREBLE_TOP+18,kind:'repeat',measure:globalMeasure,label:'Remove repeat marking'});
+        }
+
+        // right barline of each measure, spanning both staves
+        const isFinal = (globalMeasure === measureCount-1);
+        if(repeat!=='end'){
+          svg.appendChild(el('line',{x1:box.rightBar,y1:TREBLE_TOP,x2:box.rightBar,y2:TREBLE_BOTTOM,stroke:INK,'stroke-width':isFinal?2.4:1.3}));
+          svg.appendChild(el('line',{x1:box.rightBar,y1:BASS_TOP,x2:box.rightBar,y2:BASS_BOTTOM,stroke:INK,'stroke-width':isFinal?2.4:1.3}));
+        }
+        const mn = el('text',{x:box.noteStart-2,y:TREBLE_TOP-8,'font-family':'Helvetica Neue,Arial,sans-serif','font-size':9,fill:'#a07a3c'});
+        mn.textContent = globalMeasure+1;
+        svg.appendChild(mn);
+        addMeasureClearControl(svg,box,globalMeasure);
+      }
+
+      // Internal measure dividers are draggable. The final barline of a system
+      // stays fixed so the system itself remains the same width.
+      for(let i=0;i<measuresPerSystem()-1;i++) addMeasureDividerHandle(svg,s,i,boxes);
+
+      // Engraved note segments belonging to this system. A logical note may
+      // become several tied glyphs when it crosses a barline.
+      const g = el('g',{});
+      svg.appendChild(g);
+      const systemSegments = allEngravedSegments().filter(seg=>
+        Math.floor(seg.measure/measuresPerSystem())===s
+      );
+      const printXOverrides=buildPrintOnsetXOverrides(s,boxes);
+      const rhythmUnits = rhythmUnitsForSystem(systemSegments);
+      const beamGroups = beamGroupsForSystem(rhythmUnits);
+      const unitBySegment = new Map();
+      rhythmUnits.forEach((unit,ui)=>unit.segments.forEach(seg=>unitBySegment.set(`${seg.noteIndex}:${seg.segmentIndex}`,{unit,ui})));
+      const beamedUnitIds = new Set();
+      const beamStemDownByUnitId = new Map();
+      beamGroups.forEach(group=>{
+        const totalSteps = group.reduce((sum,unit)=> sum + unit.segments.reduce((s,seg)=>s+seg.step,0), 0);
+        const totalCount = group.reduce((sum,unit)=> sum + unit.segments.length, 0) || 1;
+        const stemDown = (totalSteps/totalCount) >= 4;
+        group.forEach(unit=>{
+          const ui=rhythmUnits.indexOf(unit);
+          beamedUnitIds.add(ui);
+          beamStemDownByUnitId.set(ui, stemDown);
+        });
+      });
+      const renderedSegmentGeom = new Map();
+      const renderedUnitGeom = new Map();
+
+      systemSegments.forEach(seg=>{
+        const n=seg.source, idx=seg.noteIndex;
+        const i=seg.measure % measuresPerSystem();
+        const box=measureBox(i);
+        const cap=measureCapacity(seg.measure);
+        const mNow=meterForMeasure(seg.measure);
+        const prevM=seg.measure>0 ? meterForMeasure(seg.measure-1) : null;
+        const keyNow=keyForMeasure(seg.measure);
+        const keyPrev=seg.measure>0 ? keyForMeasure(seg.measure-1) : null;
+        const keyExtra=(seg.measure>0 && keyNow!==keyPrev) ? keySigWidth(keyPrev,keyNow)+10 : 0;
+        const meterExtra=(seg.measure>0 && !sameMeter(mNow,prevM)) ? 30 : 0;
+        const extraInset=keyExtra+meterExtra;
+        const frac=cap>0 ? seg.offset/cap : 0;
+        const usable=Math.max(20,box.noteWidth-NOTE_PAD*2-extraInset);
+        const naturalX=box.noteStart+NOTE_PAD+extraInset+frac*usable;
+        const onsetKey=`${seg.measure}:${seg.offset.toFixed(6)}`;
+        const x=(printLayout && printXOverrides.has(onsetKey)) ? printXOverrides.get(onsetKey) : naturalX;
+
+        const displayNote={
+          ...n,
+          base:seg.base,
+          dotted:seg.dotted,
+          accidental:seg.first ? n.accidental : 'key'
+        };
+
+        const ng=el('g',{'data-index':idx,'data-first':seg.first?'1':'0','data-measure':seg.measure,style:'cursor:pointer'});
+        let glyphGeom=null;
+        if(seg.rest) restGlyph(ng,seg.staff,displayNote,x);
+        else {
+          const unitMeta=unitBySegment.get(`${idx}:${seg.segmentIndex}`);
+          const unit=unitMeta?unitMeta.unit:null;
+          const unitId=unitMeta?unitMeta.ui:-1;
+          const shared=!!(unit && unit.shared);
+          const beamed=unitId>=0 && beamedUnitIds.has(unitId);
+          const forcedStem = beamed ? beamStemDownByUnitId.get(unitId) : (unit?unit.stemDown:undefined);
+          glyphGeom = noteGlyph(ng,seg.staff,displayNote,x,(shared||beamed) ? {
+            suppressStem:true,
+            suppressFlags:true,
+            forceStemDown:forcedStem
+          } : {});
+        }
+
+        const title=el('title',{});
+        title.textContent=(seg.rest?'Rest':midiToName(effectiveMidi(n)))+' · '+lengthName(displayNote)+(seg.hasTieIn||seg.hasTieOut?' · tied':'');
+        ng.appendChild(title);
+        ng.addEventListener('click',e=>{
+          e.stopPropagation();
+          const rect=ng.getBoundingClientRect();
+          const leader=onsetLeaderIndex(idx);
+          if(activeTool==='select'){
+            selectMeasure(seg.measure);
+            if(!seg.rest) openNoteTextEditor(leader,rect);
+            return;
+          }
+          selectMeasure(seg.measure);
+          if(!seg.rest) preview(effectiveMidi(n),.5);
+        });
+        ng.addEventListener('contextmenu',e=>{
+          e.preventDefault(); e.stopPropagation();
+          pushHistory(); notes.splice(idx,1); render();
+        });
+        g.appendChild(ng);
+
+        renderedSegmentGeom.set(`${idx}:${seg.segmentIndex}`,{
+          x, y:noteY(seg.staff,seg.step), box, seg,
+          stemX:glyphGeom?glyphGeom.stemX:null, stemTipY:glyphGeom?glyphGeom.stemTipY:null, stemDown:glyphGeom?glyphGeom.stemDown:(seg.step>=4)
+        });
+      });
+
+      // Build geometric info for each rhythmic onset unit.
+      rhythmUnits.forEach((unit,ui)=>{
+        const geoms=unit.segments.map(seg=>renderedSegmentGeom.get(`${seg.noteIndex}:${seg.segmentIndex}`)).filter(Boolean);
+        if(!geoms.length) return;
+        const xs=geoms.map(gm=>gm.x);
+        const ys=geoms.map(gm=>gm.y);
+        const stemDown=beamedUnitIds.has(ui) ? !!beamStemDownByUnitId.get(ui) : unit.stemDown;
+        const rx=6.6;
+
+        // For a chord, the stem should attach to the OUTER notehead on the stem side,
+        // not to the average x-position of the chord.
+        const leftmost = Math.min(...xs);
+        const rightmost = Math.max(...xs);
+        const stemX = stemDown ? (leftmost - rx + 0.6) : (rightmost + rx - 0.6);
+
+        // Stem begins at the outermost pitch on the opposite side of travel.
+        const startY = stemDown ? Math.min(...ys) : Math.max(...ys);
+
+        // Default stem tip is measured from the farthest pitch on the stem-travel side.
+        const defaultTipY = stemDown ? (Math.max(...ys) + 34) : (Math.min(...ys) - 34);
+
+        renderedUnitGeom.set(ui,{stemX,startY,defaultTipY,stemDown,unit,ui});
+      });
+
+      // Shared stems for same-onset, same-duration chords when they are not part
+      // of a larger beam group.
+      rhythmUnits.forEach((unit,ui)=>{
+        if(!unit.shared || beamedUnitIds.has(ui)) return;
+        const geom=renderedUnitGeom.get(ui);
+        if(!geom) return;
+        g.appendChild(el('line',{x1:geom.stemX,y1:geom.startY,x2:geom.stemX,y2:geom.defaultTipY,stroke:INK,'stroke-width':1.7,'stroke-linecap':'round'}));
+        const count=beamLevel(unit.base);
+        for(let i=0;i<count;i++){
+          const fy=geom.stemDown ? geom.defaultTipY-i*8 : geom.defaultTipY+i*8;
+          g.appendChild(flagPath(geom.stemX,fy,geom.stemDown));
+        }
+      });
+
+      // Beam groups for eighth, sixteenth, and 32nd notes/chords. Each beam group
+      // gets one stem direction and one modest sloped beam line.
+      beamGroups.forEach(group=>{
+        const ids=group.map(unit=>rhythmUnits.indexOf(unit));
+        const geoms=ids.map(ui=>renderedUnitGeom.get(ui)).filter(Boolean);
+        if(geoms.length<2) return;
+        const stemDown=!!beamStemDownByUnitId.get(ids[0]);
+        const line=solveBeamLine(geoms, stemDown);
+
+        // Draw stems up to the primary beam.
+        geoms.forEach(geom=>{
+          const tipY=beamYAt(line, geom.stemX);
+          g.appendChild(el('line',{x1:geom.stemX,y1:geom.startY,x2:geom.stemX,y2:tipY,stroke:INK,'stroke-width':1.7,'stroke-linecap':'round'}));
+          geom.beamTipY=tipY;
+        });
+
+        // Draw the primary and secondary beams parallel to the main slope.
+        const count=beamLevel(group[0].base) || 0;
+        const dir=stemDown ? -1 : 1;
+        for(let b=0;b<count;b++){
+          for(let i=0;i<geoms.length-1;i++){
+            const a=geoms[i], z=geoms[i+1];
+            const y1=a.beamTipY + dir*b*6;
+            const y2=z.beamTipY + dir*b*6;
+            beamRect(g,a.stemX,y1,z.stemX,y2,4.6);
+          }
+        }
+      });
+
+      // Lyrics: one syllable/word per logical onset. Chord members share the
+      // lyric stored on the onset leader, and tied continuation segments do not
+      // repeat it. Keep all lyric text on one consistent baseline.
+      const lyricItems=[];
+      notes.forEach((n,idx)=>{
+        if(n.stack || !n.lyric) return;
+        const geom=renderedSegmentGeom.get(`${idx}:0`);
+        if(!geom) return;
+        lyricItems.push({ x:geom.x, text:n.lyric });
+      });
+
+      lyricItems.sort((a,b)=>a.x-b.x);
+      lyricItems.forEach(item=>{
+        lyricGlyph(g, item.x, TREBLE_BOTTOM + 30, item.text);
+      });
+
+      // Draw ties after noteheads so they remain visually clean.
+      systemSegments.forEach(seg=>{
+        if(seg.rest || !seg.hasTieOut) return;
+        const here=renderedSegmentGeom.get(`${seg.noteIndex}:${seg.segmentIndex}`);
+        if(!here) return;
+
+        const nextKey=`${seg.noteIndex}:${seg.segmentIndex+1}`;
+        const next=renderedSegmentGeom.get(nextKey);
+        const below=seg.step>=4; // ties generally opposite the stem
+
+        if(next){
+          // Both pieces are on this system.
+          tieArc(g,here.x+7,here.y+(below?4:-4),next.x-7,next.y+(below?4:-4),below);
+        }else{
+          // Tie continues onto the next system: show an outgoing half-tie.
+          const x2=here.box.rightBar-3;
+          tieArc(g,here.x+7,here.y+(below?4:-4),x2,here.y+(below?4:-4),below);
+        }
+      });
+
+      // Incoming half-ties for notes continued from the previous system.
+      systemSegments.forEach(seg=>{
+        if(seg.rest || !seg.hasTieIn) return;
+        const prevKey=`${seg.noteIndex}:${seg.segmentIndex-1}`;
+        if(renderedSegmentGeom.has(prevKey)) return;
+        const here=renderedSegmentGeom.get(`${seg.noteIndex}:${seg.segmentIndex}`);
+        if(!here) return;
+        const below=seg.step>=4;
+        tieArc(g,here.box.noteStart+3,here.y+(below?4:-4),here.x-7,here.y+(below?4:-4),below);
+      });
+
+      // ghost preview target
+      const ghost = el('g',{opacity:0}); ghost.dataset.ghost='1';
+      svg.appendChild(ghost);
+
+      svg.addEventListener('pointermove', e=>onHover(e, svg, ghost, boxes));
+      svg.addEventListener('pointerleave', ()=>{ ghost.setAttribute('opacity',0); showMeasureClearForPointer(svg,-1,true); });
+      svg.addEventListener('click', e=>onPlace(e, svg, s, boxes));
+
+      paperEl.appendChild(svg);
+    }
+
+    const sm = meterForMeasure(selectedMeasure), ss = measureSetting(selectedMeasure);
+    const realNoteCount=notes.length;
+    statusEl.textContent = `${realNoteCount} event${realNoteCount===1?'':'s'} · measure ${selectedMeasure+1}: ${keyName(keyForMeasure(selectedMeasure))} major · ${sm.num}/${sm.den} · ${tempoSymbol(ss.tempoBase)} = ${ss.bpm}`;
+    updateHistoryButtons();
+  }
+
+  // A simple engraved bracket brace with serifs, joining the two staves.
+  function braceGlyph(x, top, bottom){
+    const g = el('g',{});
+    g.appendChild(el('rect',{x:x-3.2,y:top,width:3.4,height:bottom-top,rx:1.4,fill:INK}));
+    for(const yy of [top,bottom]){
+      const dir = yy===top?1:-1;
+      g.appendChild(el('path',{d:`M ${x-3.2} ${yy} q -5 ${dir*1.5} -6 ${dir*7}`,fill:'none',stroke:INK,'stroke-width':2,'stroke-linecap':'round'}));
+    }
+    return g;
+  }
+
+  function lengthName(n){
+    const base = {4:'whole',2:'half',1:'quarter',0.5:'eighth',0.25:'sixteenth',0.125:'32nd'}[n.base]||n.base;
+    return (n.dotted?'dotted ':'') + base + (n.rest?' rest':'');
+  }
+
+  /* ---------------- interaction ---------------- */
+  function setActiveTool(tool, rerender=true){
+    activeTool = tool==='select' ? 'select' : 'note';
+    if(selectTool){
+      const on=activeTool==='select';
+      selectTool.classList.toggle('on',on);
+      selectTool.setAttribute('aria-pressed',String(on));
+    }
+    if(noteTool){
+      const on=activeTool==='note';
+      noteTool.classList.toggle('on',on);
+      noteTool.setAttribute('aria-pressed',String(on));
+    }
+    if(!isPlaying){
+      statusEl.textContent = activeTool==='select'
+        ? `Select · measure ${selectedMeasure+1}`
+        : `Note · measure ${selectedMeasure+1}`;
+      if(rerender) render();
+    }
+  }
+  function pointerStaff(y){ return y < STAFF_SPLIT_Y ? 'treble' : 'bass'; }
+
+  function onHover(e, svg, ghost, boxes){
+    if(isPlaying){ ghost.setAttribute('opacity',0); return; }
+    const pt = svgPoint(svg, e);
+    const overControl=!!e.target.closest?.('[data-editor-control]');
+    const local=pt.x<PAD_L+LEAD ? 0 : Math.max(0,boxes.findIndex(box=>pt.x<box.rightBar));
+    const localMeasure=local<0 ? boxes.length-1 : Math.min(boxes.length-1,local);
+    showMeasureClearForPointer(svg,boxes[localMeasure]?.globalMeasure ?? -1,overControl);
+    if(overControl || activeTool==='select'){ ghost.setAttribute('opacity',0); return; }
+    const staff = pointerStaff(pt.y);
+    const step = yToStep(staff, pt.y);
+    ghost.innerHTML = '';
+    ghost.setAttribute('opacity', .38);
+    const gy = noteY(staff, step);
+    // snap-line + ghost head follow the pointer's x
+    ghost.appendChild(el('ellipse',{cx:pt.x,cy:gy,rx:6.6,ry:4.8,transform:`rotate(-22 ${pt.x} ${gy})`,fill:'#9a6a2c'}));
+    const tag = el('text',{x:pt.x+12,y:gy-8,class:'pitchtag'});
+    if(restMode){
+      tag.textContent = lengthName({base:selectedBase,dotted,rest:true});
+    }else{
+      const natural=stepToMidi(staff,step);
+      const li=noteLetterIndex(staff,step);
+      const acc=selectedAccidental;
+      const altered = acc==='sharp' ? natural+1 :
+                      acc==='flat' ? natural-1 :
+                      acc==='doubleSharp' ? natural+2 :
+                      acc==='doubleFlat' ? natural-2 :
+                      acc==='natural' ? natural :
+                      natural+keyAlterForLetter(li,keyForMeasure(selectedMeasure));
+      tag.textContent = midiToName(altered);
+    }
+    ghost.appendChild(tag);
+  }
+
+  function onPlace(e, svg, systemIndex, boxes){
+    if(isPlaying || e.target.closest?.('[data-editor-control]')) return;
+    const pt = svgPoint(svg, e);
+
+    // Pick the measure from the actual (possibly user-resized) bar geometry.
+    let localMeasure=0;
+    if(pt.x >= PAD_L+LEAD){
+      const found=boxes.findIndex(box=>pt.x<box.rightBar);
+      localMeasure=found<0 ? boxes.length-1 : found;
+    }
+    localMeasure = Math.max(0, Math.min(measuresPerSystem()-1, localMeasure));
+    const globalMeasure = systemIndex*measuresPerSystem() + localMeasure;
+    selectMeasure(globalMeasure, false);
+
+    // Select mode never creates notation; it only enters that measure's editing state.
+    if(activeTool==='select'){ render(); return; }
+
+    // Clicking the clef/signature column selects the first measure of the line without placing a note.
+    if(pt.x < PAD_L + LEAD){ render(); return; }
+
+    const staff = pointerStaff(pt.y);
+    const step = yToStep(staff, pt.y);
+    const midi = stepToMidi(staff, step); // natural diatonic MIDI; accidental/key is applied dynamically
+
+    // Automatic chord stacking: if the click is horizontally close to an existing
+    // note in this measure, insert the new note into that note's onset group.
+    // This keeps chord entry direct—no separate mode or toggle is needed.
+    let targetIndex = -1, bestDx = Infinity;
+    if(!restMode){
+      svg.querySelectorAll('g[data-index][data-first="1"]').forEach(node=>{
+        const idx = Number(node.dataset.index);
+        const n = notes[idx];
+        if(!n || n.rest || n.measure !== globalMeasure) return;
+        try{
+          const bb = node.getBBox();
+          const cx = bb.x + bb.width/2;
+          const dx = Math.abs(pt.x - cx);
+          if(dx < bestDx && dx <= 24){ bestDx = dx; targetIndex = idx; }
+        }catch(_){}
+      });
+    }
+
+    pushHistory();
+    const fresh = {
+      staff, step, midi, base:selectedBase, dotted, rest:restMode, stack:false,
+      accidental:restMode?'key':selectedAccidental,
+      lyric:''
+    };
+    if(targetIndex >= 0){
+      // Resolve the complete onset group even if the user clicked a stacked
+      // member rather than the group's first note.
+      let groupStart=targetIndex;
+      while(groupStart>0 && notes[groupStart].stack) groupStart--;
+      let groupEnd=groupStart;
+      while(groupEnd+1<notes.length && notes[groupEnd+1].stack) groupEnd++;
+
+      fresh.stack=true;
+      notes.splice(groupEnd+1,0,fresh);
+    }else{
+      // Normally entry remains sequential. If the user intentionally selected
+      // an earlier/cleared measure, insert at its next free onset instead of
+      // appending at the end of the score.
+      const timelineEnd=assignTimeline();
+      const mStart=measureQuarterStart(globalMeasure), mEnd=mStart+measureCapacity(globalMeasure);
+      let targetQ=mStart, insertAt=notes.length;
+      const groups=chordGroups();
+      for(const group of groups){
+        const lead=group[0], start=Number(lead.start)||0, end=start+chordDuration(group);
+        if(start>=mEnd-1e-9){ insertAt=notes.indexOf(lead); break; }
+        if(start>=mStart-1e-9 && start<mEnd-1e-9) targetQ=Math.max(targetQ,end);
+      }
+      const endMeasure=locateQuarterPosition(Math.max(0,timelineEnd-1e-9)).measure;
+      if(targetQ>timelineEnd+1e-9 || globalMeasure<endMeasure || insertAt<notes.length){
+        fresh.anchorQ=targetQ;
+        notes.splice(insertAt,0,fresh);
+      }else notes.push(fresh);
+    }
+
+    render();
+    if(!restMode) preview(effectiveMidi(fresh), Math.min(.5, selectedBase*.3+.14));
+  }
+
+  function svgPoint(svg, e){
+    const r = svg.getBoundingClientRect();
+    // svg is rendered 1:1 (viewBox == pixel size), so client offset maps directly
+    return { x: e.clientX - r.left, y: e.clientY - r.top };
+  }
+
+  /* ---------------- audio (built-in piano voice) ---------------- */
+  function ensureAudio(){
+    const AC = window.AudioContext||window.webkitAudioContext;
+    if(!AC) return null;
+    if(!audioCtx) audioCtx = new AC();
+    if(audioCtx.state==='suspended') audioCtx.resume();
+    return audioCtx;
+  }
+  function pianoVoice(midi, when, dur, gainScale=1){
+    const ctx = ensureAudio();
+    if(!ctx) return;
+    const f = 440*Math.pow(2,(midi-69)/12);
+    const vol = Number(volumeEl.value)*gainScale;
+    const master = ctx.createGain();
+    master.gain.setValueAtTime(.0001, when);
+    master.gain.exponentialRampToValueAtTime(Math.max(.001, vol*.30), when+.006);
+    master.gain.exponentialRampToValueAtTime(Math.max(.0008, vol*.10), when+.18);
+    master.gain.exponentialRampToValueAtTime(.0001, when+Math.max(.28,dur));
+    master.connect(ctx.destination);
+    const partials=[[1,1],[2,.42],[3,.19],[4,.10],[5,.055],[6,.03]];
+    for(const [mul,amp] of partials){
+      const osc=ctx.createOscillator(), g=ctx.createGain();
+      osc.type='sine'; osc.frequency.setValueAtTime(f*mul, when);
+      osc.detune.setValueAtTime((Math.random()-.5)*2.2, when);
+      g.gain.value=amp; osc.connect(g); g.connect(master);
+      osc.start(when); osc.stop(when+Math.max(.3,dur)+.05);
+      activeNodes.push(osc);
+    }
+  }
+  function preview(midi, dur=.4){ try{ const ctx=ensureAudio(); if(!ctx) return; pianoVoice(midi, ctx.currentTime+.01, dur, .9);}catch(_){} }
+
+  function stopPlayback(){
+    if(playTimer){ clearInterval(playTimer); playTimer=null; }
+    activeNodes.forEach(n=>{try{n.stop()}catch(_){}}); activeNodes=[];
+    isPlaying=false;
+    paperEl.querySelectorAll('.playhead').forEach(e=>e.remove());
+    if(statusEl.textContent.startsWith('Playing')) statusEl.textContent='Stopped';
+  }
+  function playbackMeasureCount(){
+    const totalQ=assignTimeline();
+    // Unlike the visual layout, playback must not pad the score out to a full
+    // four-measure system; otherwise it audibly adds empty measures at the end.
+    let count=1, covered=measureCapacity(0);
+    while(covered<totalQ-1e-9){
+      covered+=measureCapacity(count);
+      count++;
+      if(count>10000) break;
+    }
+    // A deliberately placed repeat/pause marking can make an otherwise empty
+    // trailing measure meaningful to playback.
+    for(const map of [repeatMarks,pauseMarks]){
+      for(const measure of map.keys()) count=Math.max(count,Number(measure)+1);
+    }
+    return Math.max(1,count);
+  }
+
+  function repeatStartByEnd(lastMeasure){
+    const starts=[];
+    const out=new Map();
+    for(let m=0;m<=lastMeasure;m++){
+      const kind=repeatMarks.get(m);
+      if(kind==='start') starts.push(m);
+      else if(kind==='end') out.set(m,starts.length ? starts.pop() : 0);
+    }
+    return out;
+  }
+
+  function buildPlaybackPlan(){
+    const measureCount=playbackMeasureCount();
+    const lastMeasure=measureCount-1;
+    const startByEnd=repeatStartByEnd(lastMeasure);
+    const endPasses=new Map();
+    const occurrences=[];
+    let measure=0, guard=0;
+
+    while(measure<=lastMeasure && guard++<20000){
+      const kind=repeatMarks.get(measure);
+      occurrences.push({
+        scoreMeasure:measure,
+        // A one-measure repeat (%) uses the preceding written measure's notes,
+        // but keeps the target measure's tempo/dynamic/pause context.
+        sourceMeasure:(kind==='measure' && measure>0) ? measure-1 : measure
+      });
+
+      if(kind==='end'){
+        const total=Math.max(2,Math.min(16,Math.floor(Number(repeatCounts.get(measure))||2)));
+        const pass=endPasses.get(measure)||1;
+        if(pass<total){
+          endPasses.set(measure,pass+1);
+          const repeatStart=startByEnd.get(measure) ?? 0;
+          // If an outer repeat jumps backward, inner repeat endings inside that
+          // section must be allowed to run again on the next outer pass.
+          for(const innerEnd of startByEnd.keys()){
+            if(innerEnd<measure && innerEnd>=repeatStart) endPasses.delete(innerEnd);
+          }
+          measure=repeatStart;
+          continue;
+        }
+      }
+      measure++;
+    }
+
+    let elapsed=0;
+    occurrences.forEach((occ,index)=>{
+      occ.index=index;
+      occ.cap=measureCapacity(occ.scoreMeasure);
+      occ.spq=secPerQuarterForMeasure(occ.scoreMeasure);
+      occ.startSec=elapsed;
+      occ.musicEndSec=elapsed+occ.cap*occ.spq;
+      occ.endSec=occ.musicEndSec+pauseSecondsForMeasure(occ.scoreMeasure);
+      elapsed=occ.endSec;
+    });
+    occurrences.totalSec=elapsed;
+    return occurrences;
+  }
+
+  function performanceNoteDurationSeconds(plan,occIndex,offsetQ,durationQ){
+    let remaining=Math.max(0,durationQ), sec=0, index=occIndex, offset=Math.max(0,offsetQ);
+    while(remaining>1e-9 && index<plan.length){
+      const occ=plan[index];
+      const avail=Math.max(0,occ.cap-offset);
+      const take=Math.min(avail,remaining);
+      sec += take*occ.spq;
+      remaining -= take;
+      if(remaining<=1e-9) break;
+      sec += pauseSecondsForMeasure(occ.scoreMeasure);
+      index++;
+      offset=0;
+    }
+    return sec;
+  }
+
+  function performancePositionAtSeconds(plan,sec){
+    const t=Math.max(0,sec);
+    for(const occ of plan){
+      if(t<occ.endSec-1e-9){
+        if(t>=occ.musicEndSec) return {measure:occ.scoreMeasure,offset:occ.cap};
+        return {measure:occ.scoreMeasure,offset:Math.max(0,(t-occ.startSec)/occ.spq)};
+      }
+    }
+    const last=plan[plan.length-1];
+    return last ? {measure:last.scoreMeasure,offset:last.cap} : {measure:0,offset:0};
+  }
+
+  function play(){
+    if(!notes.length){ statusEl.textContent='Add some notes first'; return; }
+    stopPlayback();
+    assignTimeline();
+    const ctx=ensureAudio();
+    if(!ctx){ statusEl.textContent='Audio unavailable in this browser'; return; }
+    const startAt=ctx.currentTime+.08;
+    const plan=buildPlaybackPlan();
+
+    plan.forEach((occ,occIndex)=>{
+      const measureNotes=notes.filter(n=>n.measure===occ.sourceMeasure);
+      for(const n of measureNotes){
+        if(n.rest || n.offset>=occ.cap-1e-9) continue;
+        const when=startAt+occ.startSec+n.offset*occ.spq;
+        const noteSec=performanceNoteDurationSeconds(plan,occIndex,n.offset,durQuarters(n.base,n.dotted));
+        const dur=Math.max(.12,noteSec*.92);
+        pianoVoice(effectiveMidi(n),when,dur,.95*dynamicGain(dynamicForMeasure(occ.scoreMeasure)));
+      }
+    });
+
+    isPlaying=true; statusEl.textContent='Playing…';
+    const end=startAt+plan.totalSec;
+    playTimer=setInterval(()=>{
+      if(ctx.currentTime>=end){ stopPlayback(); return; }
+      const pos=performancePositionAtSeconds(plan,ctx.currentTime-startAt);
+      drawPlayheadAt(pos.measure,pos.offset);
+    },30);
+  }
+
+  function drawPlayhead(beat){
+    const loc=locateQuarterPosition(beat);
+    drawPlayheadAt(loc.measure,loc.offset);
+  }
+
+  function drawPlayheadAt(measure,offset){
+    paperEl.querySelectorAll('.playhead').forEach(e=>e.remove());
+    if(measure<0) return;
+    const cap=measureCapacity(measure);
+    const sysIndex=Math.floor(measure/measuresPerSystem()), mIn=measure%measuresPerSystem();
+    const svg=paperEl.querySelector(`svg[data-system="${sysIndex}"]`);
+    if(!svg) return;
+    const systemWidth=currentSystemWidth();
+    const box=systemMeasureBoxes(sysIndex,measuresPerSystem(),systemWidth)[mIn];
+    const x=box.noteStart+(Math.max(0,Math.min(cap,offset))/cap)*box.noteWidth;
+    const ph=el('line',{x1:x,y1:TREBLE_TOP-8,x2:x,y2:BASS_BOTTOM+8,stroke:'#b13d2e','stroke-width':2});
+    ph.setAttribute('class','playhead');
+    svg.appendChild(ph);
+    svg.scrollIntoView({block:'nearest'});
+  }
+
+  /* ---------------- note-length palette (SVG icons) ---------------- */
+  const DURS = [
+    {base:4,    label:'Whole'},
+    {base:2,    label:'Half'},
+    {base:1,    label:'Quarter'},
+    {base:0.5,  label:'Eighth'},
+    {base:0.25, label:'16th'},
+    {base:0.125,label:'32nd'}
+  ];
+  function iconSVG(base){
+    // little upright note icon, ~ 30x40
+    const x=10, y=27, rx=6, ry=4.4, tilt=-20;
+    const hollow = base>=2, whole = base===4;
+    const stemX = x+rx-0.5, stemTop = y-24;
+    let s = `<svg width="30" height="40" viewBox="0 0 30 40"><g class="g">`;
+    if(!whole) s += `<line x1="${stemX}" y1="${y}" x2="${stemX}" y2="${stemTop}" stroke-width="1.7" stroke-linecap="round"/>`;
+    const flags = base===0.5?1:(base===0.25?2:(base===0.125?3:0));
+    for(let i=0;i<flags;i++){
+      const fy=stemTop+i*7;
+      s += `<path d="M ${stemX} ${fy} C ${stemX+9} ${fy+3}, ${stemX+11} ${fy+11}, ${stemX+4} ${fy+17} C ${stemX+10} ${fy+10}, ${stemX+8} ${fy+4}, ${stemX} ${fy+6} Z" stroke="none"/>`;
+    }
+    s += `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" transform="rotate(${tilt} ${x} ${y})" ${hollow?`fill="none" stroke-width="${whole?2.2:2}"`:''}/>`;
+    s += `</g></svg>`;
+    return s;
+  }
+  function buildPalette(){
+    durGrid.innerHTML='';
+    DURS.forEach(d=>{
+      const b=document.createElement('button');
+      b.className='dur'+(d.base===selectedBase?' active':'');
+      b.dataset.base=d.base;
+      b.innerHTML = iconSVG(d.base) + `<span>${d.label}</span>`;
+      b.addEventListener('click',()=>{
+        selectedBase=d.base;
+        setActiveTool('note',false);
+        [...durGrid.children].forEach(c=>c.classList.toggle('active', Number(c.dataset.base)===selectedBase));
+      });
+      durGrid.appendChild(b);
+    });
+  }
+
+
+  /* ---------------- wiring ---------------- */
+  selectTool.addEventListener('click',()=>setActiveTool('select'));
+  noteTool.addEventListener('click',()=>setActiveTool('note'));
+  dotToggle.addEventListener('click',()=>{ setActiveTool('note',false); dotted=!dotted; dotToggle.classList.toggle('on',dotted); dotToggle.setAttribute('aria-pressed',dotted); });
+  accidentalSelectEl.addEventListener('change',()=>{ setActiveTool('note',false); selectedAccidental=accidentalSelectEl.value; });
+  restToggle.addEventListener('click',()=>{
+    setActiveTool('note',false); restMode=!restMode; restToggle.classList.toggle('on',restMode); restToggle.setAttribute('aria-pressed',restMode);
+  });
+  bpmEl.addEventListener('pointerdown', armEdit);
+  bpmEl.addEventListener('keydown', armEdit);
+  bpmEl.addEventListener('input',()=>{ writeSelectedMeasureSetting(); if(!isPlaying) render(); });
+  bpmEl.addEventListener('change', commitEdit);
+  tempoBaseEl.addEventListener('change',()=>{ pushHistory(); writeSelectedMeasureSetting(); if(!isPlaying) render(); });
+  beatsEl.addEventListener('change',()=>{ pushHistory(); writeSelectedMeasureSetting(); if(!isPlaying) render(); });
+  beatUnitEl.addEventListener('change',()=>{ pushHistory(); writeSelectedMeasureSetting(); if(!isPlaying) render(); });
+  keySignatureEl.addEventListener('change',()=>{ pushHistory(); writeSelectedKey(); if(!isPlaying) render(); });
+  dynamicMarkEl.addEventListener('change',()=>{ pushHistory(); writeSelectedDynamic(); if(!isPlaying) render(); });
+  codaMarkEl.addEventListener('change',()=>{ pushHistory(); writeSelectedCoda(); if(!isPlaying) render(); });
+  pauseMarkEl.addEventListener('change',()=>{ pushHistory(); writeSelectedPause(); if(!isPlaying) render(); });
+  pauseBeatsEl.addEventListener('change',()=>{ pushHistory(); writeSelectedPause(); if(!isPlaying) render(); });
+  repeatMarkEl.addEventListener('change',()=>{ pushHistory(); writeSelectedRepeat(); if(!isPlaying) render(); });
+  repeatTimesEl.addEventListener('change',()=>{ pushHistory(); writeSelectedRepeat(); if(!isPlaying) render(); });
+  inheritBtn.addEventListener('click',()=>{
+    if(selectedMeasure===0) return;
+    pushHistory();
+    measureOverrides.delete(selectedMeasure);
+    dynamicOverrides.delete(selectedMeasure);
+    keyOverrides.delete(selectedMeasure);
+    syncMeasureControls();
+    if(!isPlaying) render();
+  });
+  document.getElementById('undoBtn').addEventListener('click', undo);
+  document.getElementById('redoBtn').addEventListener('click', redo);
+  document.getElementById('clearBtn').addEventListener('click',()=>{
+    const hasContent = notes.length || measureOverrides.size>1 || dynamicOverrides.size>1 ||
+      keyOverrides.size>1 || codaMarks.size || pauseMarks.size || repeatMarks.size || repeatCounts.size;
+    if(hasContent) pushHistory();
+    stopPlayback();
+    notes=[];
+    measureOverrides.clear(); measureOverrides.set(0,{ bpm:100, tempoBase:4, beats:4, beatUnit:4 });
+    dynamicOverrides.clear(); dynamicOverrides.set(0,'mf');
+    keyOverrides.clear(); keyOverrides.set(0,0);
+    codaMarks.clear(); pauseMarks.clear(); repeatMarks.clear(); repeatCounts.clear(); measureWidthWeights.clear();
+    selectedMeasure=0;
+    syncMeasureControls();
+    render();
+  });
+  document.getElementById('playBtn').addEventListener('click',play);
+  document.getElementById('stopBtn').addEventListener('click',stopPlayback);
+
+  function exportMeasureWidthEntries(){
+    // Capture the widths exactly as they are displayed on this device. Raw stored
+    // weights are normalized inside each workspace system (2-up on phone, 4-up on
+    // desktop), so convert them to one default-measure unit before PDF reflow.
+    const totalQ=assignTimeline();
+    const sourceMps=measuresPerSystem();
+    const usedMeasureCount=countMeasuresForQuarterLength(totalQ);
+    const visibleMeasureCount=Math.max(sourceMps,Math.ceil(usedMeasureCount/sourceMps)*sourceMps);
+    const entries=[];
+    for(let first=0;first<visibleMeasureCount;first+=sourceMps){
+      const weights=Array.from({length:sourceMps},(_,i)=>measureWidthWeight(first+i));
+      const sum=Math.max(.001,weights.reduce((a,b)=>a+b,0));
+      for(let i=0;i<sourceMps;i++){
+        // The units in every source system sum to sourceMps. Therefore two phone
+        // systems combine to exactly four default units on a printer line.
+        entries.push([first+i,weights[i]*sourceMps/sum]);
+      }
+    }
+    return entries;
+  }
+
+  function currentExportState(){
+    return {
+      notes:notes.map(n=>({...n})),
+      selectedBase,
+      dotted,
+      restMode,
+      selectedAccidental,
+      selectedMeasure,
+      measureOverrides:[...measureOverrides.entries()],
+      dynamicOverrides:[...dynamicOverrides.entries()],
+      keyOverrides:[...keyOverrides.entries()],
+      codaMarks:[...codaMarks.entries()],
+      pauseMarks:[...pauseMarks.entries()],
+      repeatMarks:[...repeatMarks.entries()],
+      repeatCounts:[...repeatCounts.entries()],
+      measureWidthWeights:exportMeasureWidthEntries()
+    };
+  }
+
+  function createPdfExportFrame(){
+    // Build the print layout in a separate, off-screen document. The score the
+    // user is editing is never re-rendered or resized.
+    const stateJSON=JSON.stringify(currentExportState()).replace(/</g,'\\u003c');
+    let html='<!DOCTYPE html>\n'+document.documentElement.outerHTML;
+
+    html=html.replace('<body>', '<body data-pdf-export-frame="1">');
+
+    // Insert the live score state immediately before the application script.
+    // Build the tag names in pieces so literal script tags inside this JavaScript
+    // cannot be mistaken for the real application-script boundary in outerHTML.
+    const openScript='<scr'+'ipt>';
+    const closeScript='</scr'+'ipt>';
+    const appScriptMarker=openScript+'\n(() => {';
+    const appScriptPos=html.indexOf(appScriptMarker);
+    const bootScript=openScript+'window.__BONNEVILLE_PRINT_STATE='+stateJSON+';'+closeScript+'\n';
+    if(appScriptPos<0){
+      statusEl.textContent='PDF export could not prepare the score';
+      return;
+    }
+    html=html.slice(0,appScriptPos)+bootScript+html.slice(appScriptPos);
+
+    const frame=document.createElement('iframe');
+    frame.setAttribute('aria-hidden','true');
+    frame.style.position='fixed';
+    frame.style.left='-10000px';
+    frame.style.top='0';
+    frame.style.width='816px';
+    frame.style.height='1056px';
+    frame.style.opacity='0';
+    frame.style.pointerEvents='none';
+    frame.style.border='0';
+    frame.srcdoc=html;
+    document.body.appendChild(frame);
+
+    const cleanup=()=>{ try{ frame.remove(); }catch(_){} };
+
+    const onMessage=e=>{
+      if(e.source===frame.contentWindow && e.data==='bonneville-pdf-finished'){
+        window.removeEventListener('message',onMessage);
+        cleanup();
+      }
+    };
+    window.addEventListener('message',onMessage);
+
+    // Safety cleanup if a browser never sends afterprint.
+    setTimeout(()=>{
+      window.removeEventListener('message',onMessage);
+      cleanup();
+    },120000);
+  }
+
+  document.getElementById('exportPdfBtn').addEventListener('click',createPdfExportFrame);
+
+  window.addEventListener('resize',()=>{ if(!isPlaying && !printLayout) render(); });
+  document.addEventListener('keydown',e=>{
+    if(e.target.tagName==='INPUT'||e.target.tagName==='SELECT') return;
+    const mod = e.ctrlKey||e.metaKey;
+    if(mod && (e.key==='z'||e.key==='Z') && !e.shiftKey){ e.preventDefault(); undo(); return; }
+    if(mod && ((e.key==='z'||e.key==='Z') && e.shiftKey || e.key==='y'||e.key==='Y')){ e.preventDefault(); redo(); return; }
+    if(e.code==='Space'){ e.preventDefault(); isPlaying?stopPlayback():play(); }
+    else if(e.key==='Backspace'){ e.preventDefault(); deleteLast(); }
+    else if(e.key==='Escape'){ e.preventDefault(); setActiveTool('select'); }
+    else if(['1','2','3','4','5','6'].includes(e.key)){ setActiveTool('note',false); selectedBase=[4,2,1,0.5,0.25,0.125][+e.key-1]; [...durGrid.children].forEach(c=>c.classList.toggle('active',Number(c.dataset.base)===selectedBase)); }
+    else if(e.key==='.'){ setActiveTool('note',false); dotted=!dotted; dotToggle.classList.toggle('on',dotted); }
+    else if(e.key==='r'||e.key==='R'){
+      setActiveTool('note',false); restMode=!restMode; restToggle.classList.toggle('on',restMode); restToggle.setAttribute('aria-pressed',restMode);
+    }
+  });
+
+  buildPalette();
+  syncMeasureControls();
+
+  if(IS_PDF_EXPORT_FRAME){
+    assignTimeline();
+    // Printer systems use the normal desktop four-measure ordering. The exported
+    // width units preserve the exact measure proportions from phone or desktop.
+    printMeasuresPerSystem=DESKTOP_MEASURES_PER_SYSTEM;
+    document.title='Bonneville and Brass Sheet Music';
+  }
+
+  render();
+
+  // Re-render once Bravura is ready so the clefs paint in the real font.
+  if(document.fonts && document.fonts.ready){
+    document.fonts.ready.then(()=>{
+      render();
+      if(IS_PDF_EXPORT_FRAME){
+        requestAnimationFrame(()=>setTimeout(()=>window.print(),80));
+      }
+    });
+  }else if(IS_PDF_EXPORT_FRAME){
+    requestAnimationFrame(()=>setTimeout(()=>window.print(),120));
+  }
+
+  if(IS_PDF_EXPORT_FRAME){
+    window.addEventListener('afterprint',()=>{
+      try{ parent.postMessage('bonneville-pdf-finished','*'); }catch(_){}
+    });
+  }
+})();
+</script>
+</body>
+</html>

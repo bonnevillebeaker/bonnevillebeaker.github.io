@@ -522,8 +522,11 @@
       <span id="reverbLabel">Reverb 15%</span>
       <input id="reverb" type="range" min="0" max="100" step="1" value="15" aria-label="Reverb">
     </label>
-    <button class="ctrl loop-status" id="loop" aria-pressed="false">Loop pedal</button>
-    <button class="ctrl" id="saveRecording" disabled>Save recording</button>
+    <button class="ctrl loop-status" id="loop" aria-pressed="false">Record new layer</button>
+    <button class="ctrl" id="importLoopLayer" type="button">Import loop layer &#10549;</button>
+    <input type="file" id="loopLayerFile" accept="audio/*" hidden>
+    <button class="ctrl" id="saveTopLayer" disabled>Save top track</button>
+    <button class="ctrl" id="saveRecording" disabled>Save combined loop</button>
     <button class="ctrl" id="pauseLoops" disabled>Pause loops</button>
     <button class="ctrl" id="clearLastLoop" disabled>Clear last loop</button>
     <button class="ctrl" id="clearLoops" disabled>Clear loops</button>
@@ -1326,6 +1329,9 @@
 
   // ---- recording-based loop pedal -----------------------------------
   const loopBtn = document.getElementById("loop");
+  const importLoopLayerBtn = document.getElementById("importLoopLayer");
+  const loopLayerFileInput = document.getElementById("loopLayerFile");
+  const saveTopLayerBtn = document.getElementById("saveTopLayer");
   const saveRecordingBtn = document.getElementById("saveRecording");
   const pauseLoopsBtn = document.getElementById("pauseLoops");
   const clearLastLoopBtn = document.getElementById("clearLastLoop");
@@ -1414,7 +1420,7 @@
     const contentDuration = Math.max(100, sourceEnd - sourceStart);
     const segmentDuration = Math.max(100, padStart + contentDuration + padEnd);
     const notes = [];
-    layer.notes.forEach(note => {
+    (layer.notes || []).forEach(note => {
       const clippedStart = Math.max(note.start, sourceStart);
       const clippedEnd = Math.min(note.end, sourceEnd);
       if (clippedEnd <= clippedStart) return;
@@ -1424,7 +1430,7 @@
         end: padStart + (clippedEnd - sourceStart)
       });
     });
-    return { notes, segmentDuration };
+    return { notes, segmentDuration, sourceStart, sourceEnd, contentDuration, padStart, padEnd };
   }
 
   function stopMasterPlayback() {
@@ -1454,6 +1460,7 @@
     pauseLoopsBtn.textContent = "Pause loops";
     clearLastLoopBtn.disabled = false;
     clearLoopsBtn.disabled = false;
+    saveTopLayerBtn.disabled = false;
     saveRecordingBtn.disabled = false;
     updateTimingEditor();
   }
@@ -1494,6 +1501,20 @@
     const profile = INSTRUMENTS[layer.settings.instrument] || INSTRUMENTS.warm;
     const bus = createAudioBus(ctx, mix, layer.settings.volume, layer.settings.reverb);
     const offsetSeconds = (layer.offset || 0) / 1000;
+    if (layer.audioBuffer) {
+      const imported = ctx.createBufferSource();
+      imported.buffer = layer.audioBuffer;
+      imported.connect(bus.input);
+      const startAt = offsetSeconds + edited.padStart / 1000;
+      const sourceOffset = edited.sourceStart / 1000;
+      const playDuration = Math.min(
+        edited.contentDuration / 1000,
+        Math.max(0.001, layer.audioBuffer.duration - sourceOffset)
+      );
+      if (startAt < newDurationMs / 1000 && playDuration > 0) {
+        imported.start(startAt, sourceOffset, playDuration);
+      }
+    }
     edited.notes.forEach(note => {
       const on = offsetSeconds + note.start / 1000;
       if (on >= newDurationMs / 1000) return;
@@ -1530,6 +1551,7 @@
       stopMasterPlayback();
       loopState = "recording";
       loopBtn.textContent = "Finish first loop";
+      saveTopLayerBtn.disabled = true;
       saveRecordingBtn.disabled = true;
       pauseLoopsBtn.disabled = true;
       clearLastLoopBtn.disabled = true;
@@ -1552,7 +1574,7 @@
       loopBtn.disabled = false;
       loopBtn.setAttribute("aria-pressed", "false");
       if (masterBuffer) startPlayback();
-      else { loopState = "idle"; loopBtn.textContent = "Loop pedal"; }
+      else { loopState = "idle"; loopBtn.textContent = "Record new layer"; }
       return;
     }
 
@@ -1613,13 +1635,14 @@
     recordingEvents = [];
     recordingSettings = null;
     recordingIsOverdub = false;
+    saveTopLayerBtn.disabled = true;
     saveRecordingBtn.disabled = true;
     pauseLoopsBtn.disabled = true;
     pauseLoopsBtn.textContent = "Pause loops";
     clearLastLoopBtn.disabled = true;
     clearLoopsBtn.disabled = true;
     loopBtn.disabled = false;
-    loopBtn.textContent = "Loop pedal";
+    loopBtn.textContent = "Record new layer";
     loopBtn.setAttribute("aria-pressed", "false");
     lockLayerControls(false);
     updateTimingEditor();
@@ -1714,11 +1737,69 @@
   });
   clearLastLoopBtn.addEventListener("click", clearLastLoop);
   clearLoopsBtn.addEventListener("click", clearAllLoops);
+  importLoopLayerBtn.addEventListener("click", () => {
+    if (loopState === "recording" || loopState === "overdubbing") return;
+    loopLayerFileInput.click();
+  });
+  loopLayerFileInput.addEventListener("change", async (event) => {
+    const file = event.target.files && event.target.files[0];
+    loopLayerFileInput.value = "";
+    if (!file) return;
+    const originalText = importLoopLayerBtn.textContent;
+    importLoopLayerBtn.disabled = true;
+    importLoopLayerBtn.textContent = "Importing…";
+    try {
+      const ctx = ensureCtx();
+      const data = await file.arrayBuffer();
+      const audioBuffer = await new Promise((resolve, reject) => {
+        const result = ctx.decodeAudioData(data, resolve, reject);
+        if (result && typeof result.then === "function") result.then(resolve, reject);
+      });
+      stopMasterPlayback();
+      const previousBuffer = masterBuffer;
+      const previousDuration = loopDuration;
+      const sourceDuration = Math.max(100, audioBuffer.duration * 1000);
+      const layer = {
+        id: ++layerCounter,
+        notes: [],
+        audioBuffer,
+        importedFileName: file.name,
+        offset: 0,
+        sourceDuration,
+        previousBuffer,
+        previousMasterDuration: previousDuration,
+        startAdjust: 0,
+        endAdjust: 0,
+        settings: snapshotLayerSettings()
+      };
+      const rendered = await renderCompositeBuffer(previousBuffer, previousDuration, layer);
+      masterBuffer = rendered.buffer;
+      loopDuration = rendered.duration;
+      layer.masterBuffer = masterBuffer;
+      layer.masterDurationAtCreation = loopDuration;
+      loopLayers.push(layer);
+      startPlayback();
+      importLoopLayerBtn.textContent = "Imported ✓";
+      setTimeout(() => { importLoopLayerBtn.textContent = originalText; }, 1500);
+    } catch (err) {
+      console.error("Loop-layer import failed:", err);
+      importLoopLayerBtn.textContent = "Import failed";
+      setTimeout(() => { importLoopLayerBtn.textContent = originalText; }, 1800);
+    } finally {
+      setTimeout(() => { importLoopLayerBtn.disabled = false; }, 50);
+    }
+  });
 
   // ---- save loop as a WAV recording ---------------------------------
   let downloadsDirectoryHandle = null;
   const recordingFolderName = "Bonneville & Brass - Synthesizer";
 
+  async function renderTopLayerToWavBlob() {
+    const layer = loopLayers[loopLayers.length - 1];
+    if (!layer) throw new Error("No loop layer exists.");
+    const rendered = await renderCompositeBuffer(null, 0, layer);
+    return audioBufferToWavBlob(rendered.buffer);
+  }
   async function renderLoopToWavBlob() {
     if (!masterBuffer || !loopDuration) throw new Error("No loop has been recorded yet.");
     return audioBufferToWavBlob(masterBuffer);
@@ -1767,10 +1848,10 @@
     return new Blob([arrayBuffer], { type: "audio/wav" });
   }
 
-  function recordingFilename() {
+  function recordingFilename(kind = "combined-loop") {
     const d = new Date();
     const pad = n => String(n).padStart(2, "0");
-    return `bonneville-and-brass-loop-stack-${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}-${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}.wav`;
+    return `bonneville-and-brass-${kind}-${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}-${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}.wav`;
   }
 
   async function saveBlobToDownloads(blob, filename) {
@@ -1810,6 +1891,29 @@
     return "download";
   }
 
+  saveTopLayerBtn.addEventListener("click", async () => {
+    if (!loopLayers.length || !loopDuration) return;
+    const originalText = saveTopLayerBtn.textContent;
+    saveTopLayerBtn.disabled = true;
+    saveTopLayerBtn.textContent = "Rendering…";
+    try {
+      const blob = await renderTopLayerToWavBlob();
+      saveTopLayerBtn.textContent = "Saving…";
+      const result = await saveBlobToDownloads(blob, recordingFilename("top-track"));
+      if (result === "cancelled") saveTopLayerBtn.textContent = originalText;
+      else {
+        saveTopLayerBtn.textContent = result === "folder" ? "Saved ✓" : "Downloaded ✓";
+        setTimeout(() => { saveTopLayerBtn.textContent = originalText; }, 1500);
+      }
+    } catch (err) {
+      console.error(err);
+      saveTopLayerBtn.textContent = "Save failed";
+      setTimeout(() => { saveTopLayerBtn.textContent = originalText; }, 1800);
+    } finally {
+      setTimeout(() => { saveTopLayerBtn.disabled = !(loopLayers.length && loopDuration); }, 50);
+    }
+  });
+
   saveRecordingBtn.addEventListener("click", async () => {
     if (!loopLayers.length || !loopDuration) return;
     const originalText = saveRecordingBtn.textContent;
@@ -1819,7 +1923,7 @@
     try {
       const blob = await renderLoopToWavBlob();
       saveRecordingBtn.textContent = "Saving…";
-      const result = await saveBlobToDownloads(blob, recordingFilename());
+      const result = await saveBlobToDownloads(blob, recordingFilename("combined-loop"));
       if (result === "cancelled") {
         saveRecordingBtn.textContent = originalText;
       } else if (result === "folder") {

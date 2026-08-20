@@ -9,57 +9,74 @@
   var mobileQuery = "(max-width: 820px)";
   var minPaneWidth = 360;
   var minPaneHeight = 300;
+
   var moduleDefinitions = {
     "understanding-mass-spectrometry": {
       templateId: "understanding-mass-spectrometry-pane-template",
       defaultWidth: 900,
       defaultHeight: 760
     },
+
     "smart-turtle": {
       templateId: "smart-turtle-pane-template",
       defaultWidth: 1040,
       defaultHeight: 720
     },
+
     "bonneville-brass": {
       templateId: "bonneville-brass-pane-template",
       defaultWidth: 1040,
       defaultHeight: 760
     },
+
     "bonneville-brass-editor": {
       templateId: "bonneville-brass-editor-pane-template",
       defaultWidth: 1180,
       defaultHeight: 760
     },
+
     "bonneville-brass-fourier": {
       templateId: "bonneville-brass-fourier-pane-template",
       defaultWidth: 1180,
       defaultHeight: 780
     },
+
     "bonneville-brass-sheet-music": {
       templateId: "bonneville-brass-sheet-music-pane-template",
       defaultWidth: 1200,
       defaultHeight: 820
     },
+
+    "bonneville-brass-ear-trainer": {
+      templateId: "bonneville-brass-ear-trainer-pane-template",
+      defaultWidth: 1200,
+      defaultHeight: 820
+    },
+
     "pubchem-periodic-table": {
       templateId: "pubchem-periodic-table-pane-template",
       defaultWidth: 1120,
       defaultHeight: 800
     },
+
     "pubchem-structure-sketcher": {
       templateId: "pubchem-structure-sketcher-pane-template",
       defaultWidth: 1120,
       defaultHeight: 800
     },
+
     "circuitjs": {
       templateId: "circuitjs-pane-template",
       defaultWidth: 1120,
       defaultHeight: 800
     },
+
     "stellarium": {
       templateId: "stellarium-pane-template",
       defaultWidth: 1120,
       defaultHeight: 800
     },
+
     "custom-url": {
       templateId: "custom-url-pane-template",
       defaultWidth: 960,

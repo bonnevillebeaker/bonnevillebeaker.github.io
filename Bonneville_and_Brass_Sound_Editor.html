@@ -127,8 +127,18 @@
   .clip .h::after{content:"";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
     width:2px;height:40%;background:rgba(255,255,255,.5);border-radius:2px;opacity:0;transition:opacity .1s}
   .clip:hover .h::after{opacity:1}
+  .clip .rate-badge{position:absolute;top:2px;right:12px;font-size:9.5px;line-height:1;
+    padding:2px 5px;border-radius:4px;background:rgba(0,0,0,.5);color:var(--brass-glow);
+    pointer-events:none;font-variant-numeric:tabular-nums;letter-spacing:.02em}
 
-  .playhead{position:absolute;top:0;bottom:0;width:2px;margin-left:var(--headW);
+  select.speed-sel{appearance:none;border:1px solid var(--line);background:var(--surface);color:var(--text);
+    padding:6px 26px 6px 10px;border-radius:8px;font-size:13px;cursor:pointer;
+    background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);
+    background-position:calc(100% - 14px) 52%,calc(100% - 9px) 52%;background-size:5px 5px,5px 5px;background-repeat:no-repeat}
+  select.speed-sel:hover{background-color:var(--surface-2);border-color:#7a5836}
+  select.speed-sel:disabled{opacity:.4;cursor:not-allowed}
+
+  .playhead{position:absolute;top:0;bottom:0;width:2px;
     background:var(--accent);z-index:7;pointer-events:none;box-shadow:0 0 6px rgba(201,162,75,.6)}
   .playhead::before{content:"";position:absolute;top:0;left:-5px;border:6px solid transparent;
     border-top-color:var(--accent);border-bottom:none}
@@ -140,6 +150,15 @@
 
   .hint{color:var(--muted);font-size:12px;margin-left:auto}
   a.link{color:var(--accent);text-decoration:none}
+  /* ---- drag & drop overlay ---- */
+  .dropzone{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;
+    background:rgba(22,13,8,.72);backdrop-filter:blur(2px)}
+  .dropzone.on{display:flex}
+  .dropzone .box{border:2px dashed var(--accent);border-radius:14px;padding:34px 46px;
+    background:rgba(61,37,24,.85);color:var(--brass-glow);font-size:17px;text-align:center;
+    box-shadow:0 0 40px rgba(201,162,75,.25)}
+  .dropzone .box small{display:block;margin-top:6px;color:var(--muted);font-size:12.5px}
+
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -173,6 +192,22 @@
 
   <div class="sep"></div>
   <div class="group zoom">
+    <span>Speed</span>
+    <select id="speed" class="speed-sel" title="Playback speed of the selected clip (tempo only; pitch is preserved)" disabled>
+      <option value="0.25">0.25×</option>
+      <option value="0.5">0.5×</option>
+      <option value="0.75">0.75×</option>
+      <option value="1" selected>1×</option>
+      <option value="1.25">1.25×</option>
+      <option value="1.5">1.5×</option>
+      <option value="2">2×</option>
+      <option value="3">3×</option>
+      <option value="4">4×</option>
+    </select>
+  </div>
+
+  <div class="sep"></div>
+  <div class="group zoom">
     <span>Zoom</span>
     <input type="range" id="zoom" min="24" max="480" value="120" step="1">
   </div>
@@ -197,6 +232,12 @@
     </div>
   </div>
 </main>
+
+<div class="dropzone" id="dropzone">
+  <div class="box">Drop audio to import
+    <small>Each file lands on its own track</small>
+  </div>
+</div>
 
 <script>
 "use strict";
@@ -265,7 +306,7 @@ function snapshot(){
     tracks: tracks.map(t=>({
       id:t.id,name:t.name,hue:t.hue,muted:t.muted,solo:t.solo,gain:t.gain,
       clips:t.clips.map(c=>({id:c.id,trackId:c.trackId,name:c.name,buffer:c.buffer,
-        peaks:c.peaks,start:c.start,offset:c.offset,duration:c.duration}))
+        peaks:c.peaks,start:c.start,offset:c.offset,duration:c.duration,rate:c.rate}))
     }))
   };
 }
@@ -281,7 +322,7 @@ function restore(s){
     const t={id:st.id,name:st.name,hue:st.hue,muted:st.muted,solo:st.solo,gain:st.gain,clips:[]};
     st.clips.forEach(sc=>{
       const c={id:sc.id,trackId:sc.trackId,name:sc.name,buffer:sc.buffer,peaks:sc.peaks,
-               start:sc.start,offset:sc.offset,duration:sc.duration};
+               start:sc.start,offset:sc.offset,duration:sc.duration,rate:sc.rate??1};
       clipsById[c.id]=c; t.clips.push(c);
     });
     return t;
@@ -322,7 +363,7 @@ function addClip(track, buffer, name, start){
   const clip = {
     id:nid(), trackId:track.id, name, buffer,
     peaks:computePeaks(buffer),
-    start:Math.max(0,start), offset:0, duration:buffer.duration
+    start:Math.max(0,start), offset:0, duration:buffer.duration, rate:1
   };
   clipsById[clip.id]=clip;
   track.clips.push(clip);
@@ -347,6 +388,90 @@ function computePeaks(buffer){
     min[i]=mn; max[i]=mx;
   }
   return {min,max,N};
+}
+
+/* ---------- pitch-preserving time-stretch (phase vocoder) ----------
+   Changing a clip's "rate" now alters tempo only. We resynthesize the
+   audio time-scaled by 1/rate while holding pitch constant, then play
+   that buffer back at native rate. Results are cached per (buffer,rate). */
+const stretchCache = new WeakMap();   // AudioBuffer -> Map(rateKey -> AudioBuffer)
+
+function fft(re, im, inverse){
+  const n=re.length;
+  for(let i=1,j=0;i<n;i++){
+    let bit=n>>1; for(;j&bit;bit>>=1) j^=bit; j^=bit;
+    if(i<j){ const tr=re[i];re[i]=re[j];re[j]=tr; const ti=im[i];im[i]=im[j];im[j]=ti; }
+  }
+  for(let len=2;len<=n;len<<=1){
+    const ang=(inverse?2:-2)*Math.PI/len, wr=Math.cos(ang), wi=Math.sin(ang);
+    for(let i=0;i<n;i+=len){
+      let cr=1, ci=0;
+      for(let k=0;k<(len>>1);k++){
+        const a=i+k, b=a+(len>>1);
+        const tr=cr*re[b]-ci*im[b], ti=cr*im[b]+ci*re[b];
+        re[b]=re[a]-tr; im[b]=im[a]-ti; re[a]+=tr; im[a]+=ti;
+        const ncr=cr*wr-ci*wi; ci=cr*wi+ci*wr; cr=ncr;
+      }
+    }
+  }
+  if(inverse){ for(let i=0;i<n;i++){ re[i]/=n; im[i]/=n; } }
+}
+
+function stretchChannel(input, alpha, N, ov){
+  const Hs=Math.round(N/ov), Ha=Math.max(1,Math.round(Hs/alpha)), L=input.length, half=N>>1;
+  const win=new Float32Array(N);
+  for(let i=0;i<N;i++) win[i]=0.5-0.5*Math.cos(2*Math.PI*i/(N-1));
+  const numFrames=Math.max(1,Math.floor((L-N)/Ha)+1);
+  const outLen=(numFrames-1)*Hs+N;
+  const out=new Float32Array(outLen), norm=new Float32Array(outLen);
+  const re=new Float32Array(N), im=new Float32Array(N);
+  const lastPhase=new Float32Array(half+1), sumPhase=new Float32Array(half+1), expct=new Float32Array(half+1);
+  const twoPi=2*Math.PI;
+  for(let k=0;k<=half;k++) expct[k]=twoPi*k*Ha/N;
+  for(let m=0;m<numFrames;m++){
+    const inPos=m*Ha;
+    for(let i=0;i<N;i++){ const s=input[inPos+i]||0; re[i]=s*win[i]; im[i]=0; }
+    fft(re,im,false);
+    for(let k=0;k<=half;k++){
+      const mag=Math.hypot(re[k],im[k]), phase=Math.atan2(im[k],re[k]);
+      let delta=phase-lastPhase[k]-expct[k]; lastPhase[k]=phase;
+      delta=delta-twoPi*Math.round(delta/twoPi);
+      const trueFreq=expct[k]+delta;
+      if(m===0) sumPhase[k]=phase; else sumPhase[k]+=trueFreq*Hs/Ha;
+      const sp=sumPhase[k]; re[k]=mag*Math.cos(sp); im[k]=mag*Math.sin(sp);
+    }
+    for(let k=half+1;k<N;k++){ re[k]=re[N-k]; im[k]=-im[N-k]; }
+    fft(re,im,true);
+    const outPos=m*Hs;
+    for(let i=0;i<N;i++){ out[outPos+i]+=re[i]*win[i]; norm[outPos+i]+=win[i]*win[i]; }
+  }
+  for(let i=0;i<outLen;i++){ if(norm[i]>1e-8) out[i]/=norm[i]; }
+  return out;
+}
+
+function timeStretch(input, alpha){
+  const L=input.length;
+  if(L<1024){   // too short for the vocoder window: linear resample (sub-25ms, pitch drift negligible)
+    const out=new Float32Array(Math.max(1,Math.round(L*alpha)));
+    for(let i=0;i<out.length;i++){ const t=i/alpha, i0=Math.floor(t), f=t-i0; out[i]=(input[i0]||0)*(1-f)+(input[i0+1]||0)*f; }
+    return out;
+  }
+  let N=2048; while(N>256 && N*2>L) N>>=1;
+  return stretchChannel(input, alpha, N, 4);
+}
+
+function getStretched(buffer, rate){
+  if(Math.abs(rate-1)<1e-6) return buffer;
+  let byRate=stretchCache.get(buffer);
+  if(!byRate){ byRate=new Map(); stretchCache.set(buffer,byRate); }
+  const key=rate.toFixed(4);
+  if(byRate.has(key)) return byRate.get(key);
+  const alpha=1/rate, nCh=buffer.numberOfChannels, chans=[]; let outLen=0;
+  for(let c=0;c<nCh;c++){ const y=timeStretch(buffer.getChannelData(c), alpha); chans.push(y); outLen=Math.max(outLen,y.length); }
+  const outBuf=ac().createBuffer(nCh, outLen, buffer.sampleRate);
+  for(let c=0;c<nCh;c++) outBuf.getChannelData(c).set(chans[c]);
+  byRate.set(key,outBuf);
+  return outBuf;
 }
 
 /* ---------- layout math ---------- */
@@ -410,11 +535,34 @@ function render(){
   positionPlayhead();
   emptyEl.style.display = tracks.some(t=>t.clips.length) ? "none":"flex";
   updateClock();
+  syncSpeedUI();
 }
 
 function markSel(){
   document.querySelectorAll(".track").forEach(r=>r.classList.toggle("sel",r.dataset.track===selectedTrackId));
   document.querySelectorAll(".clip").forEach(c=>c.classList.toggle("sel",c.dataset.clip===selectedClipId));
+  syncSpeedUI();
+}
+
+/* reflect the selected clip's speed in the toolbar control */
+function syncSpeedUI(){
+  const sel=$("#speed"); if(!sel) return;
+  const c=selectedClipId?clipsById[selectedClipId]:null;
+  sel.disabled=!c;
+  sel.value = c ? String(c.rate) : "1";
+}
+
+/* change a clip's playback speed, keeping its buffer region fixed
+   (so faster = shorter on the timeline, and pitch shifts with it) */
+function setClipRate(clip, r){
+  r=Math.max(0.25,Math.min(4,r));
+  if(!clip || Math.abs(r-clip.rate)<1e-6) return;
+  stopIfPlaying();
+  pushHistory();
+  clip.duration = clip.duration * clip.rate / r;   // hold buffer length constant
+  clip.rate = r;
+  if(r!==1){ try{ getStretched(clip.buffer, r); }catch(e){ console.error(e); } }  // warm cache
+  render();
 }
 
 function buildClip(clip){
@@ -430,6 +578,10 @@ function buildClip(clip){
   const hl=document.createElement("div"); hl.className="h l";
   const hr=document.createElement("div"); hr.className="h r";
   el.append(cv,cap,hl,hr);
+  if(Math.abs(clip.rate-1)>1e-6){
+    const badge=document.createElement("div"); badge.className="rate-badge";
+    badge.textContent=(+clip.rate.toFixed(2))+"×"; el.appendChild(badge);
+  }
   el.addEventListener("pointerdown",e=>onClipPointerDown(e,clip));
   clip.el=el;
   requestAnimationFrame(()=>drawClip(clip));
@@ -446,7 +598,7 @@ function drawClip(clip){
   g.clearRect(0,0,w,h);
   const t=trackById(clip.trackId);
   const p=clip.peaks, bufDur=clip.buffer.duration;
-  const f0=clip.offset/bufDur, f1=(clip.offset+clip.duration)/bufDur;
+  const f0=clip.offset/bufDur, f1=(clip.offset+clip.duration*clip.rate)/bufDur;
   const mid=h/2, amp=h*0.44;
   g.fillStyle="rgba(255,255,255,.16)"; g.fillRect(0,mid,w,1);
   g.strokeStyle=shade(t.hue,42); g.lineWidth=1; g.beginPath();
@@ -498,10 +650,10 @@ function splitAtPlayhead(){
   if(playhead<=c.start+0.001 || playhead>=c.start+c.duration-0.001) return; // playhead not inside
   pushHistory();
   const t=trackById(c.trackId);
-  const cut=playhead-c.start;                        // seconds into clip
+  const cut=playhead-c.start;                        // timeline seconds into clip
   const right={
     id:nid(),trackId:t.id,name:c.name,buffer:c.buffer,peaks:c.peaks,
-    start:c.start+cut, offset:c.offset+cut, duration:c.duration-cut
+    start:c.start+cut, offset:c.offset+cut*c.rate, duration:c.duration-cut, rate:c.rate
   };
   c.duration=cut;                                    // left shrinks
   clipsById[right.id]=right;
@@ -545,17 +697,18 @@ function onDragMove(e){
       drawClip(c); selectedTrackId=to.id; markSel();
     }
   } else if(drag.mode==="trim-l"){
-    let d=dSec;
-    d=Math.max(d,-drag.oOffset);                          // can't expand before buffer 0
+    const rate=c.rate;
+    let d=dSec;                                           // d is in timeline seconds
+    d=Math.max(d,-drag.oOffset/rate);                     // buffer offset can't go below 0
     d=Math.min(d, drag.oDur-0.02);                        // keep some length
     if(drag.oStart+d<0) d=-drag.oStart;                   // not before timeline 0
-    c.start=drag.oStart+d; c.offset=drag.oOffset+d; c.duration=drag.oDur-d;
+    c.start=drag.oStart+d; c.offset=drag.oOffset+d*rate; c.duration=drag.oDur-d;
     c.el.style.left=(c.start*pps)+"px"; c.el.style.width=Math.max(2,c.duration*pps)+"px";
     drawClip(c);
   } else if(drag.mode==="trim-r"){
     let nd=drag.oDur+dSec;
     nd=Math.max(0.02,nd);
-    nd=Math.min(nd, bufDur-c.offset);                     // can't exceed buffer end
+    nd=Math.min(nd, (bufDur-c.offset)/c.rate);            // buffer consumed can't exceed buffer end
     c.duration=nd; c.el.style.width=Math.max(2,nd*pps)+"px";
     drawClip(c);
   }
@@ -604,11 +757,12 @@ function play(){
     for(const c of t.clips){
       const clipEnd=c.start+c.duration;
       if(clipEnd<=playhead) continue;
-      let when, off, dur;
-      if(c.start>=playhead){ when=ctxStartTime+(c.start-playhead); off=c.offset; dur=c.duration; }
-      else { const into=playhead-c.start; when=ctxStartTime; off=c.offset+into; dur=c.duration-into; }
-      const src=ctx.createBufferSource(); src.buffer=c.buffer;
-      src.connect(g); src.start(when,off,Math.max(0.001,dur));
+      const pb=getStretched(c.buffer,c.rate), scale=pb.duration/c.buffer.duration;
+      let when, off, outLen;
+      if(c.start>=playhead){ when=ctxStartTime+(c.start-playhead); off=c.offset*scale; outLen=c.duration; }
+      else { const into=playhead-c.start; when=ctxStartTime; off=c.offset*scale+into; outLen=c.duration-into; }
+      const src=ctx.createBufferSource(); src.buffer=pb; src.playbackRate.value=1;
+      src.connect(g); src.start(when,off); src.stop(when+Math.max(0.001,outLen));
       liveSources.push(src);
     }
   }
@@ -653,8 +807,9 @@ async function exportWav(){
     const audible=!t.muted && (!anySolo||t.solo);
     g.gain.value=audible?t.gain:0; g.connect(off.destination);
     for(const c of t.clips){
-      const src=off.createBufferSource(); src.buffer=c.buffer; src.connect(g);
-      src.start(c.start, c.offset, c.duration);
+      const pb=getStretched(c.buffer,c.rate), scale=pb.duration/c.buffer.duration;
+      const src=off.createBufferSource(); src.buffer=pb; src.playbackRate.value=1; src.connect(g);
+      src.start(c.start, c.offset*scale); src.stop(c.start + c.duration);
     }
   }
   const btn=$("#export"); const old=btn.textContent; btn.textContent="Rendering…"; btn.disabled=true;
@@ -710,6 +865,11 @@ $("#stop").addEventListener("click",stop);
 $("#split").addEventListener("click",splitAtPlayhead);
 $("#del").addEventListener("click",()=>selectedClipId&&deleteClip(selectedClipId));
 $("#export").addEventListener("click",exportWav);
+$("#speed").addEventListener("change",e=>{
+  const c = selectedClipId ? clipsById[selectedClipId] : null;
+  if(c) setClipRate(c, parseFloat(e.target.value));
+  else syncSpeedUI();
+});
 $("#zoom").addEventListener("input",e=>{
   const focusSec=playhead;
   pps=parseFloat(e.target.value);
@@ -720,8 +880,32 @@ $("#zoom").addEventListener("input",e=>{
 });
 
 /* drag & drop files anywhere */
-document.addEventListener("dragover",e=>{e.preventDefault();});
-document.addEventListener("drop",e=>{e.preventDefault(); if(e.dataTransfer.files.length) importFiles(e.dataTransfer.files);});
+const dropzoneEl = $("#dropzone");
+let dragDepth = 0;
+function dragHasFiles(e){
+  const t = e.dataTransfer && e.dataTransfer.types;
+  return t && Array.prototype.indexOf.call(t, "Files") !== -1;
+}
+window.addEventListener("dragenter",e=>{
+  if(!dragHasFiles(e)) return;
+  e.preventDefault();
+  dragDepth++; dropzoneEl.classList.add("on");
+});
+window.addEventListener("dragover",e=>{
+  if(!dragHasFiles(e)) return;
+  e.preventDefault();
+  e.dataTransfer.dropEffect = "copy";   // <- shows the copy cursor instead of "no drop"
+});
+window.addEventListener("dragleave",e=>{
+  if(!dragHasFiles(e)) return;
+  dragDepth = Math.max(0, dragDepth-1);
+  if(dragDepth===0) dropzoneEl.classList.remove("on");
+});
+window.addEventListener("drop",e=>{
+  e.preventDefault();
+  dragDepth = 0; dropzoneEl.classList.remove("on");
+  if(e.dataTransfer.files && e.dataTransfer.files.length) importFiles(e.dataTransfer.files);
+});
 
 /* keyboard */
 document.addEventListener("keydown",e=>{

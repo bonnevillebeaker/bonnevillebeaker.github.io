@@ -113,11 +113,15 @@
 
   .clip{
     position:absolute;top:8px;height:calc(var(--trackH) - 18px);
-    border-radius:7px;overflow:hidden;cursor:grab;
+    border-radius:7px;overflow:hidden;cursor:default;
     box-shadow:0 1px 0 rgba(255,255,255,.05) inset,0 2px 6px rgba(0,0,0,.35);
     border:1px solid rgba(0,0,0,.35);user-select:none;
   }
   .clip.sel{outline:2px solid var(--accent);outline-offset:-1px;z-index:3}
+  .peak-selection{position:absolute;top:0;bottom:0;z-index:5;cursor:grab;
+    background:rgba(242,212,126,.58);border:2px solid var(--brass-glow);border-radius:5px;
+    box-shadow:0 0 12px rgba(242,212,126,.5);mix-blend-mode:screen}
+  .peak-selection.dragging{cursor:grabbing;background:rgba(255,224,104,.72)}
   .clip .cap{position:absolute;top:0;left:0;right:0;height:16px;padding:1px 7px;font-size:10.5px;
     color:rgba(255,255,255,.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none;
     background:linear-gradient(rgba(0,0,0,.28),transparent)}
@@ -127,6 +131,9 @@
   .clip .h::after{content:"";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
     width:2px;height:40%;background:rgba(255,255,255,.5);border-radius:2px;opacity:0;transition:opacity .1s}
   .clip:hover .h::after{opacity:1}
+  .region-band{position:absolute;top:6px;bottom:6px;background:rgba(201,162,75,.22);
+    border:1px solid var(--accent);border-radius:5px;pointer-events:none;z-index:4;
+    box-shadow:0 0 0 1px rgba(0,0,0,.3) inset}
   .clip .rate-badge{position:absolute;top:2px;right:12px;font-size:9.5px;line-height:1;
     padding:2px 5px;border-radius:4px;background:rgba(0,0,0,.5);color:var(--brass-glow);
     pointer-events:none;font-variant-numeric:tabular-nums;letter-spacing:.02em}
@@ -215,7 +222,7 @@
   <div class="sep"></div>
   <button class="btn" id="export" title="Render the mix to a .wav file">⭳ Export WAV</button>
 
-  <div class="hint">Drag clip edges to trim · drag body to move / restack</div>
+  <div class="hint">Ctrl-click a waveform peak to select it in yellow · drag the yellow region within its clip · Alt-drag to slice a region</div>
 </header>
 
 <main>
@@ -251,6 +258,7 @@ let pps = 120;              // pixels per second
 let playhead = 0;           // seconds
 let selectedTrackId = null;
 let selectedClipId = null;
+let selectedPeak = null; // {clipId, srcStart, duration, destStart}; times are relative to clip timeline
 let uid = 1;
 const nid = () => "id"+(uid++);
 
@@ -295,6 +303,7 @@ function removeTrack(id){
   tracks=tracks.filter(x=>x.id!==id);
   if(selectedTrackId===id) selectedTrackId = tracks.length?tracks[0].id:null;
   if(selectedClipId && !clipsById[selectedClipId]) selectedClipId=null;
+  if(selectedPeak && !clipsById[selectedPeak.clipId]) selectedPeak=null;
   stopIfPlaying();
   render();
 }
@@ -302,7 +311,7 @@ function removeTrack(id){
 /* ---------- undo ---------- */
 function snapshot(){
   return {
-    selectedTrackId, selectedClipId, playhead,
+    selectedTrackId, selectedClipId, selectedPeak:selectedPeak?{...selectedPeak}:null, playhead,
     tracks: tracks.map(t=>({
       id:t.id,name:t.name,hue:t.hue,muted:t.muted,solo:t.solo,gain:t.gain,
       clips:t.clips.map(c=>({id:c.id,trackId:c.trackId,name:c.name,buffer:c.buffer,
@@ -327,7 +336,7 @@ function restore(s){
     });
     return t;
   });
-  selectedTrackId=s.selectedTrackId; selectedClipId=s.selectedClipId; playhead=s.playhead;
+  selectedTrackId=s.selectedTrackId; selectedClipId=s.selectedClipId; selectedPeak=s.selectedPeak?{...s.selectedPeak}:null; playhead=s.playhead;
   render();
 }
 function undo(){
@@ -582,6 +591,14 @@ function buildClip(clip){
     const badge=document.createElement("div"); badge.className="rate-badge";
     badge.textContent=(+clip.rate.toFixed(2))+"×"; el.appendChild(badge);
   }
+  if(selectedPeak && selectedPeak.clipId===clip.id){
+    const peakEl=document.createElement("div"); peakEl.className="peak-selection";
+    peakEl.style.left=(selectedPeak.destStart/clip.duration*100)+"%";
+    peakEl.style.width=(selectedPeak.duration/clip.duration*100)+"%";
+    peakEl.title="Drag this detected peak within the clip";
+    peakEl.addEventListener("pointerdown",e=>startPeakDrag(e,clip,peakEl));
+    el.appendChild(peakEl);
+  }
   el.addEventListener("pointerdown",e=>onClipPointerDown(e,clip));
   clip.el=el;
   requestAnimationFrame(()=>drawClip(clip));
@@ -602,8 +619,21 @@ function drawClip(clip){
   const mid=h/2, amp=h*0.44;
   g.fillStyle="rgba(255,255,255,.16)"; g.fillRect(0,mid,w,1);
   g.strokeStyle=shade(t.hue,42); g.lineWidth=1; g.beginPath();
+  const moved=(selectedPeak && selectedPeak.clipId===clip.id)?selectedPeak:null;
   for(let x=0;x<w;x++){
-    const fr=f0+(x/w)*(f1-f0); const idx=Math.min(p.N-1,Math.floor(fr*p.N));
+    const local=(x/w)*clip.duration;
+    let sourceLocal=local;
+    let silent=false;
+    if(moved){
+      const inDestination=local>=moved.destStart && local<moved.destStart+moved.duration;
+      const inOriginal=local>=moved.srcStart && local<moved.srcStart+moved.duration;
+      if(inDestination) sourceLocal=moved.srcStart+(local-moved.destStart);
+      else if(inOriginal) silent=true;
+    }
+    if(silent) continue;
+    const bufferSec=clip.offset+sourceLocal*clip.rate;
+    const fr=Math.max(0,Math.min(1,bufferSec/bufDur));
+    const idx=Math.min(p.N-1,Math.floor(fr*p.N));
     const yTop=mid-p.max[idx]*amp, yBot=mid-p.min[idx]*amp;
     g.moveTo(x+.5,yTop); g.lineTo(x+.5,Math.max(yBot,yTop+1));
   }
@@ -642,35 +672,147 @@ function deleteClip(id){
   const t=trackById(c.trackId); t.clips=t.clips.filter(x=>x.id!==id);
   delete clipsById[id];
   if(selectedClipId===id) selectedClipId=null;
+  if(selectedPeak && selectedPeak.clipId===id) selectedPeak=null;
   render();
+}
+
+/* split a clip at an absolute timeline position; returns the new right piece (or null) */
+function splitClipAt(clip, at){
+  if(at<=clip.start+1e-4 || at>=clip.start+clip.duration-1e-4) return null;
+  const t=trackById(clip.trackId);
+  const cut=at-clip.start;                            // timeline seconds into clip
+  const right={
+    id:nid(),trackId:t.id,name:clip.name,buffer:clip.buffer,peaks:clip.peaks,
+    start:clip.start+cut, offset:clip.offset+cut*clip.rate, duration:clip.duration-cut, rate:clip.rate
+  };
+  clip.duration=cut;                                 // left shrinks
+  clipsById[right.id]=right;
+  const idx=t.clips.indexOf(clip); t.clips.splice(idx+1,0,right);
+  return right;
 }
 
 function splitAtPlayhead(){
   const c=clipsById[selectedClipId]; if(!c) return;
-  if(playhead<=c.start+0.001 || playhead>=c.start+c.duration-0.001) return; // playhead not inside
+  if(playhead<=c.start+1e-4 || playhead>=c.start+c.duration-1e-4) return; // playhead not inside
   pushHistory();
-  const t=trackById(c.trackId);
-  const cut=playhead-c.start;                        // timeline seconds into clip
-  const right={
-    id:nid(),trackId:t.id,name:c.name,buffer:c.buffer,peaks:c.peaks,
-    start:c.start+cut, offset:c.offset+cut*c.rate, duration:c.duration-cut, rate:c.rate
-  };
-  c.duration=cut;                                    // left shrinks
-  clipsById[right.id]=right;
-  const idx=t.clips.indexOf(c); t.clips.splice(idx+1,0,right);
+  const right=splitClipAt(c, playhead);
   selectedClipId=right.id;
   render();
+}
+
+/* Double-click near a visible waveform spike to isolate that individual sound peak.
+   The search snaps to the strongest nearby peak, then expands to quiet valleys on both sides. */
+function selectWavePeak(e, clip){
+  if(e.button!==0 || e.target.classList.contains("h") || e.target.closest(".peak-selection")) return;
+  e.preventDefault(); e.stopPropagation(); stopIfPlaying();
+  const rect=clip.el.getBoundingClientRect();
+  const x=Math.max(0,Math.min(rect.width,e.clientX-rect.left));
+  const clickedTimeline=(x/Math.max(1,rect.width))*clip.duration;
+  const p=clip.peaks, bufDur=clip.buffer.duration;
+  const clickedBuffer=clip.offset+clickedTimeline*clip.rate;
+  const centerIdx=Math.max(0,Math.min(p.N-1,Math.round((clickedBuffer/bufDur)*p.N)));
+  const amp=i=>Math.max(Math.abs(p.min[i]||0),Math.abs(p.max[i]||0));
+  const searchN=Math.max(2,Math.round((0.12/bufDur)*p.N));
+  let peakIdx=centerIdx, peakAmp=amp(centerIdx);
+  for(let i=Math.max(0,centerIdx-searchN);i<=Math.min(p.N-1,centerIdx+searchN);i++){ const a=amp(i); if(a>peakAmp){peakAmp=a;peakIdx=i;} }
+  const maxSideN=Math.max(3,Math.round((0.22/bufDur)*p.N));
+  const quiet=Math.max(0.025,peakAmp*0.18), quietRun=Math.max(2,Math.round((0.018/bufDur)*p.N));
+  function valley(dir){ let q=0,b=peakIdx; for(let n=1;n<=maxSideN;n++){const i=peakIdx+dir*n;if(i<=0||i>=p.N-1)break;b=i;if(amp(i)<=quiet){q++;if(q>=quietRun)return i-dir*(quietRun-1);}else q=0;}return b;}
+  let li=valley(-1),ri=valley(1); if(li>ri){const q=li;li=ri;ri=q;}
+  let a=(li/p.N*bufDur-clip.offset)/clip.rate, b=(((ri+1)/p.N)*bufDur-clip.offset)/clip.rate;
+  a=Math.max(0,a); b=Math.min(clip.duration,b);
+  if(b-a<0.035){const mid=clickedTimeline;a=Math.max(0,mid-0.025);b=Math.min(clip.duration,mid+0.025);}
+  selectedPeak={clipId:clip.id,srcStart:a,duration:b-a,destStart:a};
+  selectedClipId=clip.id; selectedTrackId=clip.trackId; render();
+}
+function startPeakDrag(e,clip,peakEl){
+  if(e.button!==0 || !selectedPeak || selectedPeak.clipId!==clip.id) return;
+  e.preventDefault();e.stopPropagation();stopIfPlaying();
+  const startX=e.clientX, original=selectedPeak.destStart; let pushed=false; peakEl.classList.add("dragging");
+  const move=ev=>{
+    if(!pushed){pushHistory();pushed=true;}
+    const d=(ev.clientX-startX)/pps;
+    selectedPeak.destStart=Math.max(0,Math.min(clip.duration-selectedPeak.duration,original+d));
+    peakEl.style.left=(selectedPeak.destStart/clip.duration*100)+"%";
+    drawClip(clip);
+  };
+  const up=()=>{window.removeEventListener("pointermove",move);peakEl.classList.remove("dragging");drawClip(clip);};
+  window.addEventListener("pointermove",move);window.addEventListener("pointerup",up,{once:true});
+}
+
+/* carve [aSec,bSec] (absolute timeline) out of a clip into its own draggable piece */
+function carveRegion(clip, aSec, bSec){
+  const start=clip.start, end=clip.start+clip.duration;
+  aSec=Math.max(start,Math.min(aSec,end));
+  bSec=Math.max(start,Math.min(bSec,end));
+  if(bSec-aSec<0.01){ selectClip(clip.id); return null; }
+  pushHistory();
+  splitClipAt(clip, bSec);            // clip -> [start,b] , (right piece [b,end])
+  const midPart=splitClipAt(clip, aSec); // clip -> [start,a] , midPart [a,b]
+  const mid=midPart||clip;            // if a≈start there was no split; the region is the clip itself
+  selectedClipId=mid.id; selectedTrackId=mid.trackId;
+  render();
+  return mid;
+}
+
+/* ⌥-drag across a clip to paint a region, which is sliced out on release */
+function startRegionPaint(e, clip){
+  e.stopPropagation(); e.preventDefault();
+  stopIfPlaying();
+  selectClip(clip.id);
+  const lane=clip.el.parentElement;
+  const laneRect=lane.getBoundingClientRect();
+  const clipL=clip.start*pps, clipR=(clip.start+clip.duration)*pps;
+  const x0=e.clientX;
+  const band=document.createElement("div"); band.className="region-band"; lane.appendChild(band);
+  let lo=0, hi=0;
+  const update=(clientX)=>{
+    const xa=x0-laneRect.left, xb=clientX-laneRect.left;
+    lo=Math.max(clipL, Math.min(xa,xb));
+    hi=Math.min(clipR, Math.max(xa,xb));
+    band.style.left=lo+"px"; band.style.width=Math.max(0,hi-lo)+"px";
+  };
+  update(e.clientX);
+  const move=ev=>update(ev.clientX);
+  const done=()=>{
+    window.removeEventListener("pointermove",move);
+    band.remove();
+    if(hi-lo>=3) carveRegion(clip, lo/pps, hi/pps);   // lane-x / pps == absolute timeline seconds
+    else selectClip(clip.id);
+  };
+  window.addEventListener("pointermove",move);
+  window.addEventListener("pointerup",done,{once:true});
+}
+
+/* fine horizontal nudge of the selected clip (arrow keys); coalesces undo while held */
+let nudgeState={id:null,t:0};
+function nudgeClip(id, dSec){
+  const c=clipsById[id]; if(!c) return;
+  const now=performance.now();
+  if(!(nudgeState.id===id && now-nudgeState.t<1200)) pushHistory();
+  nudgeState={id, t:now};
+  stopIfPlaying();
+  c.start=Math.max(0, c.start+dSec);
+  if(c.el) c.el.style.left=(c.start*pps)+"px";
+  growContent(); buildRuler(contentSeconds());
 }
 
 /* ---------- pointer: clip move / trim ---------- */
 let drag=null;
 function onClipPointerDown(e,clip){
   if(e.button!==0) return;
+  const edge = e.target.classList.contains("h") ? (e.target.classList.contains("l")?"l":"r") : null;
+  if((e.ctrlKey||e.metaKey) && !edge && !e.target.closest(".peak-selection")){
+    e.preventDefault();
+    e.stopPropagation();
+    selectWavePeak(e,clip);
+    return;
+  }
+  if(e.altKey && !edge){ startRegionPaint(e, clip); return; }  // Alt/Option-drag = slice a region
   e.stopPropagation();
   stopIfPlaying();
   selectClip(clip.id);
-  const edge = e.target.classList.contains("h") ? (e.target.classList.contains("l")?"l":"r") : null;
-  drag={clip, mode: edge?("trim-"+edge):"move", pushed:false,
+  drag={clip, mode: edge?("trim-"+edge):"move", pushed:false, activated:false,
         startX:e.clientX, startY:e.clientY,
         oStart:clip.start, oOffset:clip.offset, oDur:clip.duration};
   clip.el.style.cursor = edge?"ew-resize":"grabbing";
@@ -680,8 +822,14 @@ function onClipPointerDown(e,clip){
 }
 function onDragMove(e){
   if(!drag) return;
+  const dx=e.clientX-drag.startX, dy=e.clientY-drag.startY;
+  // Do not turn tiny hand movement during a double-click into a clip drag.
+  if(!drag.activated){
+    if(Math.hypot(dx,dy)<7) return;
+    drag.activated=true;
+  }
   if(!drag.pushed){ pushHistory(); drag.pushed=true; }   // capture pre-drag state once
-  const c=drag.clip, dSec=(e.clientX-drag.startX)/pps, bufDur=c.buffer.duration;
+  const c=drag.clip, dSec=dx/pps, bufDur=c.buffer.duration;
   if(drag.mode==="move"){
     let ns=Math.max(0,drag.oStart+dSec);
     ns=snap(ns,c);
@@ -717,7 +865,7 @@ function onDragMove(e){
 }
 function onDragEnd(){
   window.removeEventListener("pointermove",onDragMove);
-  if(drag){ drag.clip.el.style.pointerEvents=""; drag.clip.el.style.cursor="grab"; }
+  if(drag){ drag.clip.el.style.pointerEvents=""; drag.clip.el.style.cursor="default"; }
   drag=null;
   buildRuler(contentSeconds());
 }
@@ -734,10 +882,26 @@ function onLanePointerDown(e){
   if(e.target.closest(".clip")) return;
   const r=e.currentTarget.getBoundingClientRect();
   selectedTrackId=e.currentTarget.dataset.track;
-  selectedClipId=null; markSel();
+  selectedClipId=null; selectedPeak=null; markSel();
   seek((e.clientX-r.left)/pps);
 }
 
+function scheduleClipWithMovedPeak(ctx,g,c,baseWhen,fromTimeline=0){
+  const pb=getStretched(c.buffer,c.rate), scale=pb.duration/c.buffer.duration;
+  const edit=(selectedPeak && selectedPeak.clipId===c.id)?selectedPeak:null;
+  const add=(timelineStart,timelineDur,bufferTimelineStart)=>{
+    const visibleStart=Math.max(timelineStart,fromTimeline), end=timelineStart+timelineDur;
+    if(end<=visibleStart+1e-6)return;
+    const src=ctx.createBufferSource();src.buffer=pb;src.playbackRate.value=1;src.connect(g);
+    const when=baseWhen+(visibleStart-fromTimeline);
+    const off=(c.offset+(bufferTimelineStart+(visibleStart-timelineStart))*c.rate)*scale;
+    src.start(when,off);src.stop(when+(end-visibleStart));liveSources.push(src);
+  };
+  if(!edit){add(0,c.duration,0);return;}
+  add(0,edit.srcStart,0);
+  add(edit.srcStart+edit.duration,c.duration-(edit.srcStart+edit.duration),edit.srcStart+edit.duration);
+  add(edit.destStart,edit.duration,edit.srcStart);
+}
 /* ---------- transport ---------- */
 function playPause(){ playing?pause():play(); }
 
@@ -757,13 +921,9 @@ function play(){
     for(const c of t.clips){
       const clipEnd=c.start+c.duration;
       if(clipEnd<=playhead) continue;
-      const pb=getStretched(c.buffer,c.rate), scale=pb.duration/c.buffer.duration;
-      let when, off, outLen;
-      if(c.start>=playhead){ when=ctxStartTime+(c.start-playhead); off=c.offset*scale; outLen=c.duration; }
-      else { const into=playhead-c.start; when=ctxStartTime; off=c.offset*scale+into; outLen=c.duration-into; }
-      const src=ctx.createBufferSource(); src.buffer=pb; src.playbackRate.value=1;
-      src.connect(g); src.start(when,off); src.stop(when+Math.max(0.001,outLen));
-      liveSources.push(src);
+      const from=Math.max(0,playhead-c.start);
+      const baseWhen=c.start>=playhead?ctxStartTime+(c.start-playhead):ctxStartTime;
+      scheduleClipWithMovedPeak(ctx,g,c,baseWhen,from);
     }
   }
   playing=true; $("#play").textContent="❚❚"; $("#play").classList.add("on");
@@ -808,8 +968,10 @@ async function exportWav(){
     g.gain.value=audible?t.gain:0; g.connect(off.destination);
     for(const c of t.clips){
       const pb=getStretched(c.buffer,c.rate), scale=pb.duration/c.buffer.duration;
-      const src=off.createBufferSource(); src.buffer=pb; src.playbackRate.value=1; src.connect(g);
-      src.start(c.start, c.offset*scale); src.stop(c.start + c.duration);
+      const edit=(selectedPeak && selectedPeak.clipId===c.id)?selectedPeak:null;
+      const add=(ts,td,bs)=>{if(td<=1e-6)return;const src=off.createBufferSource();src.buffer=pb;src.playbackRate.value=1;src.connect(g);src.start(c.start+ts,(c.offset+bs*c.rate)*scale);src.stop(c.start+ts+td);};
+      if(!edit)add(0,c.duration,0);
+      else{add(0,edit.srcStart,0);add(edit.srcStart+edit.duration,c.duration-edit.srcStart-edit.duration,edit.srcStart+edit.duration);add(edit.destStart,edit.duration,edit.srcStart);}
     }
   }
   const btn=$("#export"); const old=btn.textContent; btn.textContent="Rendering…"; btn.disabled=true;
@@ -914,6 +1076,12 @@ document.addEventListener("keydown",e=>{
   if(e.code==="Space"){ e.preventDefault(); playPause(); }
   else if(e.key==="Delete"||e.key==="Backspace"){ if(selectedClipId){ e.preventDefault(); deleteClip(selectedClipId);} }
   else if(e.key==="s"||e.key==="S"){ splitAtPlayhead(); }
+  else if(e.key==="ArrowLeft"||e.key==="ArrowRight"){
+    if(selectedClipId){ e.preventDefault();
+      const dir=e.key==="ArrowRight"?1:-1;
+      nudgeClip(selectedClipId, dir*(e.shiftKey?0.05:0.005));  // 5ms, or 50ms with Shift
+    }
+  }
   else if(e.key==="Home"){ seek(0); }
 });
 

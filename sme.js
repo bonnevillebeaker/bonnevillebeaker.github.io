@@ -23,6 +23,12 @@
       defaultHeight: 720
     },
 
+    "smart-turtle-probability": {
+      templateId: "smart-turtle-probability-pane-template",
+      defaultWidth: 1180,
+      defaultHeight: 820
+    },
+
     "bonneville-brass": {
       templateId: "bonneville-brass-pane-template",
       defaultWidth: 1040,

@@ -29,6 +29,12 @@
       defaultHeight: 820
     },
 
+    "smart-turtle-grapher": {
+      templateId: "smart-turtle-grapher-pane-template",
+      defaultWidth: 1180,
+      defaultHeight: 820
+    },
+
     "bonneville-brass": {
       templateId: "bonneville-brass-pane-template",
       defaultWidth: 1040,

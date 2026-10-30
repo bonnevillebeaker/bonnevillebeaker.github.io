@@ -1,0 +1,241 @@
+/* Smart Turtle DNA Toolkit — shares the Smart Turtle tool shell (header, cards, forms). */
+*{box-sizing:border-box}
+body{margin:0;background:#eef4f4;color:#263335;font-family:Arial,sans-serif}
+main{max-width:1380px;margin:auto;padding:18px}
+
+/* ---- header: identical layout to the other Smart Turtle tools ---- */
+header{display:flex;align-items:center;justify-content:center;gap:20px;margin-bottom:16px}
+header img{width:110px;height:110px;object-fit:contain;background:#fff;padding:8px;border-radius:24px;box-shadow:0 8px 24px #114b5230}
+header h1{margin:2px 0;font-size:clamp(2rem,4vw,3.1rem)}
+header p{margin:0;color:#1c6872;font-size:.85rem;font-weight:700}
+
+.app{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(330px,.85fr);grid-template-areas:'viewer controls' 'proto controls' 'plate controls' 'gelcard controls' 'output controls';gap:16px;align-items:start}
+.card{background:#fff;border:1px solid #1f87942e;border-radius:14px;box-shadow:0 6px 24px #13363a14;padding:20px}
+.viewer{grid-area:viewer}
+.controls{grid-area:controls;position:sticky;top:14px}
+.gelcard{grid-area:gelcard}
+.plate{grid-area:plate}
+.proto{grid-area:proto}
+.output{grid-area:output}
+
+.top,.rowtop{display:flex;justify-content:space-between;align-items:start;gap:10px}
+.actions{display:flex;gap:8px}
+.top h2,.controls h2,.output h2{margin:0}
+.top p{margin:4px 0;color:#637074}
+
+/* ---- gel ---- */
+.gelbar{display:flex;gap:10px;align-items:end;flex-wrap:wrap;margin-top:12px}
+.gelbar label{flex:0 0 auto;font-size:.74rem;margin-bottom:0;color:#526164;gap:3px}
+.gelbar input[type=number]{width:74px;min-height:34px;padding:5px 7px;font-size:.9rem}
+.gelbar select{min-width:96px;min-height:34px;padding:5px 7px;font-size:.9rem}
+.gelbar .check{align-self:end;padding-bottom:7px}
+#runInfo{margin:10px 0 0;padding:8px 10px;border-left:3px solid #2dabba;background:#f4fafb;border-radius:0 6px 6px 0;line-height:1.5}
+#runInfo b{color:#1c6872}
+.canvas{position:relative;flex:1 1 340px;min-width:0;height:330px;border:1px solid #d7e2e3;border-radius:10px;overflow:hidden;background:#fff}
+canvas{width:100%;height:100%;display:block}
+#empty{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:10px;color:#7b888b}
+#empty img{width:96px;height:74px;object-fit:contain;opacity:.75}
+[hidden]{display:none!important}
+#readout{margin-top:12px;padding:12px;border:1px solid currentColor;border-left:5px solid currentColor;border-radius:8px;background:#f7fafa;font-weight:700}
+#legend{display:flex;gap:14px;flex-wrap:wrap;padding-top:10px;font-size:.82rem}
+
+/* ---- tabs and forms ---- */
+nav{display:flex;flex-wrap:wrap;border-bottom:1px solid #d6e3e4;margin:10px 0 16px}
+button{min-height:38px;padding:8px 13px;border:1px solid #afd9de;border-radius:7px;background:#e8f5f7;color:#1c6872;font-weight:700;cursor:pointer}
+nav button{border:0;border-bottom:3px solid transparent;background:transparent;color:#526164;padding:8px 10px}
+nav button.active{color:#1c6872;border-bottom-color:#2dabba}
+form footer button{background:#75c84e;border-color:#5daf39;color:#15220f}
+label{display:flex;flex-direction:column;gap:5px;font-size:.92rem;font-weight:700;margin-bottom:12px}
+input,select,textarea{width:100%;min-height:43px;padding:9px;border:1px solid #b9cacc;border-radius:7px;font-size:1rem;background:#fff}
+textarea{min-height:0;font:.92rem/1.5 monospace;resize:vertical}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fields2 input{max-width:180px}
+.note{color:#69777a;font-size:.8rem;font-weight:400}
+.check{display:flex;flex-direction:row;align-items:center;gap:8px;margin-top:4px}
+.check input{width:18px;min-height:18px}
+.filebox input[type=file]{padding:7px;font-size:.85rem}
+.error{padding:10px;border-left:4px solid #c8483d;background:#fff1ef;color:#7a2822;font-size:.88rem}
+form footer{display:flex;margin-top:14px}
+form footer button{flex:1}
+
+/* ---- enzyme picker ---- */
+#enzPicker{max-height:250px;overflow-y:auto;margin:8px 0 12px;padding:4px 6px;border:1px solid #d6e3e4;border-radius:8px;background:#fcfdfd;overscroll-behavior:contain}
+/* A plain checklist: one tight line per enzyme. The global input rule adds
+   9px of padding, which turns a 13px checkbox into a 31px one, so padding
+   and min-height are reset here explicitly. */
+/* flex-direction must be set explicitly: .enz is a <label>, and the global
+   label rule stacks its children in a column. */
+.enz{display:flex;flex-direction:row;align-items:center;gap:7px;padding:1px 2px;margin:0;font-size:.79rem;line-height:1.55;font-weight:400;cursor:pointer;border-radius:3px}
+.enz:hover{background:#e8f5f7}
+.enz input[type=checkbox]{width:13px;height:13px;min-height:0;padding:0;margin:0;flex:0 0 auto;accent-color:#1c6872}
+.enz b{flex:0 0 62px;color:#1c6872;font-weight:700}
+.enz code{flex:1;font-size:.75rem;color:#8a9a9b;letter-spacing:.02em}
+.enz .n{flex:0 0 50px;text-align:right;color:#9aabab;font-size:.72rem}
+.enz.none{opacity:.4}
+
+/* ---- sample bench ---- */
+.sample{display:flex;align-items:center;gap:10px;padding:9px 6px;border-bottom:1px solid #eef3f3;font-size:.88rem}
+.sample:last-child{border-bottom:0}
+.sample input{width:18px;min-height:18px;flex:0 0 auto}
+.sample .sw{width:11px;height:11px;border-radius:3px;flex:0 0 auto}
+.sample .nm{flex:1;min-width:0}
+.sample .nm b{display:block;font-weight:700}
+.sample .nm span{color:#7b888b;font-size:.78rem}
+.sample .kill{width:26px;height:26px;min-height:0;padding:0;border-radius:50%;background:#fff0ed;color:#963c32;border-color:#f0d4cf}
+
+pre{min-height:180px;max-height:360px;overflow:auto;padding:14px;border:1px solid #d5e0e1;border-radius:9px;background:#f7fafa;font:.86rem/1.55 monospace;white-space:pre-wrap;word-break:break-word}
+
+#secretStatus{text-align:center;min-height:1em;color:#1c6872;font-size:.8rem}
+
+@media(max-width:980px){.app{grid-template-columns:1fr;grid-template-areas:'controls' 'graph' 'bench' 'output'}.controls{position:static}}
+@media(max-width:640px){header{justify-content:flex-start}header img{width:74px;height:74px}.fields{grid-template-columns:1fr}.canvas{height:380px}}
+
+
+/* ---- main viewer ---- */
+.viewbar{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin:12px 0 0}
+.viewbar label{margin-bottom:0;font-size:.82rem}
+.viewbar select{min-width:150px}
+nav.sub{border-bottom:0;margin:0;gap:2px}
+nav.sub button{border:1px solid #cfe0e2;border-radius:7px;background:#f3f9f9;color:#526164;border-bottom-width:1px;padding:7px 12px;min-height:34px}
+nav.sub button.active{background:#1c6872;border-color:#1c6872;color:#fff}
+#viewport{position:relative;margin-top:12px;border:1px solid #d7e2e3;border-radius:10px;background:#fff;min-height:520px}
+#viewEmpty{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:10px;color:#7b888b}
+#viewEmpty img{width:96px;height:74px;object-fit:contain;opacity:.75}
+#mapBox{height:560px}
+#mapBox svg{display:block}
+#featBox{padding:14px}
+
+/* ---- sequence view ---- */
+.seqbox{padding:14px 10px;max-height:620px;overflow:auto;font:12.5px/1.45 "SFMono-Regular",Consolas,"Liberation Mono",monospace}
+.sq-blk{margin-bottom:12px}
+.sq-line{display:flex;gap:10px;white-space:pre}
+.sq-n{flex:0 0 58px;text-align:right;color:#9aabab;font-size:11px;-webkit-user-select:none;user-select:none}
+.sq-n2{color:#9aabab;font-size:11px;-webkit-user-select:none;user-select:none}
+.sq-bases{letter-spacing:.09em}
+.sq-rev .sq-bases{color:#9fb0b2}
+.sq-enz,.sq-tick{margin-left:68px;white-space:pre;letter-spacing:.09em;color:#1c6872;font-size:11px;-webkit-user-select:none;user-select:none}
+.sq-tick{color:#53646a;margin-top:-2px}
+.sq-tr{margin-left:68px;white-space:pre;letter-spacing:.09em;color:#4a7a35;font-weight:700;-webkit-user-select:none;user-select:none}
+.ft{border-radius:2px}
+
+/* ---- feature table ---- */
+table.ftab{width:100%;border-collapse:collapse;font-size:.86rem}
+.ftab th{text-align:left;padding:7px 6px;color:#526164;font-size:.76rem;border-bottom:1px solid #d6e3e4}
+.ftab td{padding:7px 6px;border-bottom:1px solid #eef3f3}
+.ftab td:first-child{width:18px}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%}
+
+/* ---- gel panel ---- */
+.gelwrap{display:flex;gap:14px;align-items:stretch;margin-top:12px;flex-wrap:wrap}
+#samples{flex:1 1 230px;min-width:0;max-height:330px;overflow-y:auto}
+.sample .nm b{cursor:pointer}
+.sample.active{background:#eef7f8;border-radius:7px}
+.sample.active .nm b{color:#1c6872}
+@media(max-width:980px){.app{grid-template-areas:'controls' 'viewer' 'proto' 'plate' 'gelcard' 'output'}#mapBox{height:440px}}
+
+/* ---- fragment / sticky-end view ---- */
+.frag{margin-bottom:18px;padding:12px;border:1px solid #e3ecec;border-radius:9px;background:#fcfdfd}
+.fh{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px;margin-bottom:9px;font-size:.88rem}
+.fh b{font-size:1rem;color:#1c6872}
+.fe{padding:1px 7px;border-radius:4px;background:#e8f5f7;color:#1c6872;font:.78rem monospace}
+.fa{color:#9aabab}
+.fn{color:#9aabab;font-size:.76rem;margin-left:auto}
+.dx{font:12.5px/1.5 "SFMono-Regular",Consolas,"Liberation Mono",monospace;white-space:pre;overflow-x:auto;letter-spacing:.08em}
+.dxl{color:#9aabab;padding:0 7px;letter-spacing:0}
+.dxe{color:#c3d0d0}
+.dxgap{margin:3px 0 3px 30px;padding:2px 9px;display:inline-block;border-left:2px solid #d6e3e4;color:#9aabab;font-size:.75rem}
+.fnote{margin-top:8px;color:#69777a;font-size:.78rem}
+
+/* ---- per-segment sub-tabs ---- */
+.segtabs{display:flex;flex-wrap:wrap;gap:6px;padding:12px 12px 0}
+.segtabs .seg{min-height:28px;padding:4px 11px;font-size:.78rem;border:1px solid #cfe0e2;border-radius:20px;background:#f3f9f9;color:#526164}
+.segtabs .seg.on{background:#1c6872;border-color:#1c6872;color:#fff}
+.seqbox .segtabs{padding:0 0 10px}
+.seqbox .fnote{margin:0 0 14px;padding:8px 10px;background:#f7fafa;border-radius:6px;font-size:.78rem}
+
+/* ---- sample vials ---- */
+.vial{flex:0 0 auto;display:block}
+.sample .vial{margin:0 2px}
+#legend .leg{display:inline-flex;align-items:center;gap:6px;margin-right:16px}
+.vsel-native{display:none!important}
+.vsel{position:relative;margin-bottom:12px}
+.vsel-btn{display:flex;align-items:center;gap:8px;width:100%;min-height:43px;padding:6px 10px;border:1px solid #b9cacc;border-radius:7px;background:#fff;color:#263335;font-weight:400;font-size:.92rem;text-align:left}
+.vsel-btn[disabled]{color:#9aabab;background:#f7fafa}
+.vsel-btn span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vsel-btn i{color:#7b888b;font-style:normal}
+.vsel-list{position:absolute;z-index:30;left:0;right:0;top:calc(100% + 3px);max-height:260px;overflow-y:auto;padding:4px;border:1px solid #b9cacc;border-radius:7px;background:#fff;box-shadow:0 10px 28px #13363a24}
+.vsel-opt{display:flex;align-items:center;gap:8px;width:100%;min-height:36px;padding:5px 8px;border:0;border-radius:5px;background:transparent;color:#263335;font-weight:400;font-size:.86rem;text-align:left}
+.vsel-opt span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vsel-opt:hover{background:#e8f5f7}
+.vsel-opt.on{background:#eef7f8;color:#1c6872;font-weight:700}
+#viewTitle{display:flex;align-items:center;gap:9px}
+
+/* ---- transformation plate ---- */
+#plateBox{margin-top:12px}
+.plate-sum{display:flex;gap:18px;flex-wrap:wrap;margin:12px 0 4px;font-size:.88rem}
+.plate-sum b{color:#1c6872}
+table.ptab{width:100%;border-collapse:collapse;font-size:.84rem;margin-top:10px}
+.ptab th{text-align:left;padding:6px;color:#526164;font-size:.74rem;border-bottom:1px solid #d6e3e4;white-space:nowrap}
+.ptab th.n{text-align:right}
+.ptab td{padding:6px;border-bottom:1px solid #eef3f3}
+.ptab td.n{text-align:right;white-space:nowrap}
+.lawn{padding:12px;border-left:3px solid #c8483d;background:#fff1ef;color:#7a2822;font-size:.85rem;border-radius:0 6px 6px 0}
+
+/* ---- protocol runner ---- */
+#protoText{font:12.5px/1.5 "SFMono-Regular",Consolas,monospace;min-height:150px}
+.protoacts{display:flex;gap:8px;margin-bottom:10px}
+.protoacts button{flex:1}
+.pstep{margin-bottom:8px;padding:10px 12px;border:1px solid #e3ecec;border-left-width:4px;border-radius:7px;background:#fcfdfd;font-size:.86rem}
+.pstep.good{border-left-color:#4a8a35}
+.pstep.bad{border-left-color:#c8483d;background:#fff7f6}
+.pstep .ph{display:flex;gap:9px;align-items:baseline;flex-wrap:wrap}
+.psrc{font:12.5px/1.5 "SFMono-Regular",Consolas,monospace;color:#263335}
+.pres{margin:5px 0 0 31px;color:#526164;font-size:.83rem}
+.pres.pfail{color:#7a2822}
+.pstep .pn{color:#9aabab;font-size:.76rem;min-width:22px}
+.pstep .pv{font-weight:700;color:#1c6872}
+.pstep .pas{color:#8a6bd1;font-size:.8rem}
+.pstep .pr{color:#526164;margin-left:auto;font-size:.82rem}
+.pchk{margin:6px 0 0 31px;font-size:.8rem;color:#526164}
+.pchk .mark{display:inline-block;width:15px;font-weight:700}
+.pchk.ok .mark{color:#4a8a35}
+.pchk.no .mark{color:#c8483d}
+.pchk code{background:#eef3f3;padding:1px 5px;border-radius:3px;font-size:.92em}
+.pfail{color:#7a2822}
+.psum{display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin-bottom:12px;padding:11px 13px;border-radius:8px;font-size:.9rem}
+.psum.good{background:#eef7ea;color:#2f5a22}
+.psum.bad{background:#fff1ef;color:#7a2822}
+.psum b{font-size:1.05rem}
+
+/* ---- NCBI search ---- */
+.ncbi{margin-bottom:14px;padding:12px;border:1px solid #cfe0e2;border-radius:9px;background:#f7fbfb}
+.ncbi>b{color:#1c6872;font-size:.88rem}
+.ncbi-row{display:flex;gap:8px;margin:8px 0}
+.ncbi-row input{flex:1;min-height:38px}
+.ncbi-row button{flex:0 0 auto}
+#ncbiHits{max-height:230px;overflow-y:auto;margin-top:8px}
+.hit{display:flex;gap:9px;align-items:baseline;padding:7px 8px;border-bottom:1px solid #e7efef;cursor:pointer;font-size:.82rem}
+.hit:last-child{border-bottom:0}
+.hit:hover{background:#e8f5f7}
+.hit .acc{flex:0 0 96px;color:#1c6872;font-weight:700;font-family:monospace;font-size:.78rem}
+.hit .ttl{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#3a4a4c}
+.hit .len{flex:0 0 auto;color:#7b888b;font-size:.76rem;white-space:nowrap}
+.hit.big .len{color:#b5604f}
+.hit.right .len{color:#4a8a35;font-weight:700}
+.ncbi-slice{margin-top:10px;font-size:.8rem;color:#526164}
+.ncbi-slice summary{cursor:pointer;color:#1c6872}
+.ncbi-slice .fields{margin-top:8px}
+.ncbi-manual{margin-top:8px;padding:9px;border-left:3px solid #c47a1f;background:#fdf7ee;border-radius:0 6px 6px 0;font-size:.8rem}
+.ncbi-manual a{color:#1c6872;word-break:break-all}
+
+/* NOTE: .hit is already taken by the NCBI result rows, which are flex
+   containers. A table row given that class collapses, so the plate uses its
+   own name. */
+.ptab tr.want{background:#eef7ea}
+.ptab tr.want td{font-weight:700;color:#2f5a22}
+.plate-sum .good-hit{color:#2f5a22}
+.plate-sum .good-hit b{color:#2f5a22}
+
+/* Context attached to a protocol step: the record's own description, and
+   whether it arrived with any annotation. Quieter than the result line. */
+.pnote { margin: 2px 0 0 28px; font-size: 12px; color: #5b6b6e; font-style: italic; }

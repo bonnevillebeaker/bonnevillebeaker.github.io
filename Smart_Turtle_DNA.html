@@ -1,0 +1,131 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Smart Turtle DNA Toolkit</title><link rel="stylesheet" href="style.css"><link rel="stylesheet" href="smart-turtle-dna.css"></head><body><main><header><img id="mascot" src="smart_turtle.svg" alt="Smart Turtle mascot"><div><p>SCIENCE MADE EASY / TOOLS</p><h1>Smart Turtle DNA Toolkit</h1><span>Annotated plasmid maps, restriction digests, PCR and CRISPR edits</span></div></header><div class="app">
+
+<section class="card viewer">
+<div class="top"><div><h2 id="viewTitle">Sequence map</h2><p id="status">Load a sequence to see its map and features.</p></div><div class="actions"><button id="saveCsv" disabled>Features CSV</button><button id="saveSeq" disabled>Sequence</button><button id="saveMap" disabled>Save SVG</button></div></div>
+<div class="viewbar">
+<nav class="sub"><button id="mapView" class="active">Map</button><button id="seqView">Sequence</button><button id="featView">Features</button></nav>
+<label>Sites<select id="siteMode"><option value="unique" selected>Unique cutters</option><option value="selected">Selected enzymes</option><option value="none">None</option></select></label>
+<label class="check"><input id="transToggle" type="checkbox"> Translate CDS</label>
+</div>
+<div id="viewport"><div id="viewEmpty"><img id="emptyMascot" src="smart_turtle.svg" alt=""><span>Your sequence map will appear here.</span></div><div id="mapBox" hidden></div><div id="seqBox" class="seqbox" hidden></div><div id="featBox" hidden></div></div>
+<div id="readout" hidden></div>
+</section>
+
+<section class="card controls">
+<h2>Bench</h2>
+<nav><button id="loadTab" class="active">Load</button><button id="cutTab">Digest</button><button id="pcrTab">PCR</button><button id="crisprTab">CRISPR</button><button id="ligTab">Ligate</button><button id="xfTab">Transform</button><button id="protoTab">Protocol</button></nav>
+
+<form id="loadForm">
+<label>Preset<select id="preset"></select></label>
+<p class="note" id="presetNote"></p>
+<div class="ncbi">
+<b>Search NCBI</b>
+<div class="ncbi-row"><input id="ncbiQ" placeholder="nif gene cluster Klebsiella" autocomplete="off"><button id="ncbiGo" type="button">Search</button></div>
+<p id="ncbiStatus" class="note">Find a gene, a cluster or a plasmid by name. Results show their length, so you can tell a 10 kb cluster from a 5 Mb genome.</p>
+<div id="ncbiHits"></div>
+<details class="ncbi-slice"><summary>Take only part of a record</summary>
+<div class="fields"><label>Gene or cluster<input id="ncbiGene" placeholder="nifH  or  nifB,nifH,nifD"></label><label>Upstream bases<input id="ncbiUp" type="number" min="0" max="5000" step="50" value="300"></label></div>
+<p class="note">Pulls just those genes out of a large record, with the upstream region so the promoter comes along. Leave blank to take the whole record.</p>
+</details>
+</div>
+<label class="filebox">Or upload a file (FASTA or GenBank)<input id="file" type="file" accept=".fa,.fasta,.fna,.seq,.txt,.gb,.gbk,.genbank,.ape"><span class="note">Parsed in your browser. Nothing is uploaded anywhere. GenBank feature tables are read and used as-is.</span></label>
+<label class="rolls">Or paste a sequence<textarea id="paste" rows="3" placeholder="ATGCGT... or paste a full FASTA / GenBank record"></textarea></label>
+<div class="fields"><label>Name<input id="pasteName" value="My construct"></label><label>Topology<select id="pasteTopo"><option value="circular">Circular (plasmid)</option><option value="linear">Linear</option></select></label></div>
+<p id="loadError" class="error" hidden></p>
+<footer><button>Add to bench</button></footer>
+</form>
+
+<form id="cutForm" hidden>
+<label>DNA<select id="cutDna"></select></label>
+<div class="rowtop"><b>Enzymes</b><span class="note" id="cutCount"></span></div>
+<div id="enzPicker"></div>
+<label>Digestion<select id="cutPartial"><option value="full" selected>Complete</option><option value="partial">Partial</option></select></label>
+<p id="cutError" class="error" hidden></p>
+<footer><button>Digest</button></footer>
+</form>
+
+<form id="pcrForm" hidden>
+<label>Template<select id="pcrDna"></select></label>
+<label>Forward primer (5'&rarr;3')<textarea id="fwd" rows="2" placeholder="GTAAAACGACGGCCAGT"></textarea></label>
+<label>Reverse primer (5'&rarr;3')<textarea id="rev" rows="2" placeholder="CAGGAAACAGCTATGAC"></textarea></label>
+<p class="note">Primers are matched by their 3' end, so 5' tails that add restriction sites are fine.</p>
+<p id="pcrError" class="error" hidden></p>
+<footer><button>Run PCR</button></footer>
+</form>
+
+<form id="crisprForm" hidden>
+<label>Target<select id="crDna"></select></label>
+<label>Guide (20 nt protospacer, no PAM)<textarea id="guide" rows="2" placeholder="TACTGAGAGTGCACCATATG"></textarea></label>
+<label>Nuclease<select id="nuclease"><option value="spcas9" selected>SpCas9 (NGG)</option><option value="sacas9">SaCas9 (NNGRRT)</option></select></label>
+<p class="note">Cuts are scored on both strands. Off-target hits with up to 3 mismatches are reported.</p>
+<p id="crError" class="error" hidden></p>
+<footer><button>Cut</button></footer>
+</form>
+
+<form id="ligForm" hidden>
+<p class="note">Mix two tubes with ligase. Everything in them reacts, so expect a mixture of products.</p>
+<label>Backbone tube<select id="ligA"></select></label>
+<label>Insert tube<select id="ligB"></select></label>
+<div class="fields"><label>Insert : backbone (molar)<input id="ligRatioIn" type="number" min="0" max="50" step="0.5" value="3"></label><label>Backbone conc. (ng/&micro;L)<input id="ligConc" type="number" min="0.01" max="200" step="0.1" value="2.5"></label></div>
+<label class="check"><input id="ligCIP" type="checkbox"> Dephosphorylate the backbone (CIP / rSAP)</label>
+<p id="ligRatio" class="note"></p>
+<p id="ligError" class="error" hidden></p>
+<footer><button>Ligate</button></footer>
+</form>
+
+<form id="xfForm" hidden>
+<label>Tube to transform<select id="xfDna"></select></label>
+<div class="fields"><label>Competent cells<select id="xfStrain"></select></label><label>DNA plated (ng)<input id="xfNg" type="number" min="0.1" max="1000" step="0.5" value="5"></label></div>
+<div class="fields"><label>Plate antibiotic<select id="xfAbx"><option value="amp" selected>Ampicillin</option><option value="kan">Kanamycin</option><option value="cm">Chloramphenicol</option><option value="none">No antibiotic</option></select></label><label class="check"><input id="xfXgal" type="checkbox" checked> X-gal / IPTG</label></div>
+<p class="note">Resistance and lacZ&alpha; are read from each product's own sequence, so selection and blue/white are computed, not assumed.</p>
+<p id="xfError" class="error" hidden></p>
+<footer><button>Transform and plate</button></footer>
+</form>
+
+<form id="protoForm" hidden>
+<p class="note">Write the steps, run them, read the gel. One instruction per line; whatever follows <code>as</code> names the tube.</p>
+<label class="filebox">Protocol file (.json or .txt)<input id="protoFile" type="file" accept=".json,.txt,.proto,.yml"><span class="note">Parsed in your browser. Nothing is uploaded.</span></label>
+<label>Or write it here<textarea id="protoText" rows="9" placeholder="import puc19 as vector&#10;digest vector with EcoRI, HindIII as cut&#10;run cut on gel"></textarea></label>
+<div class="protoacts"><button id="protoExample" type="button">Load example</button></div>
+<p id="protoError" class="error" hidden></p>
+<footer><button>Run protocol</button></footer>
+</form>
+</section>
+
+<section class="card proto" id="protoCard" hidden>
+<div class="top"><div><h2>Protocol</h2><p id="protoSummary" class="note"></p></div><div class="actions"><button id="protoSave" type="button">Save report</button></div></div>
+<div id="protoBox"></div>
+</section>
+
+<section class="card plate" id="plateCard" hidden>
+<div class="top"><div><h2>Plate</h2><p id="plateInfo" class="note"></p></div><div class="actions"><button id="pickBlue" type="button">Pick blue</button><button id="pickWhite" type="button">Pick white</button></div></div>
+<div id="plateBox"></div>
+</section>
+
+<section class="card gelcard">
+<div class="top"><div><h2>Agarose gel</h2><p class="note">Tick a sample to load it into a lane. Click a name to show it in the map.</p></div><div class="actions"><button id="saveSvg" disabled>Save SVG</button><button id="reset" disabled>Clear</button></div></div>
+<div class="gelbar">
+<label>Agarose %<input id="agarose" type="number" min="0.3" max="4" step="0.1" value="1"></label>
+<label>Volts<input id="volts" type="number" min="5" max="300" step="5" value="100"></label>
+<label>Rig<select id="rig">
+<option value="wide10" selected>Wide Mini-Sub GT, 15&times;10 tray</option>
+<option value="wide7">Wide Mini-Sub GT, 15&times;7 tray</option>
+<option value="mini10">Mini-Sub GT, 7&times;10 tray</option>
+<option value="mini7">Mini-Sub GT, 7&times;7 tray</option>
+<option value="custom">Custom&hellip;</option>
+</select></label>
+<label id="gapWrap" hidden>Electrode gap (cm)<input id="gapCm" type="number" min="2" max="60" step="0.5" value="18"></label>
+<label id="gelWrap" hidden>Gel length (cm)<input id="gelCm" type="number" min="2" max="40" step="0.5" value="10"></label>
+<label>Time (min)<input id="minutes" type="number" min="1" max="2400" step="5" value="60"></label>
+<label>Ladder<select id="ladder"><option value="1kb" selected>1 kb</option><option value="100bp">100 bp</option><option value="none">None</option></select></label>
+<label class="check"><input id="showSizes" type="checkbox" checked> Label bands</label>
+</div>
+<p id="runInfo" class="note"></p>
+<div class="gelwrap"><div class="canvas"><canvas id="gel"></canvas><div id="empty"><span id="emptyText">Your gel will appear here.</span></div></div>
+<div id="samples"><p class="note">Nothing on the bench yet.</p></div></div>
+<div id="legend"></div>
+</section>
+
+<section class="card output"><h2 id="outputTitle">Reaction log</h2><pre id="output">No reactions yet.</pre></section>
+
+</div><p id="secretStatus"></p></main><script src="smart-turtle-dna.js"></script></body></html>

@@ -117,7 +117,10 @@ function normalizeGroups(w){
   w.ex.forEach(e=>{if(e.group&&e.group!==prev&&seen.has(e.group))e.group="";if(e.group)seen.add(e.group);prev=e.group});
   const count={};w.ex.forEach(e=>{if(e.group)count[e.group]=(count[e.group]||0)+1});
   w.ex.forEach(e=>{if(e.group&&count[e.group]<2)e.group=""});
+  /* every exercise in a superset runs the same number of rounds: the first exercise's set count wins */
+  const rounds={};w.ex.forEach(e=>{if(!e.group)return;if(!(e.group in rounds))rounds[e.group]=e.sets;else e.sets=rounds[e.group]});
 }
+const ssRounds=n=>(+n>0?n+" round"+(+n===1?"":"s"):"");
 /* letters for each superset in order: A, B, C… */
 function groupLetters(w){const m={};let n=0;w.ex.forEach(e=>{if(e.group&&!(e.group in m))m[e.group]=String.fromCharCode(65+(n++%26))});return m}
 function metricVal(s,id){if(id==="bw")return s.bw>0?+s.bw:null;const v=s.m&&s.m[id];if(v==null)return null;return v}
@@ -377,7 +380,7 @@ function renderLog(preserve){
     rm.onclick=()=>{draft[e.id].pop();renderLog(true)};
     if(e.group){
       if(e.group!==prevG){block=document.createElement("div");block.className="superset";
-        const lb=document.createElement("div");lb.className="sslabel";lb.textContent="Superset "+letters[e.group]+" · do one set of each, then rest";block.appendChild(lb);list.appendChild(block)}
+        const lb=document.createElement("div");lb.className="sslabel";lb.textContent=["Superset "+letters[e.group],ssRounds(e.sets),"one set of each, then rest"].filter(Boolean).join(" · ");block.appendChild(lb);list.appendChild(block)}
       block.appendChild(card);
     } else list.appendChild(card);
     prevG=e.group;
@@ -1112,7 +1115,7 @@ function workoutEditor(d,ctx){
   const letters=groupLetters(d);
   d.ex.forEach((e,ei)=>{
     const row=document.createElement("div");row.className="exrow"+(e.group?" grouped":"");
-    if(e.group&&(ei===0||d.ex[ei-1].group!==e.group)){const lb=document.createElement("div");lb.className="sslabel";lb.textContent="Superset "+letters[e.group];row.appendChild(lb)}
+    if(e.group&&(ei===0||d.ex[ei-1].group!==e.group)){const lb=document.createElement("div");lb.className="sslabel";lb.id=`ssl-${d.id}-${e.group}`;lb.textContent=["Superset "+letters[e.group],ssRounds(e.sets)].filter(Boolean).join(" · ");row.appendChild(lb)}
     const nm=field("Name",inp("text",e.name,v=>{e.name=v},{id:`en-${d.id}-${e.id}`,maxLength:60}));
     const tools=document.createElement("div");tools.className="tools";
     const up=btn("↑","icon",()=>{[d.ex[ei-1],d.ex[ei]]=[d.ex[ei],d.ex[ei-1]];normalizeGroups(d);markDirty(true);renderEditor()},"Move "+e.name+" up");up.disabled=ei===0;
@@ -1123,7 +1126,10 @@ function workoutEditor(d,ctx){
     tools.appendChild(btn("✕","icon danger",()=>{d.ex.splice(ei,1);normalizeGroups(d);markDirty(true);renderEditor()},"Remove "+e.name));
     const nums=document.createElement("div");nums.className="nums";
     const noMain=e.unit==="none";
-    nums.append(field("Sets",inp("number",e.sets,v=>{e.sets=v},{min:1,step:1})),
+    const setSets=v=>{e.sets=v;if(!e.group)return;
+      d.ex.forEach(x=>{if(x.group===e.group&&x!==e){x.sets=v;const o=$(`es-${d.id}-${x.id}`);if(o)o.value=v}});
+      const lb=$(`ssl-${d.id}-${e.group}`);if(lb)lb.textContent=["Superset "+letters[e.group],ssRounds(v)].filter(Boolean).join(" · ")};
+    nums.append(field(e.group?"Sets (rounds)":"Sets",inp("number",e.sets,setSets,{min:1,step:1,id:`es-${d.id}-${e.id}`})),
       field("Counts",sel([["reps","Reps"],["sec","Time"],["none","Nothing"]],e.unit,v=>{e.unit=v;renderEditor()})),
       field(e.unit==="sec"?"Target low (sec)":"Target low",inp("number",e.lo,v=>{e.lo=v},{min:0,step:1,disabled:noMain})),
       field(e.unit==="sec"?"Target high (sec)":"Target high",inp("number",e.hi,v=>{e.hi=v},{min:0,step:1,disabled:noMain})));

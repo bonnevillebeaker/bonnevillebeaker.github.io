@@ -486,10 +486,12 @@ function renderLog(preserve){
         const el=document.createElement("input");el.id=`${k}-${e.id}-${i}`;el.setAttribute("aria-label",e.name+" set "+(i+1)+" "+lab.toLowerCase());
         if(k==="w"){el.type="number";el.inputMode="decimal";el.min=0;el.step="any";el.value=st.w;el.placeholder=v.w!=null?v.w:"–";
           el.oninput=()=>{st.w=el.value===""?"":+el.value};
-          el.onfocus=()=>{if(el.value===""&&i>0&&draft[e.id][i-1].w!==""){el.value=draft[e.id][i-1].w;st.w=+el.value}}}
+          el.onfocus=()=>{if(el.value===""&&i>0&&draft[e.id][i-1].w!==""){el.value=draft[e.id][i-1].w;st.w=+el.value;el.select()}}}
         else if(k==="r"&&e.unit==="sec"){el.type="text";el.inputMode="decimal";el.value=st.r===""?"":fmtDur(st.r);el.placeholder=e.hi?fmtDur(e.hi):"m:ss";
-          el.onchange=()=>{const t=parseTime(el.value);st.r=t;el.value=t===""?"":fmtDur(t);mark();autoPace()}}
-        else if(k==="r"){el.type="number";el.inputMode="numeric";el.min=0;el.step=1;el.value=st.r;el.placeholder=e.hi||"";el.oninput=()=>{st.r=el.value===""?"":+el.value;mark()}}
+          el.onchange=()=>{const t=parseTime(el.value);st.r=t;el.value=t===""?"":fmtDur(t);mark();autoPace()};
+          el.onfocus=()=>{const pr=i>0?draft[e.id][i-1].r:"";if(el.value===""&&pr!==""){st.r=pr;el.value=fmtDur(pr);mark();autoPace();el.select()}}}
+        else if(k==="r"){el.type="number";el.inputMode="numeric";el.min=0;el.step=1;el.value=st.r;el.placeholder=e.hi||"";el.oninput=()=>{st.r=el.value===""?"":+el.value;mark()};
+          el.onfocus=()=>{const pr=i>0?draft[e.id][i-1].r:"";if(el.value===""&&pr!==""){st.r=pr;el.value=pr;mark();el.select()}}}
         else if(k==="d"){el.type="number";el.inputMode="decimal";el.min=0;el.step="any";el.value=st.d;el.placeholder="0.0";el.oninput=()=>{st.d=el.value===""?"":+el.value;autoPace()}}
         else if(k==="p"){el.type="text";el.inputMode="decimal";el.value=st.p===""?"":fmtPace(st.p);
           el.onchange=()=>{const t=parseTime(el.value);st.p=t;el.value=t===""?"":fmtPace(t)}}

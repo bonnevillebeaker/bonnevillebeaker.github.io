@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<herculean-program version="1">
+<program id="push-pull-legs" name="Push / Pull / Legs" author="Herculean" authorId="ironlog" created="2026-11-08" deload="5" deloadSets="3">
+<loop len="7" start="2026-01-05">
+<slot index="0" workout="push-a"/>
+<slot index="1" workout="pull-a-legs-b"/>
+<slot index="2" workout="legs-a"/>
+<slot index="3" workout="push-b"/>
+<slot index="4" workout="pull-b"/>
+<slot index="5" workout="conditioning"/>
+<slot index="6"/>
+</loop>
+<workout ref="push-a" src="workouts/push-a.xml"/>
+<workout ref="pull-a-legs-b" src="workouts/pull-a-legs-b.xml"/>
+<workout ref="legs-a" src="workouts/legs-a.xml"/>
+<workout ref="push-b" src="workouts/push-b.xml"/>
+<workout ref="pull-b" src="workouts/pull-b.xml"/>
+<workout ref="conditioning" src="workouts/conditioning.xml"/>
+</program>
+</herculean-program>

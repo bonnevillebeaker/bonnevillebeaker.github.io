@@ -1,0 +1,240 @@
+<!doctype html>
+<!-- Herculean Workout Tracker · Copyright (C) 2026 Coleman Nielsen · Code licensed under the GNU GPL v3 or later (see LICENSE). The Herculean name and the Hercule logo are not covered by the GPL. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Herculean Workout Tracker</title>
+<link rel="icon" href="herculean/hercule.svg" type="image/svg+xml">
+<link rel="stylesheet" href="herculean/herculean.css">
+</head>
+<body>
+<main class="wrap">
+  <header class="brand">
+    <div id="mascot" class="logo-slot"><img src="herculean/hercule.svg" alt="Hercule the Hercules beetle" onerror="this.remove()"><span>LOGO</span></div>
+    <div>
+      <p class="kicker">HERCULEAN / WORKOUT TRACKER</p>
+      <h1>Herculean Workout Tracker</h1>
+    </div>
+  </header>
+  <div class="app">
+  <aside class="card controls" aria-label="Session">
+    <h2>Session</h2>
+    <div class="ctl-row"><span class="ctl-lab">Active program</span><b id="activeName"></b></div>
+    <div class="ctl-row"><span class="ctl-lab">Where you are</span><b id="loopLabel">Loop 1</b></div>
+    <div class="status" id="status"></div>
+  <div class="filebar" id="fileBar" aria-label="Profile file" aria-live="polite">
+    <div id="fileState" class="filestate"></div>
+    <div class="actions" id="fileBtns"></div>
+    <input type="file" id="importInput" accept=".xml,application/xml,text/xml" hidden>
+  </div>
+    <div class="timer" aria-label="Rest timer">
+      <div class="in">
+        <span class="ctl-lab">Rest timer</span>
+        <span class="clock" id="clock" aria-live="polite">0:00</span>
+        <div class="actions">
+          <button id="tA">1:30</button>
+          <button id="tB">2:30</button>
+          <button class="ghost" id="tStop">Stop</button>
+        </div>
+      </div>
+    </div>
+    <details class="tips"><summary>How progression works</summary><ul class="rules" id="rules"></ul></details>
+  </aside>
+  <section class="card viewer">
+  <nav class="views" role="group" aria-label="View">
+    <button id="vLog" aria-pressed="true">Log</button>
+    <button id="vArch" aria-pressed="false">Archive</button>
+    <button id="vProg" aria-pressed="false">Progress</button>
+    <button id="vLib" aria-pressed="false">Library</button>
+    <button id="vSet" aria-pressed="false">Settings</button>
+  </nav>
+  <section id="logView" class="view">
+    <div class="loophead">
+      <button class="icon ghost" id="prevLoop" aria-label="Previous loop">←</button>
+      <span class="t" id="loopTitle"></span>
+      <button class="icon ghost" id="nextLoop" aria-label="Next loop">→</button>
+    </div>
+    <nav class="strip" id="strip" aria-label="Days in this loop"></nav>
+    <div class="sessionbar">
+      <div><h2 id="dayTitle"></h2><div class="muted" id="daySub" style="font-size:.85rem"></div></div>
+      <label for="date">Date <input type="date" id="date"></label>
+    </div>
+    <div class="days" id="days"></div>
+    <div id="deload" class="banner" hidden></div>
+    <div id="exList" style="display:flex;flex-direction:column;gap:12px"></div>
+    <div class="ex" id="cardioBox" hidden></div>
+    <div class="ex" id="measBox">
+      <div class="exhead"><div><h3>Measurements</h3><div class="rx">Optional. Fill in whatever you measured today.</div></div></div>
+      <div class="grid2" id="measures"></div>
+    </div>
+    <label for="note" class="eyebrow">Notes</label>
+    <textarea id="note" placeholder="Energy, sleep, anything that hurt"></textarea>
+    <div class="actions">
+      <button class="primary" id="save">Save entry</button>
+      <span id="delWrap"></span>
+    </div>
+  </section>
+
+  <section id="archView" class="view" hidden>
+    <div class="sessionbar">
+      <h2>Archive</h2>
+      <span class="muted" id="archCount" style="font-size:.85rem"></span>
+    </div>
+    <div class="grid2">
+      <label class="field" for="archProg">Program<select id="archProg"></select></label>
+      <label class="check" for="archRest" style="align-self:end"><input type="checkbox" id="archRest"> Include rest days</label>
+    </div>
+    <div id="archList" style="display:flex;flex-direction:column;gap:8px"></div>
+  </section>
+
+  <section id="progView" class="view" hidden>
+    <div class="seg" role="group" aria-label="Progress view">
+      <button id="pOver" aria-pressed="true">Overview</button>
+      <button id="pEx" aria-pressed="false">By exercise</button>
+    </div>
+    <div id="overPane" class="view">
+      <div class="chartbox">
+        <h3>Workouts per loop</h3>
+        <div class="cap">Active program’s loop. One-offs count as completed days.</div>
+        <div class="legend"><span><i></i>Completed</span><span><i class="b"></i>Planned</span></div>
+        <div id="cAdh"></div>
+      </div>
+      <div class="chartbox">
+        <h3>Training volume per loop</h3>
+        <div class="cap" id="capVol">Sum of weight × reps across all lifts.</div>
+        <div id="cVol"></div>
+      </div>
+      <div class="chartbox">
+        <h3>Cardio per loop</h3>
+        <div class="legend"><span><i></i>Steady minutes</span><span><i class="d"></i>Interval rounds</span></div>
+        <div id="cCardio"></div>
+      </div>
+      <div class="chartbox">
+        <div class="exhead"><h3>Measurements</h3><select id="mPick" aria-label="Measurement to chart"></select></div>
+        <div class="legend" id="mLegend"></div>
+        <div id="cBw"></div>
+        <div id="mStats" class="mstats"></div>
+      </div>
+      <h2>Loop history</h2>
+      <div id="loopTable"></div>
+    </div>
+    <div id="exPane" class="view" hidden>
+      <label for="exPick" class="eyebrow">Exercise</label>
+      <select id="exPick"></select>
+      <div class="chartbox">
+        <div class="legend"><span><i></i><span id="lgTop">Top set weight</span></span><span><i class="d"></i><span id="lgE1">Estimated 1RM, Epley</span></span></div>
+        <div id="chart"></div>
+      </div>
+      <h2>Sessions</h2>
+      <div id="history"></div>
+    </div>
+  </section>
+
+  <section id="libView" class="view" hidden>
+    <div class="sessionbar">
+      <h2>Programs</h2>
+      <div class="actions">
+        <button id="newProg">New program</button>
+        <button class="ghost" id="importProg">Import…</button>
+        <input type="file" id="importProgInput" accept=".xml,.txt,application/xml,text/xml,text/plain" multiple hidden>
+      </div>
+    </div>
+    <div class="muted" style="font-size:.82rem;margin-top:-6px">Import program or workout files (pick a program together with its workout files), or a full Herculean profile.</div>
+    <div id="progList" class="liblist"></div>
+
+    <div class="sessionbar">
+      <h2>Workouts</h2>
+      <button id="newWorkout">New workout</button>
+    </div>
+    <div class="muted" style="font-size:.82rem;margin-top:-6px">Reusable workouts. Log any of them as a one-off, or add them to a program.</div>
+    <div id="workList" class="liblist"></div>
+
+    <section id="catalogSec" class="view" hidden>
+      <div class="sessionbar"><h2>Expert library</h2></div>
+      <div class="muted" style="font-size:.82rem;margin-top:-6px">Programs and workouts written by coaches and experts. Adding one puts a copy in your library, credited to its author.</div>
+      <div id="catalog" class="liblist"></div>
+    </section>
+
+    <div class="sessionbar">
+      <h2>Measurements</h2>
+    </div>
+    <div class="muted" style="font-size:.82rem;margin-top:-6px">Things you track besides workouts. Turned-on items appear on every Log entry and in Progress.</div>
+    <div id="metricList" class="liblist"></div>
+    <div class="ex">
+      <div class="subhead">Add a measurement</div>
+      <div class="grid2">
+        <label class="field" for="presetPick">From presets<select id="presetPick"></select></label>
+        <div class="field" style="justify-content:flex-end"><button id="addPreset">Add preset</button></div>
+      </div>
+      <div class="grid2">
+        <label class="field" for="cmName">Or your own: name<input id="cmName" type="text" maxlength="40" placeholder="e.g. Grip strength"></label>
+        <label class="field" for="cmUnit">Unit<input id="cmUnit" type="text" maxlength="16" placeholder="e.g. kg"></label>
+        <label class="field" for="cmDir">Better when it goes<select id="cmDir"><option value="none">No preference</option><option value="down">Down</option><option value="up">Up</option></select></label>
+        <div class="field" style="justify-content:flex-end"><button id="addCustom">Add custom</button></div>
+      </div>
+    </div>
+
+  </section>
+
+  <section id="setView" class="view" hidden>
+    <div class="sessionbar"><h2>Settings</h2></div>
+    <div class="ex">
+      <div class="subhead">Profile</div>
+      <div class="ctl-row"><span class="ctl-lab">Name (author on everything you create)</span><b id="meName"></b></div>
+    </div>
+    <div class="ex">
+      <div class="subhead">Settings for every program</div>
+      <div class="grid2">
+        <label class="field" for="sUnit">Units<select id="sUnit"><option value="lb">Pounds (lb)</option><option value="kg">Kilograms (kg)</option></select></label>
+        <label class="field" for="sInc">Weight jump when you hit the target<input id="sInc" type="number" min="0" step="0.5" class="num"></label>
+        <label class="field" for="sRestA">Rest timer A (sec)<input id="sRestA" type="number" min="5" step="5" class="num"></label>
+        <label class="field" for="sRestB">Rest timer B (sec)<input id="sRestB" type="number" min="5" step="5" class="num"></label>
+      </div>
+    </div>
+    <div class="ex">
+      <div class="subhead">Preset program</div>
+      <div class="rx muted" style="font-size:.85rem">Add the original Push / Pull / Legs program and its workouts back to your library.</div>
+      <div class="actions"><span id="resetWrap"></span></div>
+    </div>
+    <div class="ex dangerzone">
+      <div class="subhead">Reset user profile</div>
+      <div class="muted" style="font-size:.85rem">Erases your name, programs, workouts, measurements, settings and every logged day from this browser, then starts the welcome setup again. A linked Herculean.xml file is unlinked but not deleted, so it still holds your old profile.</div>
+      <div class="actions"><span id="profResetWrap"></span></div>
+    </div>
+  </section>
+
+  <section id="editView" class="view" hidden>
+    <div class="sessionbar">
+      <div><div class="eyebrow" id="editKind">Program</div><h2 id="editTitle">Edit</h2></div>
+      <span class="dirty" id="dirty" hidden>Unsaved changes</span>
+    </div>
+    <div id="editBody" style="display:flex;flex-direction:column;gap:12px"></div>
+    <div class="actions">
+      <button class="primary" id="saveEdit">Save</button>
+      <button class="ghost" id="cancelEdit">Cancel</button>
+    </div>
+    <p class="muted" style="font-size:.85rem;margin:0">Renaming an exercise keeps its history. Removing one hides it from the log but its past sessions stay in Progress and Archive.</p>
+  </section>
+  </section>
+  </div>
+</main>
+<div class="modal" id="welcome" role="dialog" aria-modal="true" aria-labelledby="wTitle" hidden>
+  <form class="modalcard" id="wForm">
+    <div class="logo-slot small"><img src="herculean/hercule.svg" alt="" onerror="this.remove()"><span>LOGO</span></div>
+    <p class="kicker">HERCULEAN / WORKOUT TRACKER</p>
+    <h2 id="wTitle">Welcome to Herculean</h2>
+    <p class="muted">Let’s set up your profile. Your name is stamped as the author on every program and workout you create, and it can’t be changed later.</p>
+    <label class="field" for="wName">Your name<input id="wName" type="text" maxlength="60" autocomplete="name" placeholder="e.g. Alex Rivera" required></label>
+    <label class="field" for="wUnit">Weights in<select id="wUnit"><option value="lb">Pounds (lb)</option><option value="kg">Kilograms (kg)</option></select></label>
+    <p class="error" id="wErr" hidden>Enter your name to create your profile.</p>
+    <button class="primary" type="submit" id="wGo">Create my profile</button>
+    <div class="walt" id="wAlt" hidden><span class="muted">Already have a profile?</span> <button type="button" class="ghost" id="wOpen">Open my Herculean.xml</button></div>
+  </form>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script src="herculean/herculean-core.js"></script>
+<script src="herculean/herculean-storage.js"></script>
+</body>
+</html>

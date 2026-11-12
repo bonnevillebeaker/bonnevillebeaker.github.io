@@ -1,0 +1,3206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<herculean version="4" saved="2026-11-09T04:02:04.418Z">
+<settings unit="lb" inc="5" restA="90" restB="150"/>
+<me id="u-example" name="Alex Example"/>
+<measurements>
+<measure id="bw" name="Body weight" unit="@w" dir="none" kind="number" on="true"/>
+<measure id="bp" name="Blood pressure" unit="mmHg" dir="down" kind="bp" on="true"/>
+<measure id="rhr" name="Resting heart rate" unit="bpm" dir="down" kind="number" on="true"/>
+<measure id="vo2" name="VO2 max" unit="mL/kg/min" dir="up" kind="number" on="true"/>
+<measure id="ahi" name="AHI (sleep apnea index)" unit="events/hr" dir="down" kind="number" on="true"/>
+<measure id="waist" name="Waist" unit="@l" dir="down" kind="number" on="true"/>
+<measure id="arm-r" name="Upper arm (right)" unit="@l" dir="up" kind="number" on="true"/>
+</measurements>
+<programs active="ppl">
+<program id="ppl" name="Push / Pull / Legs" author="Herculean" authorId="ironlog" created="2026-11-08" deload="5" deloadSets="3">
+<loop len="7" start="2026-07-13">
+<slot index="0" workout="mon"/>
+<slot index="1" workout="tue"/>
+<slot index="2" workout="wed"/>
+<slot index="3" workout="thu"/>
+<slot index="4" workout="fri"/>
+<slot index="5" workout="sat"/>
+<slot index="6"/>
+</loop>
+<workout id="mon" label="Mon" name="Push A" author="Herculean" authorId="ironlog" created="2026-11-08">
+<cardio on="true" type="steady" label="Easy bike" target="15 min, conversational pace"/>
+<exercise id="smith-bench" name="Smith bench press" sets="5" lo="7" hi="7" unit="reps" weight="true"/>
+<exercise id="incline-db-press" name="Incline DB press" sets="5" lo="7" hi="7" unit="reps" weight="true"/>
+<exercise id="seated-db-shoulder" name="Seated DB shoulder press" sets="4" lo="7" hi="7" unit="reps" weight="true"/>
+<exercise id="cable-lateral" name="Cable lateral raise" sets="3" lo="12" hi="15" unit="reps" weight="true"/>
+<exercise id="triceps-pushdown" name="Triceps pushdown" sets="3" lo="7" hi="7" unit="reps" weight="true"/>
+</workout>
+<workout id="tue" label="Tue" name="Pull A + Legs B" author="Herculean" authorId="ironlog" created="2026-11-08">
+<cardio on="false" type="steady"/>
+<exercise id="lat-pulldown" name="Lat pulldown" sets="5" lo="7" hi="7" unit="reps" weight="true"/>
+<exercise id="seated-cable-row" name="Seated cable row" sets="5" lo="7" hi="7" unit="reps" weight="true"/>
+<exercise id="face-pull" name="Face pull" sets="3" lo="12" hi="15" unit="reps" weight="true"/>
+<exercise id="db-curl" name="DB curl" sets="3" lo="7" hi="7" unit="reps" weight="true"/>
+<exercise id="leg-press" name="Leg press" sets="3" lo="7" hi="7" unit="reps" weight="true"/>
+<exercise id="seated-leg-curl" name="Seated leg curl" sets="3" lo="7" hi="7" unit="reps" weight="true"/>
+</workout>
+<workout id="wed" label="Wed" name="Legs A" author="Herculean" authorId="ironlog" created="2026-11-08">
+<cardio on="false" type="steady"/>
+<exercise id="smith-squat" name="Smith squat" sets="5" lo="7" hi="7" unit="reps" weight="true"/>
+<exercise id="db-rdl" name="DB Romanian deadlift" sets="5" lo="7" hi="7" unit="reps" weight="true"/>
+<exercise id="walking-lunge" name="Walking lunge (each leg)" sets="3" lo="7" hi="7" unit="reps" weight="true"/>
+<exercise id="leg-extension" name="Leg extension" sets="3" lo="7" hi="7" unit="reps" weight="true"/>
+<exercise id="lying-leg-curl" name="Lying leg curl" sets="3" lo="7" hi="7" unit="reps" weight="true"/>
+<exercise id="calf-raise" name="Calf raise" sets="4" lo="12" hi="15" unit="reps" weight="true"/>
+</workout>
+<workout id="thu" label="Thu" name="Push B" author="Herculean" authorId="ironlog" created="2026-11-08">
+<cardio on="true" type="steady" label="Easy bike" target="15 min, conversational pace"/>
+<exercise id="machine-chest-press" name="Machine chest press" sets="5" lo="7" hi="7" unit="reps" weight="true"/>
+<exercise id="incline-smith-press" name="Incline Smith press" sets="5" lo="7" hi="7" unit="reps" weight="true"/>
+<exercise id="pec-deck" name="Pec deck" sets="3" lo="7" hi="7" unit="reps" weight="true"/>
+<exercise id="machine-shoulder-press" name="Machine shoulder press" sets="4" lo="7" hi="7" unit="reps" weight="true"/>
+<exercise id="db-lateral" name="DB lateral raise" sets="3" lo="12" hi="15" unit="reps" weight="true"/>
+<exercise id="oh-db-triceps" name="Overhead DB triceps extension" sets="3" lo="7" hi="7" unit="reps" weight="true"/>
+</workout>
+<workout id="fri" label="Fri" name="Pull B" author="Herculean" authorId="ironlog" created="2026-11-08">
+<cardio on="false" type="steady"/>
+<exercise id="one-arm-db-row" name="One-arm DB row (each arm)" sets="5" lo="7" hi="7" unit="reps" weight="true"/>
+<exercise id="close-grip-pulldown" name="Close-grip pulldown" sets="5" lo="7" hi="7" unit="reps" weight="true"/>
+<exercise id="machine-row" name="Machine row" sets="4" lo="7" hi="7" unit="reps" weight="true"/>
+<exercise id="reverse-pec-deck" name="Reverse pec deck" sets="3" lo="12" hi="15" unit="reps" weight="true"/>
+<exercise id="hammer-curl" name="Hammer curl" sets="3" lo="7" hi="7" unit="reps" weight="true"/>
+</workout>
+<workout id="sat" label="Sat" name="Conditioning" author="Herculean" authorId="ironlog" created="2026-11-08">
+<cardio on="true" type="intervals" label="Bike intervals" target="4 × 4 min hard, 3 min easy"/>
+<exercise id="cable-crunch" name="Cable crunch" sets="3" lo="12" hi="15" unit="reps" weight="true"/>
+<exercise id="plank" name="Plank" sets="3" lo="30" hi="60" unit="sec" weight="false"/>
+</workout>
+</program>
+</programs>
+<library>
+<workout id="lib-mon" label="Mon" name="Push A" author="Herculean" authorId="ironlog" created="2026-11-08">
+<cardio on="true" type="steady" label="Easy bike" target="15 min, conversational pace"/>
+<exercise id="smith-bench" name="Smith bench press" sets="5" lo="7" hi="7" unit="reps" weight="true"/>
+<exercise id="incline-db-press" name="Incline DB press" sets="5" lo="7" hi="7" unit="reps" weight="true"/>
+<exercise id="seated-db-shoulder" name="Seated DB shoulder press" sets="4" lo="7" hi="7" unit="reps" weight="true"/>
+<exercise id="cable-lateral" name="Cable lateral raise" sets="3" lo="12" hi="15" unit="reps" weight="true"/>
+<exercise id="triceps-pushdown" name="Triceps pushdown" sets="3" lo="7" hi="7" unit="reps" weight="true"/>
+</workout>
+<workout id="lib-tue" label="Tue" name="Pull A + Legs B" author="Herculean" authorId="ironlog" created="2026-11-08">
+<cardio on="false" type="steady"/>
+<exercise id="lat-pulldown" name="Lat pulldown" sets="5" lo="7" hi="7" unit="reps" weight="true"/>
+<exercise id="seated-cable-row" name="Seated cable row" sets="5" lo="7" hi="7" unit="reps" weight="true"/>
+<exercise id="face-pull" name="Face pull" sets="3" lo="12" hi="15" unit="reps" weight="true"/>
+<exercise id="db-curl" name="DB curl" sets="3" lo="7" hi="7" unit="reps" weight="true"/>
+<exercise id="leg-press" name="Leg press" sets="3" lo="7" hi="7" unit="reps" weight="true"/>
+<exercise id="seated-leg-curl" name="Seated leg curl" sets="3" lo="7" hi="7" unit="reps" weight="true"/>
+</workout>
+<workout id="lib-wed" label="Wed" name="Legs A" author="Herculean" authorId="ironlog" created="2026-11-08">
+<cardio on="false" type="steady"/>
+<exercise id="smith-squat" name="Smith squat" sets="5" lo="7" hi="7" unit="reps" weight="true"/>
+<exercise id="db-rdl" name="DB Romanian deadlift" sets="5" lo="7" hi="7" unit="reps" weight="true"/>
+<exercise id="walking-lunge" name="Walking lunge (each leg)" sets="3" lo="7" hi="7" unit="reps" weight="true"/>
+<exercise id="leg-extension" name="Leg extension" sets="3" lo="7" hi="7" unit="reps" weight="true"/>
+<exercise id="lying-leg-curl" name="Lying leg curl" sets="3" lo="7" hi="7" unit="reps" weight="true"/>
+<exercise id="calf-raise" name="Calf raise" sets="4" lo="12" hi="15" unit="reps" weight="true"/>
+</workout>
+<workout id="lib-thu" label="Thu" name="Push B" author="Herculean" authorId="ironlog" created="2026-11-08">
+<cardio on="true" type="steady" label="Easy bike" target="15 min, conversational pace"/>
+<exercise id="machine-chest-press" name="Machine chest press" sets="5" lo="7" hi="7" unit="reps" weight="true"/>
+<exercise id="incline-smith-press" name="Incline Smith press" sets="5" lo="7" hi="7" unit="reps" weight="true"/>
+<exercise id="pec-deck" name="Pec deck" sets="3" lo="7" hi="7" unit="reps" weight="true"/>
+<exercise id="machine-shoulder-press" name="Machine shoulder press" sets="4" lo="7" hi="7" unit="reps" weight="true"/>
+<exercise id="db-lateral" name="DB lateral raise" sets="3" lo="12" hi="15" unit="reps" weight="true"/>
+<exercise id="oh-db-triceps" name="Overhead DB triceps extension" sets="3" lo="7" hi="7" unit="reps" weight="true"/>
+</workout>
+<workout id="lib-fri" label="Fri" name="Pull B" author="Herculean" authorId="ironlog" created="2026-11-08">
+<cardio on="false" type="steady"/>
+<exercise id="one-arm-db-row" name="One-arm DB row (each arm)" sets="5" lo="7" hi="7" unit="reps" weight="true"/>
+<exercise id="close-grip-pulldown" name="Close-grip pulldown" sets="5" lo="7" hi="7" unit="reps" weight="true"/>
+<exercise id="machine-row" name="Machine row" sets="4" lo="7" hi="7" unit="reps" weight="true"/>
+<exercise id="reverse-pec-deck" name="Reverse pec deck" sets="3" lo="12" hi="15" unit="reps" weight="true"/>
+<exercise id="hammer-curl" name="Hammer curl" sets="3" lo="7" hi="7" unit="reps" weight="true"/>
+</workout>
+<workout id="lib-sat" label="Sat" name="Conditioning" author="Herculean" authorId="ironlog" created="2026-11-08">
+<cardio on="true" type="intervals" label="Bike intervals" target="4 × 4 min hard, 3 min easy"/>
+<exercise id="cable-crunch" name="Cable crunch" sets="3" lo="12" hi="15" unit="reps" weight="true"/>
+<exercise id="plank" name="Plank" sets="3" lo="30" hi="60" unit="sec" weight="false"/>
+</workout>
+<workout id="lib-run" label="Run" name="Easy run" author="Alex Example" authorId="u-example">
+<cardio on="false" type="steady"/>
+<exercise id="treadmill-run" name="Treadmill run" sets="1" lo="1800" hi="2400" unit="sec" weight="false" dist="true" distUnit="mi" pace="true"/>
+</workout>
+<workout id="lib-arms" label="Arms" name="Arm finisher" author="Alex Example" authorId="u-example">
+<cardio on="false" type="steady"/>
+<exercise id="ez-curl" name="EZ-bar curl" sets="3" lo="10" hi="12" unit="reps" weight="true" group="g1"/>
+<exercise id="rope-pushdown" name="Rope pushdown" sets="3" lo="10" hi="12" unit="reps" weight="true" group="g1"/>
+</workout>
+</library>
+<entries>
+<entry id="s_2026-07-13_mon" date="2026-07-13" day="mon" dayName="Push A" programName="Push / Pull / Legs" programId="ppl" loop="1" unit="lb" bw="186.4" savedAt="2026-07-13T13:30:00.000Z">
+<note>Lower back a little tight on RDLs, went lighter.</note>
+<value of="bp" sys="136" dia="88"/>
+<value of="rhr" v="67"/>
+<value of="ahi" v="8.1"/>
+<value of="waist" v="36.75"/>
+<value of="arm-r" v="14.25"/>
+<value of="vo2" v="40.5"/>
+<cardio type="steady" min="15" level="5" hr="133"/>
+<exercise id="smith-bench" name="Smith bench press">
+<set w="135" r="7"/>
+<set w="135" r="7"/>
+<set w="135" r="7"/>
+<set w="135" r="7"/>
+<set w="135" r="7"/>
+</exercise>
+<exercise id="incline-db-press" name="Incline DB press">
+<set w="45" r="7"/>
+<set w="45" r="7"/>
+<set w="45" r="7"/>
+<set w="45" r="7"/>
+<set w="45" r="7"/>
+</exercise>
+<exercise id="seated-db-shoulder" name="Seated DB shoulder press">
+<set w="35" r="7"/>
+<set w="35" r="7"/>
+<set w="35" r="7"/>
+<set w="35" r="6"/>
+</exercise>
+<exercise id="cable-lateral" name="Cable lateral raise">
+<set w="15" r="14"/>
+<set w="15" r="14"/>
+<set w="15" r="13"/>
+</exercise>
+<exercise id="triceps-pushdown" name="Triceps pushdown">
+<set w="50" r="7"/>
+<set w="50" r="6"/>
+<set w="50" r="6"/>
+</exercise>
+</entry>
+<entry id="s_2026-07-14_tue" date="2026-07-14" day="tue" dayName="Pull A + Legs B" programName="Push / Pull / Legs" programId="ppl" loop="1" unit="lb" bw="186.4" savedAt="2026-07-14T13:30:00.000Z">
+<exercise id="lat-pulldown" name="Lat pulldown">
+<set w="120" r="7"/>
+<set w="120" r="7"/>
+<set w="120" r="7"/>
+<set w="120" r="6"/>
+<set w="120" r="7"/>
+</exercise>
+<exercise id="seated-cable-row" name="Seated cable row">
+<set w="110" r="7"/>
+<set w="110" r="7"/>
+<set w="110" r="7"/>
+<set w="110" r="7"/>
+<set w="110" r="7"/>
+</exercise>
+<exercise id="face-pull" name="Face pull">
+<set w="30" r="13"/>
+<set w="30" r="15"/>
+<set w="30" r="14"/>
+</exercise>
+<exercise id="db-curl" name="DB curl">
+<set w="25" r="7"/>
+<set w="25" r="7"/>
+<set w="25" r="7"/>
+</exercise>
+<exercise id="leg-press" name="Leg press">
+<set w="230" r="7"/>
+<set w="230" r="7"/>
+<set w="230" r="7"/>
+</exercise>
+<exercise id="seated-leg-curl" name="Seated leg curl">
+<set w="80" r="7"/>
+<set w="80" r="6"/>
+<set w="80" r="7"/>
+</exercise>
+</entry>
+<entry id="s_2026-07-15_wed" date="2026-07-15" day="wed" dayName="Legs A" programName="Push / Pull / Legs" programId="ppl" loop="1" unit="lb" bw="186.1" savedAt="2026-07-15T13:30:00.000Z">
+<exercise id="smith-squat" name="Smith squat">
+<set w="155" r="7"/>
+<set w="155" r="7"/>
+<set w="155" r="7"/>
+<set w="155" r="7"/>
+<set w="155" r="6"/>
+</exercise>
+<exercise id="db-rdl" name="DB Romanian deadlift">
+<set w="50" r="7"/>
+<set w="50" r="7"/>
+<set w="50" r="7"/>
+<set w="50" r="7"/>
+<set w="50" r="7"/>
+</exercise>
+<exercise id="walking-lunge" name="Walking lunge (each leg)">
+<set w="25" r="7"/>
+<set w="25" r="6"/>
+<set w="25" r="7"/>
+</exercise>
+<exercise id="leg-extension" name="Leg extension">
+<set w="90" r="7"/>
+<set w="90" r="5"/>
+<set w="90" r="7"/>
+</exercise>
+<exercise id="lying-leg-curl" name="Lying leg curl">
+<set w="70" r="7"/>
+<set w="70" r="6"/>
+<set w="70" r="7"/>
+</exercise>
+<exercise id="calf-raise" name="Calf raise">
+<set w="140" r="14"/>
+<set w="140" r="13"/>
+<set w="140" r="14"/>
+<set w="140" r="12"/>
+</exercise>
+</entry>
+<entry id="s_2026-07-16_thu" date="2026-07-16" day="thu" dayName="Push B" programName="Push / Pull / Legs" programId="ppl" loop="1" unit="lb" savedAt="2026-07-16T13:30:00.000Z">
+<cardio type="steady" min="15" level="5" hr="131"/>
+<exercise id="machine-chest-press" name="Machine chest press">
+<set w="120" r="7"/>
+<set w="120" r="7"/>
+<set w="120" r="7"/>
+<set w="120" r="7"/>
+<set w="120" r="7"/>
+</exercise>
+<exercise id="incline-smith-press" name="Incline Smith press">
+<set w="115" r="7"/>
+<set w="115" r="7"/>
+<set w="115" r="7"/>
+<set w="115" r="6"/>
+<set w="115" r="6"/>
+</exercise>
+<exercise id="pec-deck" name="Pec deck">
+<set w="90" r="7"/>
+<set w="90" r="6"/>
+<set w="90" r="7"/>
+</exercise>
+<exercise id="machine-shoulder-press" name="Machine shoulder press">
+<set w="80" r="7"/>
+<set w="80" r="7"/>
+<set w="80" r="6"/>
+<set w="80" r="7"/>
+</exercise>
+<exercise id="db-lateral" name="DB lateral raise">
+<set w="15" r="15"/>
+<set w="15" r="14"/>
+<set w="15" r="13"/>
+</exercise>
+<exercise id="oh-db-triceps" name="Overhead DB triceps extension">
+<set w="35" r="7"/>
+<set w="35" r="7"/>
+<set w="35" r="5"/>
+</exercise>
+</entry>
+<entry id="s_2026-07-17_fri" date="2026-07-17" day="fri" dayName="Pull B" programName="Push / Pull / Legs" programId="ppl" loop="1" unit="lb" savedAt="2026-07-17T13:30:00.000Z">
+<exercise id="one-arm-db-row" name="One-arm DB row (each arm)">
+<set w="55" r="7"/>
+<set w="55" r="7"/>
+<set w="55" r="7"/>
+<set w="55" r="6"/>
+<set w="55" r="7"/>
+</exercise>
+<exercise id="close-grip-pulldown" name="Close-grip pulldown">
+<set w="110" r="7"/>
+<set w="110" r="7"/>
+<set w="110" r="7"/>
+<set w="110" r="5"/>
+<set w="110" r="7"/>
+</exercise>
+<exercise id="machine-row" name="Machine row">
+<set w="100" r="7"/>
+<set w="100" r="7"/>
+<set w="100" r="6"/>
+<set w="100" r="5"/>
+</exercise>
+<exercise id="reverse-pec-deck" name="Reverse pec deck">
+<set w="50" r="13"/>
+<set w="50" r="14"/>
+<set w="50" r="13"/>
+</exercise>
+<exercise id="hammer-curl" name="Hammer curl">
+<set w="25" r="7"/>
+<set w="25" r="6"/>
+<set w="25" r="7"/>
+</exercise>
+</entry>
+<entry id="s_2026-07-18_sat" date="2026-07-18" day="sat" dayName="Conditioning" programName="Push / Pull / Legs" programId="ppl" loop="1" unit="lb" bw="186.5" savedAt="2026-07-18T13:30:00.000Z">
+<note>Lower back a little tight on RDLs, went lighter.</note>
+<cardio type="intervals" rounds="4" level="8" hr="160"/>
+<exercise id="cable-crunch" name="Cable crunch">
+<set w="60" r="14"/>
+<set w="60" r="13"/>
+<set w="60" r="14"/>
+</exercise>
+<exercise id="plank" name="Plank" unit="sec">
+<set w="0" r="34"/>
+<set w="0" r="33"/>
+<set w="0" r="28"/>
+</exercise>
+</entry>
+<entry id="s_2026-07-20_mon" date="2026-07-20" day="mon" dayName="Push A" programName="Push / Pull / Legs" programId="ppl" loop="2" unit="lb" savedAt="2026-07-20T13:30:00.000Z">
+<value of="bp" sys="134" dia="85"/>
+<value of="rhr" v="65"/>
+<value of="ahi" v="8.2"/>
+<cardio type="steady" min="15" level="5" hr="131"/>
+<exercise id="smith-bench" name="Smith bench press">
+<set w="140" r="7"/>
+<set w="140" r="7"/>
+<set w="140" r="7"/>
+<set w="140" r="6"/>
+<set w="140" r="7"/>
+</exercise>
+<exercise id="incline-db-press" name="Incline DB press">
+<set w="50" r="7"/>
+<set w="50" r="7"/>
+<set w="50" r="7"/>
+<set w="50" r="7"/>
+<set w="50" r="6"/>
+</exercise>
+<exercise id="seated-db-shoulder" name="Seated DB shoulder press">
+<set w="35" r="7"/>
+<set w="35" r="7"/>
+<set w="35" r="7"/>
+<set w="35" r="7"/>
+</exercise>
+<exercise id="cable-lateral" name="Cable lateral raise">
+<set w="15" r="15"/>
+<set w="15" r="15"/>
+<set w="15" r="15"/>
+</exercise>
+<exercise id="triceps-pushdown" name="Triceps pushdown">
+<set w="50" r="7"/>
+<set w="50" r="7"/>
+<set w="50" r="7"/>
+</exercise>
+</entry>
+<entry id="s_2026-07-21_tue" date="2026-07-21" day="tue" dayName="Pull A + Legs B" programName="Push / Pull / Legs" programId="ppl" loop="2" unit="lb" bw="185.8" savedAt="2026-07-21T13:30:00.000Z">
+<exercise id="lat-pulldown" name="Lat pulldown">
+<set w="120" r="7"/>
+<set w="120" r="7"/>
+<set w="120" r="7"/>
+<set w="120" r="7"/>
+<set w="120" r="7"/>
+</exercise>
+<exercise id="seated-cable-row" name="Seated cable row">
+<set w="115" r="7"/>
+<set w="115" r="7"/>
+<set w="115" r="7"/>
+<set w="115" r="6"/>
+<set w="115" r="7"/>
+</exercise>
+<exercise id="face-pull" name="Face pull">
+<set w="30" r="15"/>
+<set w="30" r="14"/>
+<set w="30" r="13"/>
+</exercise>
+<exercise id="db-curl" name="DB curl">
+<set w="30" r="7"/>
+<set w="30" r="7"/>
+<set w="30" r="6"/>
+</exercise>
+<exercise id="leg-press" name="Leg press">
+<set w="240" r="7"/>
+<set w="240" r="5"/>
+<set w="240" r="7"/>
+</exercise>
+<exercise id="seated-leg-curl" name="Seated leg curl">
+<set w="80" r="7"/>
+<set w="80" r="7"/>
+<set w="80" r="7"/>
+</exercise>
+</entry>
+<entry id="s_2026-07-22_wed" date="2026-07-22" day="wed" dayName="Legs A" programName="Push / Pull / Legs" programId="ppl" loop="2" unit="lb" bw="186.1" savedAt="2026-07-22T13:30:00.000Z">
+<note>Great pump.</note>
+<exercise id="smith-squat" name="Smith squat">
+<set w="155" r="7"/>
+<set w="155" r="7"/>
+<set w="155" r="7"/>
+<set w="155" r="7"/>
+<set w="155" r="7"/>
+</exercise>
+<exercise id="db-rdl" name="DB Romanian deadlift">
+<set w="55" r="7"/>
+<set w="55" r="7"/>
+<set w="55" r="7"/>
+<set w="55" r="7"/>
+<set w="55" r="5"/>
+</exercise>
+<exercise id="walking-lunge" name="Walking lunge (each leg)">
+<set w="25" r="7"/>
+<set w="25" r="7"/>
+<set w="25" r="7"/>
+</exercise>
+<exercise id="leg-extension" name="Leg extension">
+<set w="90" r="7"/>
+<set w="90" r="7"/>
+<set w="90" r="7"/>
+</exercise>
+<exercise id="lying-leg-curl" name="Lying leg curl">
+<set w="70" r="7"/>
+<set w="70" r="7"/>
+<set w="70" r="7"/>
+</exercise>
+<exercise id="calf-raise" name="Calf raise">
+<set w="140" r="15"/>
+<set w="140" r="15"/>
+<set w="140" r="15"/>
+<set w="140" r="15"/>
+</exercise>
+</entry>
+<entry id="s_2026-07-23_thu" date="2026-07-23" day="thu" dayName="Push B" programName="Push / Pull / Legs" programId="ppl" loop="2" unit="lb" savedAt="2026-07-23T13:30:00.000Z">
+<cardio type="steady" min="15" level="5" hr="138"/>
+<exercise id="machine-chest-press" name="Machine chest press">
+<set w="125" r="7"/>
+<set w="125" r="7"/>
+<set w="125" r="7"/>
+<set w="125" r="7"/>
+<set w="125" r="6"/>
+</exercise>
+<exercise id="incline-smith-press" name="Incline Smith press">
+<set w="115" r="7"/>
+<set w="115" r="7"/>
+<set w="115" r="7"/>
+<set w="115" r="7"/>
+<set w="115" r="7"/>
+</exercise>
+<exercise id="pec-deck" name="Pec deck">
+<set w="90" r="7"/>
+<set w="90" r="7"/>
+<set w="90" r="7"/>
+</exercise>
+<exercise id="machine-shoulder-press" name="Machine shoulder press">
+<set w="80" r="7"/>
+<set w="80" r="7"/>
+<set w="80" r="7"/>
+<set w="80" r="7"/>
+</exercise>
+<exercise id="db-lateral" name="DB lateral raise">
+<set w="15" r="15"/>
+<set w="15" r="15"/>
+<set w="15" r="15"/>
+</exercise>
+<exercise id="oh-db-triceps" name="Overhead DB triceps extension">
+<set w="35" r="7"/>
+<set w="35" r="7"/>
+<set w="35" r="7"/>
+</exercise>
+</entry>
+<entry id="s_2026-07-25_sat" date="2026-07-25" day="sat" dayName="Conditioning" programName="Push / Pull / Legs" programId="ppl" loop="2" unit="lb" bw="185.4" savedAt="2026-07-25T13:30:00.000Z">
+<cardio type="intervals" rounds="4" level="8" hr="162"/>
+<exercise id="cable-crunch" name="Cable crunch">
+<set w="60" r="13"/>
+<set w="60" r="13"/>
+<set w="60" r="13"/>
+</exercise>
+<exercise id="plank" name="Plank" unit="sec">
+<set w="0" r="40"/>
+<set w="0" r="35"/>
+<set w="0" r="31"/>
+</exercise>
+</entry>
+<entry id="s_2026-07-26_lib-run" date="2026-07-26" day="lib-run" dayName="Easy run" programName="One-off" loop="2" unit="lb" bw="185.2" savedAt="2026-07-26T17:20:00.000Z">
+<exercise id="treadmill-run" name="Treadmill run" unit="sec" distUnit="mi">
+<set w="0" r="1691" d="2.8" p="604"/>
+</exercise>
+</entry>
+<entry id="s_2026-07-27_mon" date="2026-07-27" day="mon" dayName="Push A" programName="Push / Pull / Legs" programId="ppl" loop="3" unit="lb" savedAt="2026-07-27T13:30:00.000Z">
+<note>Slept badly, kept it smooth.</note>
+<value of="bp" sys="130" dia="84"/>
+<value of="rhr" v="67"/>
+<value of="ahi" v="7.3"/>
+<value of="waist" v="36.5"/>
+<value of="arm-r" v="14.25"/>
+<cardio type="steady" min="15" level="5" hr="131"/>
+<exercise id="smith-bench" name="Smith bench press">
+<set w="140" r="7"/>
+<set w="140" r="7"/>
+<set w="140" r="7"/>
+<set w="140" r="7"/>
+<set w="140" r="7"/>
+</exercise>
+<exercise id="incline-db-press" name="Incline DB press">
+<set w="50" r="7"/>
+<set w="50" r="7"/>
+<set w="50" r="7"/>
+<set w="50" r="7"/>
+<set w="50" r="7"/>
+</exercise>
+<exercise id="seated-db-shoulder" name="Seated DB shoulder press">
+<set w="40" r="7"/>
+<set w="40" r="7"/>
+<set w="40" r="6"/>
+<set w="40" r="7"/>
+</exercise>
+<exercise id="cable-lateral" name="Cable lateral raise">
+<set w="17.5" r="13"/>
+<set w="17.5" r="14"/>
+<set w="17.5" r="12"/>
+</exercise>
+<exercise id="triceps-pushdown" name="Triceps pushdown">
+<set w="55" r="7"/>
+<set w="55" r="6"/>
+<set w="55" r="6"/>
+</exercise>
+</entry>
+<entry id="s_2026-07-28_tue" date="2026-07-28" day="tue" dayName="Pull A + Legs B" programName="Push / Pull / Legs" programId="ppl" loop="3" unit="lb" bw="185.3" savedAt="2026-07-28T13:30:00.000Z">
+<exercise id="lat-pulldown" name="Lat pulldown">
+<set w="125" r="7"/>
+<set w="125" r="7"/>
+<set w="125" r="7"/>
+<set w="125" r="7"/>
+<set w="125" r="6"/>
+</exercise>
+<exercise id="seated-cable-row" name="Seated cable row">
+<set w="115" r="7"/>
+<set w="115" r="7"/>
+<set w="115" r="7"/>
+<set w="115" r="7"/>
+<set w="115" r="7"/>
+</exercise>
+<exercise id="face-pull" name="Face pull">
+<set w="30" r="15"/>
+<set w="30" r="15"/>
+<set w="30" r="15"/>
+</exercise>
+<exercise id="db-curl" name="DB curl">
+<set w="30" r="7"/>
+<set w="30" r="7"/>
+<set w="30" r="7"/>
+</exercise>
+<exercise id="leg-press" name="Leg press">
+<set w="240" r="7"/>
+<set w="240" r="7"/>
+<set w="240" r="7"/>
+</exercise>
+<exercise id="seated-leg-curl" name="Seated leg curl">
+<set w="85" r="7"/>
+<set w="85" r="7"/>
+<set w="85" r="6"/>
+</exercise>
+</entry>
+<entry id="s_2026-07-29_wed" date="2026-07-29" day="wed" dayName="Legs A" programName="Push / Pull / Legs" programId="ppl" loop="3" unit="lb" bw="184.9" savedAt="2026-07-29T13:30:00.000Z">
+<exercise id="smith-squat" name="Smith squat">
+<set w="160" r="7"/>
+<set w="160" r="7"/>
+<set w="160" r="7"/>
+<set w="160" r="7"/>
+<set w="160" r="7"/>
+</exercise>
+<exercise id="db-rdl" name="DB Romanian deadlift">
+<set w="55" r="7"/>
+<set w="55" r="7"/>
+<set w="55" r="7"/>
+<set w="55" r="7"/>
+<set w="55" r="7"/>
+</exercise>
+<exercise id="walking-lunge" name="Walking lunge (each leg)">
+<set w="30" r="7"/>
+<set w="30" r="6"/>
+<set w="30" r="7"/>
+</exercise>
+<exercise id="leg-extension" name="Leg extension">
+<set w="95" r="7"/>
+<set w="95" r="5"/>
+<set w="95" r="6"/>
+</exercise>
+<exercise id="lying-leg-curl" name="Lying leg curl">
+<set w="75" r="7"/>
+<set w="75" r="7"/>
+<set w="75" r="5"/>
+</exercise>
+<exercise id="calf-raise" name="Calf raise">
+<set w="150" r="14"/>
+<set w="150" r="14"/>
+<set w="150" r="14"/>
+<set w="150" r="14"/>
+</exercise>
+</entry>
+<entry id="s_2026-07-30_thu" date="2026-07-30" day="thu" dayName="Push B" programName="Push / Pull / Legs" programId="ppl" loop="3" unit="lb" savedAt="2026-07-30T13:30:00.000Z">
+<note>Lower back a little tight on RDLs, went lighter.</note>
+<cardio type="steady" min="15" level="5" hr="130"/>
+<exercise id="machine-chest-press" name="Machine chest press">
+<set w="125" r="7"/>
+<set w="125" r="7"/>
+<set w="125" r="7"/>
+<set w="125" r="7"/>
+<set w="125" r="7"/>
+</exercise>
+<exercise id="incline-smith-press" name="Incline Smith press">
+<set w="120" r="7"/>
+<set w="120" r="7"/>
+<set w="120" r="7"/>
+<set w="120" r="5"/>
+<set w="120" r="6"/>
+</exercise>
+<exercise id="pec-deck" name="Pec deck">
+<set w="95" r="7"/>
+<set w="95" r="5"/>
+<set w="95" r="5"/>
+</exercise>
+<exercise id="machine-shoulder-press" name="Machine shoulder press">
+<set w="85" r="7"/>
+<set w="85" r="7"/>
+<set w="85" r="7"/>
+<set w="85" r="6"/>
+</exercise>
+<exercise id="db-lateral" name="DB lateral raise">
+<set w="17.5" r="13"/>
+<set w="17.5" r="15"/>
+<set w="17.5" r="13"/>
+</exercise>
+<exercise id="oh-db-triceps" name="Overhead DB triceps extension">
+<set w="40" r="7"/>
+<set w="40" r="5"/>
+<set w="40" r="5"/>
+</exercise>
+</entry>
+<entry id="s_2026-07-31_fri" date="2026-07-31" day="fri" dayName="Pull B" programName="Push / Pull / Legs" programId="ppl" loop="3" unit="lb" bw="185.1" savedAt="2026-07-31T13:30:00.000Z">
+<exercise id="one-arm-db-row" name="One-arm DB row (each arm)">
+<set w="55" r="7"/>
+<set w="55" r="7"/>
+<set w="55" r="7"/>
+<set w="55" r="7"/>
+<set w="55" r="7"/>
+</exercise>
+<exercise id="close-grip-pulldown" name="Close-grip pulldown">
+<set w="110" r="7"/>
+<set w="110" r="7"/>
+<set w="110" r="7"/>
+<set w="110" r="7"/>
+<set w="110" r="7"/>
+</exercise>
+<exercise id="machine-row" name="Machine row">
+<set w="100" r="7"/>
+<set w="100" r="7"/>
+<set w="100" r="7"/>
+<set w="100" r="7"/>
+</exercise>
+<exercise id="reverse-pec-deck" name="Reverse pec deck">
+<set w="50" r="15"/>
+<set w="50" r="15"/>
+<set w="50" r="15"/>
+</exercise>
+<exercise id="hammer-curl" name="Hammer curl">
+<set w="25" r="7"/>
+<set w="25" r="7"/>
+<set w="25" r="7"/>
+</exercise>
+</entry>
+<entry id="s_2026-08-01_sat" date="2026-08-01" day="sat" dayName="Conditioning" programName="Push / Pull / Legs" programId="ppl" loop="3" unit="lb" savedAt="2026-08-01T13:30:00.000Z">
+<cardio type="intervals" rounds="4" level="8" hr="158"/>
+<exercise id="cable-crunch" name="Cable crunch">
+<set w="60" r="15"/>
+<set w="60" r="15"/>
+<set w="60" r="15"/>
+</exercise>
+<exercise id="plank" name="Plank" unit="sec">
+<set w="0" r="39"/>
+<set w="0" r="35"/>
+<set w="0" r="32"/>
+</exercise>
+</entry>
+<entry id="s_2026-08-03_mon" date="2026-08-03" day="mon" dayName="Push A" programName="Push / Pull / Legs" programId="ppl" loop="4" unit="lb" bw="184" savedAt="2026-08-03T13:30:00.000Z">
+<value of="bp" sys="131" dia="86"/>
+<value of="rhr" v="66"/>
+<value of="ahi" v="8"/>
+<cardio type="steady" min="20" level="5" hr="134"/>
+<exercise id="smith-bench" name="Smith bench press">
+<set w="145" r="7"/>
+<set w="145" r="7"/>
+<set w="145" r="7"/>
+<set w="145" r="6"/>
+<set w="145" r="7"/>
+</exercise>
+<exercise id="incline-db-press" name="Incline DB press">
+<set w="55" r="7"/>
+<set w="55" r="7"/>
+<set w="55" r="7"/>
+<set w="55" r="7"/>
+<set w="55" r="6"/>
+</exercise>
+<exercise id="seated-db-shoulder" name="Seated DB shoulder press">
+<set w="40" r="7"/>
+<set w="40" r="7"/>
+<set w="40" r="7"/>
+<set w="40" r="7"/>
+</exercise>
+<exercise id="cable-lateral" name="Cable lateral raise">
+<set w="17.5" r="15"/>
+<set w="17.5" r="15"/>
+<set w="17.5" r="15"/>
+</exercise>
+<exercise id="triceps-pushdown" name="Triceps pushdown">
+<set w="55" r="7"/>
+<set w="55" r="7"/>
+<set w="55" r="7"/>
+</exercise>
+</entry>
+<entry id="s_2026-08-04_tue" date="2026-08-04" day="tue" dayName="Pull A + Legs B" programName="Push / Pull / Legs" programId="ppl" loop="4" unit="lb" savedAt="2026-08-04T13:30:00.000Z">
+<exercise id="lat-pulldown" name="Lat pulldown">
+<set w="125" r="7"/>
+<set w="125" r="7"/>
+<set w="125" r="7"/>
+<set w="125" r="7"/>
+<set w="125" r="7"/>
+</exercise>
+<exercise id="seated-cable-row" name="Seated cable row">
+<set w="120" r="7"/>
+<set w="120" r="7"/>
+<set w="120" r="7"/>
+<set w="120" r="6"/>
+<set w="120" r="5"/>
+</exercise>
+<exercise id="face-pull" name="Face pull">
+<set w="35" r="15"/>
+<set w="35" r="14"/>
+<set w="35" r="13"/>
+</exercise>
+<exercise id="db-curl" name="DB curl">
+<set w="35" r="7"/>
+<set w="35" r="7"/>
+<set w="35" r="7"/>
+</exercise>
+<exercise id="leg-press" name="Leg press">
+<set w="250" r="7"/>
+<set w="250" r="6"/>
+<set w="250" r="7"/>
+</exercise>
+<exercise id="seated-leg-curl" name="Seated leg curl">
+<set w="85" r="7"/>
+<set w="85" r="7"/>
+<set w="85" r="7"/>
+</exercise>
+</entry>
+<entry id="s_2026-08-05_wed" date="2026-08-05" day="wed" dayName="Legs A" programName="Push / Pull / Legs" programId="ppl" loop="4" unit="lb" bw="184" savedAt="2026-08-05T13:30:00.000Z">
+<exercise id="smith-squat" name="Smith squat">
+<set w="165" r="7"/>
+<set w="165" r="7"/>
+<set w="165" r="7"/>
+<set w="165" r="6"/>
+<set w="165" r="6"/>
+</exercise>
+<exercise id="db-rdl" name="DB Romanian deadlift">
+<set w="60" r="7"/>
+<set w="60" r="7"/>
+<set w="60" r="7"/>
+<set w="60" r="7"/>
+<set w="60" r="6"/>
+</exercise>
+<exercise id="walking-lunge" name="Walking lunge (each leg)">
+<set w="30" r="7"/>
+<set w="30" r="7"/>
+<set w="30" r="7"/>
+</exercise>
+<exercise id="leg-extension" name="Leg extension">
+<set w="95" r="7"/>
+<set w="95" r="7"/>
+<set w="95" r="7"/>
+</exercise>
+<exercise id="lying-leg-curl" name="Lying leg curl">
+<set w="75" r="7"/>
+<set w="75" r="7"/>
+<set w="75" r="7"/>
+</exercise>
+<exercise id="calf-raise" name="Calf raise">
+<set w="150" r="15"/>
+<set w="150" r="15"/>
+<set w="150" r="15"/>
+<set w="150" r="15"/>
+</exercise>
+</entry>
+<entry id="s_2026-08-06_thu" date="2026-08-06" day="thu" dayName="Push B" programName="Push / Pull / Legs" programId="ppl" loop="4" unit="lb" savedAt="2026-08-06T13:30:00.000Z">
+<cardio type="steady" min="15" level="5" hr="135"/>
+<exercise id="machine-chest-press" name="Machine chest press">
+<set w="130" r="7"/>
+<set w="130" r="7"/>
+<set w="130" r="7"/>
+<set w="130" r="5"/>
+<set w="130" r="7"/>
+</exercise>
+<exercise id="incline-smith-press" name="Incline Smith press">
+<set w="120" r="7"/>
+<set w="120" r="7"/>
+<set w="120" r="7"/>
+<set w="120" r="7"/>
+<set w="120" r="7"/>
+</exercise>
+<exercise id="pec-deck" name="Pec deck">
+<set w="95" r="7"/>
+<set w="95" r="7"/>
+<set w="95" r="7"/>
+</exercise>
+<exercise id="machine-shoulder-press" name="Machine shoulder press">
+<set w="85" r="7"/>
+<set w="85" r="7"/>
+<set w="85" r="7"/>
+<set w="85" r="7"/>
+</exercise>
+<exercise id="db-lateral" name="DB lateral raise">
+<set w="17.5" r="15"/>
+<set w="17.5" r="15"/>
+<set w="17.5" r="15"/>
+</exercise>
+<exercise id="oh-db-triceps" name="Overhead DB triceps extension">
+<set w="40" r="7"/>
+<set w="40" r="6"/>
+<set w="40" r="6"/>
+</exercise>
+</entry>
+<entry id="s_2026-08-07_fri" date="2026-08-07" day="fri" dayName="Pull B" programName="Push / Pull / Legs" programId="ppl" loop="4" unit="lb" bw="183.3" savedAt="2026-08-07T13:30:00.000Z">
+<exercise id="one-arm-db-row" name="One-arm DB row (each arm)">
+<set w="60" r="7"/>
+<set w="60" r="7"/>
+<set w="60" r="7"/>
+<set w="60" r="7"/>
+<set w="60" r="7"/>
+</exercise>
+<exercise id="close-grip-pulldown" name="Close-grip pulldown">
+<set w="115" r="7"/>
+<set w="115" r="7"/>
+<set w="115" r="7"/>
+<set w="115" r="6"/>
+<set w="115" r="6"/>
+</exercise>
+<exercise id="machine-row" name="Machine row">
+<set w="105" r="7"/>
+<set w="105" r="7"/>
+<set w="105" r="7"/>
+<set w="105" r="6"/>
+</exercise>
+<exercise id="reverse-pec-deck" name="Reverse pec deck">
+<set w="55" r="15"/>
+<set w="55" r="13"/>
+<set w="55" r="13"/>
+</exercise>
+<exercise id="hammer-curl" name="Hammer curl">
+<set w="30" r="7"/>
+<set w="30" r="6"/>
+<set w="30" r="6"/>
+</exercise>
+</entry>
+<entry id="s_2026-08-08_sat" date="2026-08-08" day="sat" dayName="Conditioning" programName="Push / Pull / Legs" programId="ppl" loop="4" unit="lb" bw="184.1" savedAt="2026-08-08T13:30:00.000Z">
+<cardio type="intervals" rounds="4" level="9" hr="164"/>
+<exercise id="cable-crunch" name="Cable crunch">
+<set w="65" r="15"/>
+<set w="65" r="14"/>
+<set w="65" r="13"/>
+</exercise>
+<exercise id="plank" name="Plank" unit="sec">
+<set w="0" r="40"/>
+<set w="0" r="37"/>
+<set w="0" r="34"/>
+</exercise>
+</entry>
+<entry id="s_2026-08-10_mon" date="2026-08-10" day="mon" dayName="Push A" programName="Push / Pull / Legs" programId="ppl" loop="5" unit="lb" bw="183.5" savedAt="2026-08-10T13:30:00.000Z">
+<value of="bp" sys="131" dia="85"/>
+<value of="rhr" v="64"/>
+<value of="ahi" v="6.8"/>
+<value of="waist" v="36.25"/>
+<value of="arm-r" v="14.5"/>
+<value of="vo2" v="41.8"/>
+<cardio type="steady" min="15" level="5" hr="137"/>
+<exercise id="smith-bench" name="Smith bench press">
+<set w="145" r="7"/>
+<set w="145" r="7"/>
+<set w="145" r="7"/>
+</exercise>
+<exercise id="incline-db-press" name="Incline DB press">
+<set w="55" r="7"/>
+<set w="55" r="7"/>
+<set w="55" r="7"/>
+</exercise>
+<exercise id="seated-db-shoulder" name="Seated DB shoulder press">
+<set w="45" r="7"/>
+<set w="45" r="6"/>
+<set w="45" r="6"/>
+</exercise>
+<exercise id="cable-lateral" name="Cable lateral raise">
+<set w="20" r="13"/>
+<set w="20" r="15"/>
+<set w="20" r="14"/>
+</exercise>
+<exercise id="triceps-pushdown" name="Triceps pushdown">
+<set w="60" r="7"/>
+<set w="60" r="7"/>
+<set w="60" r="7"/>
+</exercise>
+</entry>
+<entry id="s_2026-08-11_tue" date="2026-08-11" day="tue" dayName="Pull A + Legs B" programName="Push / Pull / Legs" programId="ppl" loop="5" unit="lb" bw="183.9" savedAt="2026-08-11T13:30:00.000Z">
+<exercise id="lat-pulldown" name="Lat pulldown">
+<set w="130" r="7"/>
+<set w="130" r="6"/>
+<set w="130" r="6"/>
+</exercise>
+<exercise id="seated-cable-row" name="Seated cable row">
+<set w="120" r="7"/>
+<set w="120" r="7"/>
+<set w="120" r="6"/>
+</exercise>
+<exercise id="face-pull" name="Face pull">
+<set w="35" r="15"/>
+<set w="35" r="15"/>
+<set w="35" r="15"/>
+</exercise>
+<exercise id="db-curl" name="DB curl">
+<set w="40" r="7"/>
+<set w="40" r="5"/>
+<set w="40" r="7"/>
+</exercise>
+<exercise id="leg-press" name="Leg press">
+<set w="250" r="7"/>
+<set w="250" r="7"/>
+<set w="250" r="7"/>
+</exercise>
+<exercise id="seated-leg-curl" name="Seated leg curl">
+<set w="90" r="7"/>
+<set w="90" r="7"/>
+<set w="90" r="6"/>
+</exercise>
+</entry>
+<entry id="s_2026-08-13_thu" date="2026-08-13" day="thu" dayName="Push B" programName="Push / Pull / Legs" programId="ppl" loop="5" unit="lb" savedAt="2026-08-13T13:30:00.000Z">
+<cardio type="steady" min="15" level="5" hr="134"/>
+<exercise id="machine-chest-press" name="Machine chest press">
+<set w="130" r="7"/>
+<set w="130" r="7"/>
+<set w="130" r="7"/>
+</exercise>
+<exercise id="incline-smith-press" name="Incline Smith press">
+<set w="125" r="7"/>
+<set w="125" r="7"/>
+<set w="125" r="6"/>
+</exercise>
+<exercise id="pec-deck" name="Pec deck">
+<set w="100" r="7"/>
+<set w="100" r="7"/>
+<set w="100" r="6"/>
+</exercise>
+<exercise id="machine-shoulder-press" name="Machine shoulder press">
+<set w="90" r="7"/>
+<set w="90" r="6"/>
+<set w="90" r="7"/>
+</exercise>
+<exercise id="db-lateral" name="DB lateral raise">
+<set w="20" r="13"/>
+<set w="20" r="14"/>
+<set w="20" r="13"/>
+</exercise>
+<exercise id="oh-db-triceps" name="Overhead DB triceps extension">
+<set w="40" r="7"/>
+<set w="40" r="7"/>
+<set w="40" r="7"/>
+</exercise>
+</entry>
+<entry id="s_2026-08-14_fri" date="2026-08-14" day="fri" dayName="Pull B" programName="Push / Pull / Legs" programId="ppl" loop="5" unit="lb" bw="183.2" savedAt="2026-08-14T13:30:00.000Z">
+<note>New top set on bench!</note>
+<exercise id="one-arm-db-row" name="One-arm DB row (each arm)">
+<set w="65" r="7"/>
+<set w="65" r="6"/>
+<set w="65" r="6"/>
+</exercise>
+<exercise id="close-grip-pulldown" name="Close-grip pulldown">
+<set w="115" r="7"/>
+<set w="115" r="7"/>
+<set w="115" r="7"/>
+</exercise>
+<exercise id="machine-row" name="Machine row">
+<set w="105" r="7"/>
+<set w="105" r="7"/>
+<set w="105" r="7"/>
+</exercise>
+<exercise id="reverse-pec-deck" name="Reverse pec deck">
+<set w="55" r="15"/>
+<set w="55" r="15"/>
+<set w="55" r="15"/>
+</exercise>
+<exercise id="hammer-curl" name="Hammer curl">
+<set w="30" r="7"/>
+<set w="30" r="7"/>
+<set w="30" r="7"/>
+</exercise>
+</entry>
+<entry id="s_2026-08-15_sat" date="2026-08-15" day="sat" dayName="Conditioning" programName="Push / Pull / Legs" programId="ppl" loop="5" unit="lb" savedAt="2026-08-15T13:30:00.000Z">
+<cardio type="intervals" rounds="4" level="9" hr="158"/>
+<exercise id="cable-crunch" name="Cable crunch">
+<set w="65" r="15"/>
+<set w="65" r="15"/>
+<set w="65" r="15"/>
+</exercise>
+<exercise id="plank" name="Plank" unit="sec">
+<set w="0" r="44"/>
+<set w="0" r="40"/>
+<set w="0" r="37"/>
+</exercise>
+</entry>
+<entry id="s_2026-08-16_lib-run" date="2026-08-16" day="lib-run" dayName="Easy run" programName="One-off" loop="5" unit="lb" savedAt="2026-08-16T17:20:00.000Z">
+<exercise id="treadmill-run" name="Treadmill run" unit="sec" distUnit="mi">
+<set w="0" r="1682" d="2.85" p="590"/>
+</exercise>
+</entry>
+<entry id="s_2026-08-17_mon" date="2026-08-17" day="mon" dayName="Push A" programName="Push / Pull / Legs" programId="ppl" loop="6" unit="lb" savedAt="2026-08-17T13:30:00.000Z">
+<value of="bp" sys="130" dia="85"/>
+<value of="rhr" v="64"/>
+<value of="ahi" v="6.3"/>
+<cardio type="steady" min="15" level="5" hr="132"/>
+<exercise id="smith-bench" name="Smith bench press">
+<set w="145" r="7"/>
+<set w="145" r="7"/>
+<set w="145" r="7"/>
+<set w="145" r="7"/>
+<set w="145" r="7"/>
+</exercise>
+<exercise id="incline-db-press" name="Incline DB press">
+<set w="55" r="7"/>
+<set w="55" r="7"/>
+<set w="55" r="7"/>
+<set w="55" r="7"/>
+<set w="55" r="7"/>
+</exercise>
+<exercise id="seated-db-shoulder" name="Seated DB shoulder press">
+<set w="45" r="7"/>
+<set w="45" r="7"/>
+<set w="45" r="5"/>
+<set w="45" r="7"/>
+</exercise>
+<exercise id="cable-lateral" name="Cable lateral raise">
+<set w="20" r="15"/>
+<set w="20" r="14"/>
+<set w="20" r="13"/>
+</exercise>
+<exercise id="triceps-pushdown" name="Triceps pushdown">
+<set w="60" r="7"/>
+<set w="60" r="7"/>
+<set w="60" r="6"/>
+</exercise>
+</entry>
+<entry id="s_2026-08-18_tue" date="2026-08-18" day="tue" dayName="Pull A + Legs B" programName="Push / Pull / Legs" programId="ppl" loop="6" unit="lb" savedAt="2026-08-18T13:30:00.000Z">
+<note>Slept badly, kept it smooth.</note>
+<exercise id="lat-pulldown" name="Lat pulldown">
+<set w="130" r="7"/>
+<set w="130" r="7"/>
+<set w="130" r="7"/>
+<set w="130" r="5"/>
+<set w="130" r="6"/>
+</exercise>
+<exercise id="seated-cable-row" name="Seated cable row">
+<set w="120" r="7"/>
+<set w="120" r="7"/>
+<set w="120" r="7"/>
+<set w="120" r="7"/>
+<set w="120" r="7"/>
+</exercise>
+<exercise id="face-pull" name="Face pull">
+<set w="35" r="15"/>
+<set w="35" r="15"/>
+<set w="35" r="15"/>
+</exercise>
+<exercise id="db-curl" name="DB curl">
+<set w="40" r="7"/>
+<set w="40" r="6"/>
+<set w="40" r="5"/>
+</exercise>
+<exercise id="leg-press" name="Leg press">
+<set w="250" r="7"/>
+<set w="250" r="7"/>
+<set w="250" r="7"/>
+</exercise>
+<exercise id="seated-leg-curl" name="Seated leg curl">
+<set w="90" r="7"/>
+<set w="90" r="6"/>
+<set w="90" r="7"/>
+</exercise>
+</entry>
+<entry id="s_2026-08-19_wed" date="2026-08-19" day="wed" dayName="Legs A" programName="Push / Pull / Legs" programId="ppl" loop="6" unit="lb" bw="182.4" savedAt="2026-08-19T13:30:00.000Z">
+<note>Gym was packed, swapped order a bit.</note>
+<exercise id="smith-squat" name="Smith squat">
+<set w="165" r="7"/>
+<set w="165" r="7"/>
+<set w="165" r="7"/>
+<set w="165" r="7"/>
+<set w="165" r="7"/>
+</exercise>
+<exercise id="db-rdl" name="DB Romanian deadlift">
+<set w="60" r="7"/>
+<set w="60" r="7"/>
+<set w="60" r="7"/>
+<set w="60" r="7"/>
+<set w="60" r="7"/>
+</exercise>
+<exercise id="walking-lunge" name="Walking lunge (each leg)">
+<set w="35" r="7"/>
+<set w="35" r="6"/>
+<set w="35" r="7"/>
+</exercise>
+<exercise id="leg-extension" name="Leg extension">
+<set w="100" r="7"/>
+<set w="100" r="5"/>
+<set w="100" r="7"/>
+</exercise>
+<exercise id="lying-leg-curl" name="Lying leg curl">
+<set w="80" r="7"/>
+<set w="80" r="7"/>
+<set w="80" r="6"/>
+</exercise>
+<exercise id="calf-raise" name="Calf raise">
+<set w="160" r="15"/>
+<set w="160" r="14"/>
+<set w="160" r="14"/>
+<set w="160" r="12"/>
+</exercise>
+</entry>
+<entry id="s_2026-08-20_thu" date="2026-08-20" day="thu" dayName="Push B" programName="Push / Pull / Legs" programId="ppl" loop="6" unit="lb" bw="183.4" savedAt="2026-08-20T13:30:00.000Z">
+<note>Lower back a little tight on RDLs, went lighter.</note>
+<cardio type="steady" min="20" level="5" hr="134"/>
+<exercise id="machine-chest-press" name="Machine chest press">
+<set w="130" r="7"/>
+<set w="130" r="7"/>
+<set w="130" r="7"/>
+<set w="130" r="7"/>
+<set w="130" r="7"/>
+</exercise>
+<exercise id="incline-smith-press" name="Incline Smith press">
+<set w="125" r="7"/>
+<set w="125" r="7"/>
+<set w="125" r="7"/>
+<set w="125" r="7"/>
+<set w="125" r="7"/>
+</exercise>
+<exercise id="pec-deck" name="Pec deck">
+<set w="100" r="7"/>
+<set w="100" r="7"/>
+<set w="100" r="5"/>
+</exercise>
+<exercise id="machine-shoulder-press" name="Machine shoulder press">
+<set w="90" r="7"/>
+<set w="90" r="7"/>
+<set w="90" r="5"/>
+<set w="90" r="6"/>
+</exercise>
+<exercise id="db-lateral" name="DB lateral raise">
+<set w="20" r="14"/>
+<set w="20" r="15"/>
+<set w="20" r="13"/>
+</exercise>
+<exercise id="oh-db-triceps" name="Overhead DB triceps extension">
+<set w="40" r="7"/>
+<set w="40" r="7"/>
+<set w="40" r="7"/>
+</exercise>
+</entry>
+<entry id="s_2026-08-21_fri" date="2026-08-21" day="fri" dayName="Pull B" programName="Push / Pull / Legs" programId="ppl" loop="6" unit="lb" bw="183.5" savedAt="2026-08-21T13:30:00.000Z">
+<note>Easy session, felt fresh.</note>
+<exercise id="one-arm-db-row" name="One-arm DB row (each arm)">
+<set w="65" r="7"/>
+<set w="65" r="7"/>
+<set w="65" r="7"/>
+<set w="65" r="5"/>
+<set w="65" r="6"/>
+</exercise>
+<exercise id="close-grip-pulldown" name="Close-grip pulldown">
+<set w="115" r="7"/>
+<set w="115" r="7"/>
+<set w="115" r="7"/>
+<set w="115" r="7"/>
+<set w="115" r="7"/>
+</exercise>
+<exercise id="machine-row" name="Machine row">
+<set w="105" r="7"/>
+<set w="105" r="7"/>
+<set w="105" r="7"/>
+<set w="105" r="7"/>
+</exercise>
+<exercise id="reverse-pec-deck" name="Reverse pec deck">
+<set w="55" r="15"/>
+<set w="55" r="15"/>
+<set w="55" r="15"/>
+</exercise>
+<exercise id="hammer-curl" name="Hammer curl">
+<set w="30" r="7"/>
+<set w="30" r="7"/>
+<set w="30" r="7"/>
+</exercise>
+</entry>
+<entry id="s_2026-08-23_rest" date="2026-08-23" day="rest" dayName="Rest" programName="Push / Pull / Legs" programId="ppl" loop="6" unit="lb" bw="182.7" savedAt="2026-08-23T15:00:00.000Z"/>
+<entry id="s_2026-08-24_mon" date="2026-08-24" day="mon" dayName="Push A" programName="Push / Pull / Legs" programId="ppl" loop="7" unit="lb" savedAt="2026-08-24T13:30:00.000Z">
+<value of="bp" sys="129" dia="84"/>
+<value of="rhr" v="62"/>
+<value of="ahi" v="6.2"/>
+<value of="waist" v="35.75"/>
+<value of="arm-r" v="14.5"/>
+<cardio type="steady" min="20" level="6" hr="132"/>
+<exercise id="smith-bench" name="Smith bench press">
+<set w="150" r="7"/>
+<set w="150" r="7"/>
+<set w="150" r="7"/>
+<set w="150" r="6"/>
+<set w="150" r="7"/>
+</exercise>
+<exercise id="incline-db-press" name="Incline DB press">
+<set w="60" r="7"/>
+<set w="60" r="7"/>
+<set w="60" r="7"/>
+<set w="60" r="7"/>
+<set w="60" r="7"/>
+</exercise>
+<exercise id="seated-db-shoulder" name="Seated DB shoulder press">
+<set w="45" r="7"/>
+<set w="45" r="7"/>
+<set w="45" r="6"/>
+<set w="45" r="7"/>
+</exercise>
+<exercise id="cable-lateral" name="Cable lateral raise">
+<set w="20" r="15"/>
+<set w="20" r="15"/>
+<set w="20" r="15"/>
+</exercise>
+<exercise id="triceps-pushdown" name="Triceps pushdown">
+<set w="60" r="7"/>
+<set w="60" r="6"/>
+<set w="60" r="7"/>
+</exercise>
+</entry>
+<entry id="s_2026-08-25_tue" date="2026-08-25" day="tue" dayName="Pull A + Legs B" programName="Push / Pull / Legs" programId="ppl" loop="7" unit="lb" savedAt="2026-08-25T13:30:00.000Z">
+<exercise id="lat-pulldown" name="Lat pulldown">
+<set w="130" r="7"/>
+<set w="130" r="7"/>
+<set w="130" r="7"/>
+<set w="130" r="7"/>
+<set w="130" r="7"/>
+</exercise>
+<exercise id="seated-cable-row" name="Seated cable row">
+<set w="125" r="7"/>
+<set w="125" r="7"/>
+<set w="125" r="7"/>
+<set w="125" r="6"/>
+<set w="125" r="6"/>
+</exercise>
+<exercise id="face-pull" name="Face pull">
+<set w="40" r="15"/>
+<set w="40" r="14"/>
+<set w="40" r="12"/>
+</exercise>
+<exercise id="db-curl" name="DB curl">
+<set w="40" r="7"/>
+<set w="40" r="7"/>
+<set w="40" r="7"/>
+</exercise>
+<exercise id="leg-press" name="Leg press">
+<set w="260" r="7"/>
+<set w="260" r="7"/>
+<set w="260" r="6"/>
+</exercise>
+<exercise id="seated-leg-curl" name="Seated leg curl">
+<set w="90" r="7"/>
+<set w="90" r="7"/>
+<set w="90" r="7"/>
+</exercise>
+</entry>
+<entry id="s_2026-08-26_wed" date="2026-08-26" day="wed" dayName="Legs A" programName="Push / Pull / Legs" programId="ppl" loop="7" unit="lb" bw="182.2" savedAt="2026-08-26T13:30:00.000Z">
+<exercise id="smith-squat" name="Smith squat">
+<set w="170" r="7"/>
+<set w="170" r="7"/>
+<set w="170" r="7"/>
+<set w="170" r="7"/>
+<set w="170" r="7"/>
+</exercise>
+<exercise id="db-rdl" name="DB Romanian deadlift">
+<set w="65" r="7"/>
+<set w="65" r="7"/>
+<set w="65" r="7"/>
+<set w="65" r="7"/>
+<set w="65" r="6"/>
+</exercise>
+<exercise id="walking-lunge" name="Walking lunge (each leg)">
+<set w="35" r="7"/>
+<set w="35" r="7"/>
+<set w="35" r="7"/>
+</exercise>
+<exercise id="leg-extension" name="Leg extension">
+<set w="100" r="7"/>
+<set w="100" r="7"/>
+<set w="100" r="7"/>
+</exercise>
+<exercise id="lying-leg-curl" name="Lying leg curl">
+<set w="80" r="7"/>
+<set w="80" r="7"/>
+<set w="80" r="7"/>
+</exercise>
+<exercise id="calf-raise" name="Calf raise">
+<set w="160" r="15"/>
+<set w="160" r="15"/>
+<set w="160" r="15"/>
+<set w="160" r="15"/>
+</exercise>
+</entry>
+<entry id="s_2026-08-27_thu" date="2026-08-27" day="thu" dayName="Push B" programName="Push / Pull / Legs" programId="ppl" loop="7" unit="lb" bw="182.5" savedAt="2026-08-27T13:30:00.000Z">
+<cardio type="steady" min="15" level="6" hr="134"/>
+<exercise id="machine-chest-press" name="Machine chest press">
+<set w="135" r="7"/>
+<set w="135" r="7"/>
+<set w="135" r="7"/>
+<set w="135" r="5"/>
+<set w="135" r="6"/>
+</exercise>
+<exercise id="incline-smith-press" name="Incline Smith press">
+<set w="130" r="7"/>
+<set w="130" r="7"/>
+<set w="130" r="7"/>
+<set w="130" r="7"/>
+<set w="130" r="7"/>
+</exercise>
+<exercise id="pec-deck" name="Pec deck">
+<set w="100" r="7"/>
+<set w="100" r="7"/>
+<set w="100" r="7"/>
+</exercise>
+<exercise id="machine-shoulder-press" name="Machine shoulder press">
+<set w="90" r="7"/>
+<set w="90" r="7"/>
+<set w="90" r="7"/>
+<set w="90" r="7"/>
+</exercise>
+<exercise id="db-lateral" name="DB lateral raise">
+<set w="20" r="15"/>
+<set w="20" r="15"/>
+<set w="20" r="15"/>
+</exercise>
+<exercise id="oh-db-triceps" name="Overhead DB triceps extension">
+<set w="45" r="7"/>
+<set w="45" r="6"/>
+<set w="45" r="6"/>
+</exercise>
+</entry>
+<entry id="s_2026-08-28_fri" date="2026-08-28" day="fri" dayName="Pull B" programName="Push / Pull / Legs" programId="ppl" loop="7" unit="lb" bw="182" savedAt="2026-08-28T13:30:00.000Z">
+<exercise id="one-arm-db-row" name="One-arm DB row (each arm)">
+<set w="65" r="7"/>
+<set w="65" r="7"/>
+<set w="65" r="7"/>
+<set w="65" r="7"/>
+<set w="65" r="7"/>
+</exercise>
+<exercise id="close-grip-pulldown" name="Close-grip pulldown">
+<set w="120" r="7"/>
+<set w="120" r="7"/>
+<set w="120" r="7"/>
+<set w="120" r="7"/>
+<set w="120" r="5"/>
+</exercise>
+<exercise id="machine-row" name="Machine row">
+<set w="110" r="7"/>
+<set w="110" r="7"/>
+<set w="110" r="5"/>
+<set w="110" r="7"/>
+</exercise>
+<exercise id="reverse-pec-deck" name="Reverse pec deck">
+<set w="60" r="13"/>
+<set w="60" r="14"/>
+<set w="60" r="13"/>
+</exercise>
+<exercise id="hammer-curl" name="Hammer curl">
+<set w="35" r="7"/>
+<set w="35" r="7"/>
+<set w="35" r="7"/>
+</exercise>
+</entry>
+<entry id="s_2026-08-29_sat" date="2026-08-29" day="sat" dayName="Conditioning" programName="Push / Pull / Legs" programId="ppl" loop="7" unit="lb" savedAt="2026-08-29T13:30:00.000Z">
+<cardio type="intervals" rounds="4" level="10" hr="160"/>
+<exercise id="cable-crunch" name="Cable crunch">
+<set w="65" r="15"/>
+<set w="65" r="15"/>
+<set w="65" r="15"/>
+</exercise>
+<exercise id="plank" name="Plank" unit="sec">
+<set w="0" r="43"/>
+<set w="0" r="40"/>
+<set w="0" r="39"/>
+</exercise>
+</entry>
+<entry id="s_2026-08-30_lib-run" date="2026-08-30" day="lib-run" dayName="Easy run" programName="One-off" loop="7" unit="lb" savedAt="2026-08-30T17:20:00.000Z">
+<exercise id="treadmill-run" name="Treadmill run" unit="sec" distUnit="mi">
+<set w="0" r="2099" d="3.54" p="593"/>
+</exercise>
+</entry>
+<entry id="s_2026-08-31_mon" date="2026-08-31" day="mon" dayName="Push A" programName="Push / Pull / Legs" programId="ppl" loop="8" unit="lb" savedAt="2026-08-31T13:30:00.000Z">
+<value of="bp" sys="130" dia="83"/>
+<value of="rhr" v="63"/>
+<value of="ahi" v="5.6"/>
+<cardio type="steady" min="15" level="6" hr="135"/>
+<exercise id="smith-bench" name="Smith bench press">
+<set w="150" r="7"/>
+<set w="150" r="7"/>
+<set w="150" r="7"/>
+<set w="150" r="7"/>
+<set w="150" r="7"/>
+</exercise>
+<exercise id="incline-db-press" name="Incline DB press">
+<set w="65" r="7"/>
+<set w="65" r="7"/>
+<set w="65" r="7"/>
+<set w="65" r="7"/>
+<set w="65" r="6"/>
+</exercise>
+<exercise id="seated-db-shoulder" name="Seated DB shoulder press">
+<set w="45" r="7"/>
+<set w="45" r="7"/>
+<set w="45" r="7"/>
+<set w="45" r="7"/>
+</exercise>
+<exercise id="cable-lateral" name="Cable lateral raise">
+<set w="22.5" r="14"/>
+<set w="22.5" r="14"/>
+<set w="22.5" r="13"/>
+</exercise>
+<exercise id="triceps-pushdown" name="Triceps pushdown">
+<set w="60" r="7"/>
+<set w="60" r="7"/>
+<set w="60" r="7"/>
+</exercise>
+</entry>
+<entry id="s_2026-09-01_tue" date="2026-09-01" day="tue" dayName="Pull A + Legs B" programName="Push / Pull / Legs" programId="ppl" loop="8" unit="lb" savedAt="2026-09-01T13:30:00.000Z">
+<exercise id="lat-pulldown" name="Lat pulldown">
+<set w="135" r="7"/>
+<set w="135" r="7"/>
+<set w="135" r="7"/>
+<set w="135" r="5"/>
+<set w="135" r="6"/>
+</exercise>
+<exercise id="seated-cable-row" name="Seated cable row">
+<set w="125" r="7"/>
+<set w="125" r="7"/>
+<set w="125" r="7"/>
+<set w="125" r="7"/>
+<set w="125" r="7"/>
+</exercise>
+<exercise id="face-pull" name="Face pull">
+<set w="40" r="15"/>
+<set w="40" r="15"/>
+<set w="40" r="15"/>
+</exercise>
+<exercise id="db-curl" name="DB curl">
+<set w="45" r="7"/>
+<set w="45" r="7"/>
+<set w="45" r="7"/>
+</exercise>
+<exercise id="leg-press" name="Leg press">
+<set w="260" r="7"/>
+<set w="260" r="7"/>
+<set w="260" r="7"/>
+</exercise>
+<exercise id="seated-leg-curl" name="Seated leg curl">
+<set w="95" r="7"/>
+<set w="95" r="7"/>
+<set w="95" r="7"/>
+</exercise>
+</entry>
+<entry id="s_2026-09-02_wed" date="2026-09-02" day="wed" dayName="Legs A" programName="Push / Pull / Legs" programId="ppl" loop="8" unit="lb" bw="181.3" savedAt="2026-09-02T13:30:00.000Z">
+<exercise id="smith-squat" name="Smith squat">
+<set w="175" r="7"/>
+<set w="175" r="7"/>
+<set w="175" r="7"/>
+<set w="175" r="5"/>
+<set w="175" r="5"/>
+</exercise>
+<exercise id="db-rdl" name="DB Romanian deadlift">
+<set w="65" r="7"/>
+<set w="65" r="7"/>
+<set w="65" r="7"/>
+<set w="65" r="7"/>
+<set w="65" r="7"/>
+</exercise>
+<exercise id="walking-lunge" name="Walking lunge (each leg)">
+<set w="40" r="7"/>
+<set w="40" r="6"/>
+<set w="40" r="5"/>
+</exercise>
+<exercise id="leg-extension" name="Leg extension">
+<set w="105" r="7"/>
+<set w="105" r="7"/>
+<set w="105" r="7"/>
+</exercise>
+<exercise id="lying-leg-curl" name="Lying leg curl">
+<set w="85" r="7"/>
+<set w="85" r="7"/>
+<set w="85" r="7"/>
+</exercise>
+<exercise id="calf-raise" name="Calf raise">
+<set w="170" r="13"/>
+<set w="170" r="14"/>
+<set w="170" r="15"/>
+<set w="170" r="13"/>
+</exercise>
+</entry>
+<entry id="s_2026-09-03_thu" date="2026-09-03" day="thu" dayName="Push B" programName="Push / Pull / Legs" programId="ppl" loop="8" unit="lb" savedAt="2026-09-03T13:30:00.000Z">
+<cardio type="steady" min="15" level="6" hr="131"/>
+<exercise id="machine-chest-press" name="Machine chest press">
+<set w="135" r="7"/>
+<set w="135" r="7"/>
+<set w="135" r="7"/>
+<set w="135" r="6"/>
+<set w="135" r="6"/>
+</exercise>
+<exercise id="incline-smith-press" name="Incline Smith press">
+<set w="135" r="7"/>
+<set w="135" r="7"/>
+<set w="135" r="7"/>
+<set w="135" r="7"/>
+<set w="135" r="7"/>
+</exercise>
+<exercise id="pec-deck" name="Pec deck">
+<set w="105" r="7"/>
+<set w="105" r="6"/>
+<set w="105" r="7"/>
+</exercise>
+<exercise id="machine-shoulder-press" name="Machine shoulder press">
+<set w="95" r="7"/>
+<set w="95" r="7"/>
+<set w="95" r="6"/>
+<set w="95" r="7"/>
+</exercise>
+<exercise id="db-lateral" name="DB lateral raise">
+<set w="22.5" r="14"/>
+<set w="22.5" r="14"/>
+<set w="22.5" r="13"/>
+</exercise>
+<exercise id="oh-db-triceps" name="Overhead DB triceps extension">
+<set w="45" r="7"/>
+<set w="45" r="7"/>
+<set w="45" r="7"/>
+</exercise>
+</entry>
+<entry id="s_2026-09-04_fri" date="2026-09-04" day="fri" dayName="Pull B" programName="Push / Pull / Legs" programId="ppl" loop="8" unit="lb" bw="181.2" savedAt="2026-09-04T13:30:00.000Z">
+<exercise id="one-arm-db-row" name="One-arm DB row (each arm)">
+<set w="70" r="7"/>
+<set w="70" r="7"/>
+<set w="70" r="7"/>
+<set w="70" r="7"/>
+<set w="70" r="6"/>
+</exercise>
+<exercise id="close-grip-pulldown" name="Close-grip pulldown">
+<set w="120" r="7"/>
+<set w="120" r="7"/>
+<set w="120" r="7"/>
+<set w="120" r="5"/>
+<set w="120" r="7"/>
+</exercise>
+<exercise id="machine-row" name="Machine row">
+<set w="110" r="7"/>
+<set w="110" r="7"/>
+<set w="110" r="7"/>
+<set w="110" r="7"/>
+</exercise>
+<exercise id="reverse-pec-deck" name="Reverse pec deck">
+<set w="60" r="15"/>
+<set w="60" r="15"/>
+<set w="60" r="15"/>
+</exercise>
+<exercise id="hammer-curl" name="Hammer curl">
+<set w="40" r="7"/>
+<set w="40" r="6"/>
+<set w="40" r="7"/>
+</exercise>
+</entry>
+<entry id="s_2026-09-06_lib-run" date="2026-09-06" day="lib-run" dayName="Easy run" programName="One-off" loop="8" unit="lb" savedAt="2026-09-06T17:20:00.000Z">
+<exercise id="treadmill-run" name="Treadmill run" unit="sec" distUnit="mi">
+<set w="0" r="1951" d="3.29" p="593"/>
+</exercise>
+</entry>
+<entry id="s_2026-09-07_mon" date="2026-09-07" day="mon" dayName="Push A" programName="Push / Pull / Legs" programId="ppl" loop="9" unit="lb" bw="180.7" savedAt="2026-09-07T13:30:00.000Z">
+<value of="bp" sys="130" dia="83"/>
+<value of="rhr" v="63"/>
+<value of="ahi" v="5.3"/>
+<value of="waist" v="35.5"/>
+<value of="arm-r" v="14.5"/>
+<value of="vo2" v="43.1"/>
+<cardio type="steady" min="15" level="6" hr="132"/>
+<exercise id="smith-bench" name="Smith bench press">
+<set w="155" r="7"/>
+<set w="155" r="7"/>
+<set w="155" r="7"/>
+<set w="155" r="6"/>
+<set w="155" r="7"/>
+</exercise>
+<exercise id="incline-db-press" name="Incline DB press">
+<set w="65" r="7"/>
+<set w="65" r="7"/>
+<set w="65" r="7"/>
+<set w="65" r="7"/>
+<set w="65" r="7"/>
+</exercise>
+<exercise id="seated-db-shoulder" name="Seated DB shoulder press">
+<set w="50" r="7"/>
+<set w="50" r="7"/>
+<set w="50" r="5"/>
+<set w="50" r="7"/>
+</exercise>
+<exercise id="cable-lateral" name="Cable lateral raise">
+<set w="22.5" r="15"/>
+<set w="22.5" r="15"/>
+<set w="22.5" r="15"/>
+</exercise>
+<exercise id="triceps-pushdown" name="Triceps pushdown">
+<set w="65" r="7"/>
+<set w="65" r="5"/>
+<set w="65" r="7"/>
+</exercise>
+</entry>
+<entry id="s_2026-09-08_tue" date="2026-09-08" day="tue" dayName="Pull A + Legs B" programName="Push / Pull / Legs" programId="ppl" loop="9" unit="lb" savedAt="2026-09-08T13:30:00.000Z">
+<exercise id="lat-pulldown" name="Lat pulldown">
+<set w="135" r="7"/>
+<set w="135" r="7"/>
+<set w="135" r="7"/>
+<set w="135" r="7"/>
+<set w="135" r="7"/>
+</exercise>
+<exercise id="seated-cable-row" name="Seated cable row">
+<set w="130" r="7"/>
+<set w="130" r="7"/>
+<set w="130" r="7"/>
+<set w="130" r="6"/>
+<set w="130" r="7"/>
+</exercise>
+<exercise id="face-pull" name="Face pull">
+<set w="45" r="14"/>
+<set w="45" r="13"/>
+<set w="45" r="13"/>
+</exercise>
+<exercise id="db-curl" name="DB curl">
+<set w="50" r="7"/>
+<set w="50" r="5"/>
+<set w="50" r="6"/>
+</exercise>
+<exercise id="leg-press" name="Leg press">
+<set w="270" r="7"/>
+<set w="270" r="7"/>
+<set w="270" r="6"/>
+</exercise>
+<exercise id="seated-leg-curl" name="Seated leg curl">
+<set w="100" r="7"/>
+<set w="100" r="6"/>
+<set w="100" r="6"/>
+</exercise>
+</entry>
+<entry id="s_2026-09-10_thu" date="2026-09-10" day="thu" dayName="Push B" programName="Push / Pull / Legs" programId="ppl" loop="9" unit="lb" bw="181" savedAt="2026-09-10T13:30:00.000Z">
+<cardio type="steady" min="15" level="6" hr="134"/>
+<exercise id="machine-chest-press" name="Machine chest press">
+<set w="135" r="7"/>
+<set w="135" r="7"/>
+<set w="135" r="7"/>
+<set w="135" r="7"/>
+<set w="135" r="6"/>
+</exercise>
+<exercise id="incline-smith-press" name="Incline Smith press">
+<set w="140" r="7"/>
+<set w="140" r="7"/>
+<set w="140" r="7"/>
+<set w="140" r="7"/>
+<set w="140" r="6"/>
+</exercise>
+<exercise id="pec-deck" name="Pec deck">
+<set w="105" r="7"/>
+<set w="105" r="6"/>
+<set w="105" r="6"/>
+</exercise>
+<exercise id="machine-shoulder-press" name="Machine shoulder press">
+<set w="95" r="7"/>
+<set w="95" r="7"/>
+<set w="95" r="7"/>
+<set w="95" r="7"/>
+</exercise>
+<exercise id="db-lateral" name="DB lateral raise">
+<set w="22.5" r="15"/>
+<set w="22.5" r="15"/>
+<set w="22.5" r="15"/>
+</exercise>
+<exercise id="oh-db-triceps" name="Overhead DB triceps extension">
+<set w="50" r="7"/>
+<set w="50" r="6"/>
+<set w="50" r="7"/>
+</exercise>
+</entry>
+<entry id="s_2026-09-12_sat" date="2026-09-12" day="sat" dayName="Conditioning" programName="Push / Pull / Legs" programId="ppl" loop="9" unit="lb" savedAt="2026-09-12T13:30:00.000Z">
+<note>New top set on bench!</note>
+<cardio type="intervals" rounds="4" level="10" hr="166"/>
+<exercise id="cable-crunch" name="Cable crunch">
+<set w="70" r="14"/>
+<set w="70" r="13"/>
+<set w="70" r="13"/>
+</exercise>
+<exercise id="plank" name="Plank" unit="sec">
+<set w="0" r="45"/>
+<set w="0" r="42"/>
+<set w="0" r="40"/>
+</exercise>
+</entry>
+<entry id="s_2026-09-13_rest" date="2026-09-13" day="rest" dayName="Rest" programName="Push / Pull / Legs" programId="ppl" loop="9" unit="lb" bw="180.1" savedAt="2026-09-13T15:00:00.000Z"/>
+<entry id="s_2026-09-14_mon" date="2026-09-14" day="mon" dayName="Push A" programName="Push / Pull / Legs" programId="ppl" loop="10" unit="lb" bw="179.7" savedAt="2026-09-14T13:30:00.000Z">
+<value of="bp" sys="130" dia="83"/>
+<value of="rhr" v="61"/>
+<value of="ahi" v="5.1"/>
+<cardio type="steady" min="15" level="6" hr="128"/>
+<exercise id="smith-bench" name="Smith bench press">
+<set w="155" r="7"/>
+<set w="155" r="7"/>
+<set w="155" r="7"/>
+</exercise>
+<exercise id="incline-db-press" name="Incline DB press">
+<set w="70" r="7"/>
+<set w="70" r="7"/>
+<set w="70" r="7"/>
+</exercise>
+<exercise id="seated-db-shoulder" name="Seated DB shoulder press">
+<set w="50" r="7"/>
+<set w="50" r="7"/>
+<set w="50" r="7"/>
+</exercise>
+<exercise id="cable-lateral" name="Cable lateral raise">
+<set w="25" r="13"/>
+<set w="25" r="14"/>
+<set w="25" r="13"/>
+</exercise>
+<exercise id="triceps-pushdown" name="Triceps pushdown">
+<set w="65" r="7"/>
+<set w="65" r="7"/>
+<set w="65" r="7"/>
+</exercise>
+</entry>
+<entry id="s_2026-09-15_tue" date="2026-09-15" day="tue" dayName="Pull A + Legs B" programName="Push / Pull / Legs" programId="ppl" loop="10" unit="lb" savedAt="2026-09-15T13:30:00.000Z">
+<exercise id="lat-pulldown" name="Lat pulldown">
+<set w="140" r="7"/>
+<set w="140" r="6"/>
+<set w="140" r="6"/>
+</exercise>
+<exercise id="seated-cable-row" name="Seated cable row">
+<set w="130" r="7"/>
+<set w="130" r="7"/>
+<set w="130" r="7"/>
+</exercise>
+<exercise id="face-pull" name="Face pull">
+<set w="45" r="15"/>
+<set w="45" r="15"/>
+<set w="45" r="15"/>
+</exercise>
+<exercise id="db-curl" name="DB curl">
+<set w="50" r="7"/>
+<set w="50" r="7"/>
+<set w="50" r="7"/>
+</exercise>
+<exercise id="leg-press" name="Leg press">
+<set w="270" r="7"/>
+<set w="270" r="7"/>
+<set w="270" r="7"/>
+</exercise>
+<exercise id="seated-leg-curl" name="Seated leg curl">
+<set w="100" r="7"/>
+<set w="100" r="7"/>
+<set w="100" r="7"/>
+</exercise>
+</entry>
+<entry id="s_2026-09-16_wed" date="2026-09-16" day="wed" dayName="Legs A" programName="Push / Pull / Legs" programId="ppl" loop="10" unit="lb" bw="179.4" savedAt="2026-09-16T13:30:00.000Z">
+<exercise id="smith-squat" name="Smith squat">
+<set w="175" r="7"/>
+<set w="175" r="7"/>
+<set w="175" r="7"/>
+</exercise>
+<exercise id="db-rdl" name="DB Romanian deadlift">
+<set w="70" r="7"/>
+<set w="70" r="7"/>
+<set w="70" r="5"/>
+</exercise>
+<exercise id="walking-lunge" name="Walking lunge (each leg)">
+<set w="40" r="7"/>
+<set w="40" r="7"/>
+<set w="40" r="7"/>
+</exercise>
+<exercise id="leg-extension" name="Leg extension">
+<set w="110" r="7"/>
+<set w="110" r="5"/>
+<set w="110" r="6"/>
+</exercise>
+<exercise id="lying-leg-curl" name="Lying leg curl">
+<set w="90" r="7"/>
+<set w="90" r="6"/>
+<set w="90" r="5"/>
+</exercise>
+<exercise id="calf-raise" name="Calf raise">
+<set w="170" r="15"/>
+<set w="170" r="15"/>
+<set w="170" r="15"/>
+</exercise>
+</entry>
+<entry id="s_2026-09-17_thu" date="2026-09-17" day="thu" dayName="Push B" programName="Push / Pull / Legs" programId="ppl" loop="10" unit="lb" savedAt="2026-09-17T13:30:00.000Z">
+<cardio type="steady" min="15" level="6" hr="132"/>
+<exercise id="machine-chest-press" name="Machine chest press">
+<set w="135" r="7"/>
+<set w="135" r="7"/>
+<set w="135" r="7"/>
+</exercise>
+<exercise id="incline-smith-press" name="Incline Smith press">
+<set w="140" r="7"/>
+<set w="140" r="7"/>
+<set w="140" r="7"/>
+</exercise>
+<exercise id="pec-deck" name="Pec deck">
+<set w="105" r="7"/>
+<set w="105" r="6"/>
+<set w="105" r="7"/>
+</exercise>
+<exercise id="machine-shoulder-press" name="Machine shoulder press">
+<set w="100" r="7"/>
+<set w="100" r="7"/>
+<set w="100" r="6"/>
+</exercise>
+<exercise id="db-lateral" name="DB lateral raise">
+<set w="25" r="14"/>
+<set w="25" r="15"/>
+<set w="25" r="13"/>
+</exercise>
+<exercise id="oh-db-triceps" name="Overhead DB triceps extension">
+<set w="50" r="7"/>
+<set w="50" r="7"/>
+<set w="50" r="7"/>
+</exercise>
+</entry>
+<entry id="s_2026-09-18_fri" date="2026-09-18" day="fri" dayName="Pull B" programName="Push / Pull / Legs" programId="ppl" loop="10" unit="lb" bw="179.6" savedAt="2026-09-18T13:30:00.000Z">
+<exercise id="one-arm-db-row" name="One-arm DB row (each arm)">
+<set w="70" r="7"/>
+<set w="70" r="7"/>
+<set w="70" r="7"/>
+</exercise>
+<exercise id="close-grip-pulldown" name="Close-grip pulldown">
+<set w="120" r="7"/>
+<set w="120" r="7"/>
+<set w="120" r="7"/>
+</exercise>
+<exercise id="machine-row" name="Machine row">
+<set w="115" r="7"/>
+<set w="115" r="7"/>
+<set w="115" r="7"/>
+</exercise>
+<exercise id="reverse-pec-deck" name="Reverse pec deck">
+<set w="65" r="14"/>
+<set w="65" r="15"/>
+<set w="65" r="13"/>
+</exercise>
+<exercise id="hammer-curl" name="Hammer curl">
+<set w="40" r="7"/>
+<set w="40" r="7"/>
+<set w="40" r="7"/>
+</exercise>
+</entry>
+<entry id="s_2026-09-19_sat" date="2026-09-19" day="sat" dayName="Conditioning" programName="Push / Pull / Legs" programId="ppl" loop="10" unit="lb" savedAt="2026-09-19T13:30:00.000Z">
+<note>Slept badly, kept it smooth.</note>
+<cardio type="intervals" rounds="4" level="10" hr="166"/>
+<exercise id="cable-crunch" name="Cable crunch">
+<set w="70" r="15"/>
+<set w="70" r="15"/>
+<set w="70" r="15"/>
+</exercise>
+<exercise id="plank" name="Plank" unit="sec">
+<set w="0" r="43"/>
+<set w="0" r="41"/>
+<set w="0" r="37"/>
+</exercise>
+</entry>
+<entry id="s_2026-09-19_lib-arms" date="2026-09-19" day="lib-arms" dayName="Arm finisher" programName="One-off" loop="10" unit="lb" savedAt="2026-09-19T19:00:00.000Z">
+<note>Extra arm work after conditioning.</note>
+<exercise id="ez-curl" name="EZ-bar curl">
+<set w="50" r="12"/>
+<set w="50" r="11"/>
+<set w="50" r="10"/>
+</exercise>
+<exercise id="rope-pushdown" name="Rope pushdown">
+<set w="40" r="12"/>
+<set w="40" r="12"/>
+<set w="40" r="11"/>
+</exercise>
+</entry>
+<entry id="s_2026-09-20_lib-run" date="2026-09-20" day="lib-run" dayName="Easy run" programName="One-off" loop="10" unit="lb" savedAt="2026-09-20T17:20:00.000Z">
+<note>Kept it conversational.</note>
+<exercise id="treadmill-run" name="Treadmill run" unit="sec" distUnit="mi">
+<set w="0" r="1919" d="3.32" p="578"/>
+</exercise>
+</entry>
+<entry id="s_2026-09-21_mon" date="2026-09-21" day="mon" dayName="Push A" programName="Push / Pull / Legs" programId="ppl" loop="11" unit="lb" bw="179.1" savedAt="2026-09-21T13:30:00.000Z">
+<value of="bp" sys="128" dia="82"/>
+<value of="rhr" v="62"/>
+<value of="ahi" v="5.6"/>
+<value of="waist" v="35"/>
+<value of="arm-r" v="14.75"/>
+<cardio type="steady" min="15" level="6" hr="136"/>
+<exercise id="smith-bench" name="Smith bench press">
+<set w="155" r="7"/>
+<set w="155" r="7"/>
+<set w="155" r="7"/>
+<set w="155" r="7"/>
+<set w="155" r="7"/>
+</exercise>
+<exercise id="incline-db-press" name="Incline DB press">
+<set w="70" r="7"/>
+<set w="70" r="7"/>
+<set w="70" r="7"/>
+<set w="70" r="7"/>
+<set w="70" r="7"/>
+</exercise>
+<exercise id="seated-db-shoulder" name="Seated DB shoulder press">
+<set w="50" r="7"/>
+<set w="50" r="7"/>
+<set w="50" r="7"/>
+<set w="50" r="7"/>
+</exercise>
+<exercise id="cable-lateral" name="Cable lateral raise">
+<set w="25" r="14"/>
+<set w="25" r="14"/>
+<set w="25" r="12"/>
+</exercise>
+<exercise id="triceps-pushdown" name="Triceps pushdown">
+<set w="65" r="7"/>
+<set w="65" r="6"/>
+<set w="65" r="6"/>
+</exercise>
+</entry>
+<entry id="s_2026-09-22_tue" date="2026-09-22" day="tue" dayName="Pull A + Legs B" programName="Push / Pull / Legs" programId="ppl" loop="11" unit="lb" savedAt="2026-09-22T13:30:00.000Z">
+<exercise id="lat-pulldown" name="Lat pulldown">
+<set w="140" r="7"/>
+<set w="140" r="7"/>
+<set w="140" r="7"/>
+<set w="140" r="6"/>
+<set w="140" r="6"/>
+</exercise>
+<exercise id="seated-cable-row" name="Seated cable row">
+<set w="130" r="7"/>
+<set w="130" r="7"/>
+<set w="130" r="7"/>
+<set w="130" r="7"/>
+<set w="130" r="7"/>
+</exercise>
+<exercise id="face-pull" name="Face pull">
+<set w="45" r="14"/>
+<set w="45" r="14"/>
+<set w="45" r="13"/>
+</exercise>
+<exercise id="db-curl" name="DB curl">
+<set w="50" r="7"/>
+<set w="50" r="7"/>
+<set w="50" r="7"/>
+</exercise>
+<exercise id="leg-press" name="Leg press">
+<set w="270" r="7"/>
+<set w="270" r="6"/>
+<set w="270" r="6"/>
+</exercise>
+<exercise id="seated-leg-curl" name="Seated leg curl">
+<set w="100" r="7"/>
+<set w="100" r="7"/>
+<set w="100" r="7"/>
+</exercise>
+</entry>
+<entry id="s_2026-09-24_thu" date="2026-09-24" day="thu" dayName="Push B" programName="Push / Pull / Legs" programId="ppl" loop="11" unit="lb" savedAt="2026-09-24T13:30:00.000Z">
+<cardio type="steady" min="20" level="6" hr="135"/>
+<exercise id="machine-chest-press" name="Machine chest press">
+<set w="135" r="7"/>
+<set w="135" r="7"/>
+<set w="135" r="7"/>
+<set w="135" r="6"/>
+<set w="135" r="6"/>
+</exercise>
+<exercise id="incline-smith-press" name="Incline Smith press">
+<set w="140" r="7"/>
+<set w="140" r="7"/>
+<set w="140" r="7"/>
+<set w="140" r="7"/>
+<set w="140" r="7"/>
+</exercise>
+<exercise id="pec-deck" name="Pec deck">
+<set w="105" r="7"/>
+<set w="105" r="7"/>
+<set w="105" r="7"/>
+</exercise>
+<exercise id="machine-shoulder-press" name="Machine shoulder press">
+<set w="100" r="7"/>
+<set w="100" r="7"/>
+<set w="100" r="7"/>
+<set w="100" r="7"/>
+</exercise>
+<exercise id="db-lateral" name="DB lateral raise">
+<set w="25" r="13"/>
+<set w="25" r="14"/>
+<set w="25" r="13"/>
+</exercise>
+<exercise id="oh-db-triceps" name="Overhead DB triceps extension">
+<set w="50" r="7"/>
+<set w="50" r="7"/>
+<set w="50" r="7"/>
+</exercise>
+</entry>
+<entry id="s_2026-09-25_fri" date="2026-09-25" day="fri" dayName="Pull B" programName="Push / Pull / Legs" programId="ppl" loop="11" unit="lb" bw="178.6" savedAt="2026-09-25T13:30:00.000Z">
+<exercise id="one-arm-db-row" name="One-arm DB row (each arm)">
+<set w="70" r="7"/>
+<set w="70" r="7"/>
+<set w="70" r="7"/>
+<set w="70" r="6"/>
+<set w="70" r="7"/>
+</exercise>
+<exercise id="close-grip-pulldown" name="Close-grip pulldown">
+<set w="120" r="7"/>
+<set w="120" r="7"/>
+<set w="120" r="7"/>
+<set w="120" r="7"/>
+<set w="120" r="7"/>
+</exercise>
+<exercise id="machine-row" name="Machine row">
+<set w="115" r="7"/>
+<set w="115" r="7"/>
+<set w="115" r="6"/>
+<set w="115" r="6"/>
+</exercise>
+<exercise id="reverse-pec-deck" name="Reverse pec deck">
+<set w="65" r="14"/>
+<set w="65" r="14"/>
+<set w="65" r="14"/>
+</exercise>
+<exercise id="hammer-curl" name="Hammer curl">
+<set w="40" r="7"/>
+<set w="40" r="7"/>
+<set w="40" r="7"/>
+</exercise>
+</entry>
+<entry id="s_2026-09-26_sat" date="2026-09-26" day="sat" dayName="Conditioning" programName="Push / Pull / Legs" programId="ppl" loop="11" unit="lb" bw="179.1" savedAt="2026-09-26T13:30:00.000Z">
+<cardio type="intervals" rounds="4" level="10" hr="160"/>
+<exercise id="cable-crunch" name="Cable crunch">
+<set w="70" r="15"/>
+<set w="70" r="15"/>
+<set w="70" r="15"/>
+</exercise>
+<exercise id="plank" name="Plank" unit="sec">
+<set w="0" r="46"/>
+<set w="0" r="45"/>
+<set w="0" r="39"/>
+</exercise>
+</entry>
+<entry id="s_2026-09-27_lib-run" date="2026-09-27" day="lib-run" dayName="Easy run" programName="One-off" loop="11" unit="lb" bw="179.3" savedAt="2026-09-27T17:20:00.000Z">
+<exercise id="treadmill-run" name="Treadmill run" unit="sec" distUnit="mi">
+<set w="0" r="2158" d="3.72" p="580"/>
+</exercise>
+</entry>
+<entry id="s_2026-09-28_mon" date="2026-09-28" day="mon" dayName="Push A" programName="Push / Pull / Legs" programId="ppl" loop="12" unit="lb" bw="178.4" savedAt="2026-09-28T13:30:00.000Z">
+<value of="bp" sys="125" dia="80"/>
+<value of="rhr" v="61"/>
+<value of="ahi" v="4.6"/>
+<cardio type="steady" min="15" level="6" hr="135"/>
+<exercise id="smith-bench" name="Smith bench press">
+<set w="160" r="7"/>
+<set w="160" r="7"/>
+<set w="160" r="7"/>
+<set w="160" r="6"/>
+<set w="160" r="7"/>
+</exercise>
+<exercise id="incline-db-press" name="Incline DB press">
+<set w="75" r="7"/>
+<set w="75" r="7"/>
+<set w="75" r="7"/>
+<set w="75" r="7"/>
+<set w="75" r="7"/>
+</exercise>
+<exercise id="seated-db-shoulder" name="Seated DB shoulder press">
+<set w="55" r="7"/>
+<set w="55" r="7"/>
+<set w="55" r="6"/>
+<set w="55" r="6"/>
+</exercise>
+<exercise id="cable-lateral" name="Cable lateral raise">
+<set w="25" r="13"/>
+<set w="25" r="14"/>
+<set w="25" r="13"/>
+</exercise>
+<exercise id="triceps-pushdown" name="Triceps pushdown">
+<set w="65" r="7"/>
+<set w="65" r="7"/>
+<set w="65" r="7"/>
+</exercise>
+</entry>
+<entry id="s_2026-09-29_tue" date="2026-09-29" day="tue" dayName="Pull A + Legs B" programName="Push / Pull / Legs" programId="ppl" loop="12" unit="lb" savedAt="2026-09-29T13:30:00.000Z">
+<exercise id="lat-pulldown" name="Lat pulldown">
+<set w="140" r="7"/>
+<set w="140" r="7"/>
+<set w="140" r="7"/>
+<set w="140" r="7"/>
+<set w="140" r="7"/>
+</exercise>
+<exercise id="seated-cable-row" name="Seated cable row">
+<set w="135" r="7"/>
+<set w="135" r="7"/>
+<set w="135" r="7"/>
+<set w="135" r="7"/>
+<set w="135" r="7"/>
+</exercise>
+<exercise id="face-pull" name="Face pull">
+<set w="45" r="15"/>
+<set w="45" r="15"/>
+<set w="45" r="14"/>
+</exercise>
+<exercise id="db-curl" name="DB curl">
+<set w="55" r="7"/>
+<set w="55" r="7"/>
+<set w="55" r="6"/>
+</exercise>
+<exercise id="leg-press" name="Leg press">
+<set w="270" r="7"/>
+<set w="270" r="7"/>
+<set w="270" r="7"/>
+</exercise>
+<exercise id="seated-leg-curl" name="Seated leg curl">
+<set w="105" r="7"/>
+<set w="105" r="6"/>
+<set w="105" r="6"/>
+</exercise>
+</entry>
+<entry id="s_2026-09-30_wed" date="2026-09-30" day="wed" dayName="Legs A" programName="Push / Pull / Legs" programId="ppl" loop="12" unit="lb" bw="178" savedAt="2026-09-30T13:30:00.000Z">
+<exercise id="smith-squat" name="Smith squat">
+<set w="175" r="7"/>
+<set w="175" r="7"/>
+<set w="175" r="7"/>
+<set w="175" r="7"/>
+<set w="175" r="7"/>
+</exercise>
+<exercise id="db-rdl" name="DB Romanian deadlift">
+<set w="70" r="7"/>
+<set w="70" r="7"/>
+<set w="70" r="7"/>
+<set w="70" r="5"/>
+<set w="70" r="5"/>
+</exercise>
+<exercise id="walking-lunge" name="Walking lunge (each leg)">
+<set w="40" r="7"/>
+<set w="40" r="7"/>
+<set w="40" r="7"/>
+</exercise>
+<exercise id="leg-extension" name="Leg extension">
+<set w="110" r="7"/>
+<set w="110" r="7"/>
+<set w="110" r="6"/>
+</exercise>
+<exercise id="lying-leg-curl" name="Lying leg curl">
+<set w="90" r="7"/>
+<set w="90" r="6"/>
+<set w="90" r="7"/>
+</exercise>
+<exercise id="calf-raise" name="Calf raise">
+<set w="170" r="15"/>
+<set w="170" r="15"/>
+<set w="170" r="15"/>
+<set w="170" r="15"/>
+</exercise>
+</entry>
+<entry id="s_2026-10-01_thu" date="2026-10-01" day="thu" dayName="Push B" programName="Push / Pull / Legs" programId="ppl" loop="12" unit="lb" savedAt="2026-10-01T13:30:00.000Z">
+<cardio type="steady" min="15" level="6" hr="135"/>
+<exercise id="machine-chest-press" name="Machine chest press">
+<set w="135" r="7"/>
+<set w="135" r="7"/>
+<set w="135" r="7"/>
+<set w="135" r="7"/>
+<set w="135" r="7"/>
+</exercise>
+<exercise id="incline-smith-press" name="Incline Smith press">
+<set w="145" r="7"/>
+<set w="145" r="7"/>
+<set w="145" r="7"/>
+<set w="145" r="6"/>
+<set w="145" r="6"/>
+</exercise>
+<exercise id="pec-deck" name="Pec deck">
+<set w="110" r="7"/>
+<set w="110" r="7"/>
+<set w="110" r="7"/>
+</exercise>
+<exercise id="machine-shoulder-press" name="Machine shoulder press">
+<set w="105" r="7"/>
+<set w="105" r="7"/>
+<set w="105" r="5"/>
+<set w="105" r="5"/>
+</exercise>
+<exercise id="db-lateral" name="DB lateral raise">
+<set w="25" r="15"/>
+<set w="25" r="15"/>
+<set w="25" r="15"/>
+</exercise>
+<exercise id="oh-db-triceps" name="Overhead DB triceps extension">
+<set w="55" r="7"/>
+<set w="55" r="6"/>
+<set w="55" r="7"/>
+</exercise>
+</entry>
+<entry id="s_2026-10-02_fri" date="2026-10-02" day="fri" dayName="Pull B" programName="Push / Pull / Legs" programId="ppl" loop="12" unit="lb" bw="178.3" savedAt="2026-10-02T13:30:00.000Z">
+<exercise id="one-arm-db-row" name="One-arm DB row (each arm)">
+<set w="70" r="7"/>
+<set w="70" r="7"/>
+<set w="70" r="7"/>
+<set w="70" r="7"/>
+<set w="70" r="7"/>
+</exercise>
+<exercise id="close-grip-pulldown" name="Close-grip pulldown">
+<set w="125" r="7"/>
+<set w="125" r="7"/>
+<set w="125" r="7"/>
+<set w="125" r="7"/>
+<set w="125" r="6"/>
+</exercise>
+<exercise id="machine-row" name="Machine row">
+<set w="115" r="7"/>
+<set w="115" r="7"/>
+<set w="115" r="7"/>
+<set w="115" r="7"/>
+</exercise>
+<exercise id="reverse-pec-deck" name="Reverse pec deck">
+<set w="65" r="15"/>
+<set w="65" r="15"/>
+<set w="65" r="15"/>
+</exercise>
+<exercise id="hammer-curl" name="Hammer curl">
+<set w="45" r="7"/>
+<set w="45" r="7"/>
+<set w="45" r="5"/>
+</exercise>
+</entry>
+<entry id="s_2026-10-03_sat" date="2026-10-03" day="sat" dayName="Conditioning" programName="Push / Pull / Legs" programId="ppl" loop="12" unit="lb" savedAt="2026-10-03T13:30:00.000Z">
+<note>Easy session, felt fresh.</note>
+<cardio type="intervals" rounds="3" level="11" hr="168"/>
+<exercise id="cable-crunch" name="Cable crunch">
+<set w="75" r="15"/>
+<set w="75" r="14"/>
+<set w="75" r="12"/>
+</exercise>
+<exercise id="plank" name="Plank" unit="sec">
+<set w="0" r="49"/>
+<set w="0" r="45"/>
+<set w="0" r="41"/>
+</exercise>
+</entry>
+<entry id="s_2026-10-04_rest" date="2026-10-04" day="rest" dayName="Rest" programName="Push / Pull / Legs" programId="ppl" loop="12" unit="lb" bw="178.1" savedAt="2026-10-04T15:00:00.000Z"/>
+<entry id="s_2026-10-05_mon" date="2026-10-05" day="mon" dayName="Push A" programName="Push / Pull / Legs" programId="ppl" loop="13" unit="lb" bw="178.1" savedAt="2026-10-05T13:30:00.000Z">
+<value of="bp" sys="125" dia="79"/>
+<value of="rhr" v="60"/>
+<value of="ahi" v="4.6"/>
+<value of="waist" v="35"/>
+<value of="arm-r" v="14.75"/>
+<value of="vo2" v="44.4"/>
+<cardio type="steady" min="15" level="7" hr="129"/>
+<exercise id="smith-bench" name="Smith bench press">
+<set w="160" r="7"/>
+<set w="160" r="7"/>
+<set w="160" r="7"/>
+<set w="160" r="7"/>
+<set w="160" r="7"/>
+</exercise>
+<exercise id="incline-db-press" name="Incline DB press">
+<set w="80" r="7"/>
+<set w="80" r="7"/>
+<set w="80" r="7"/>
+<set w="80" r="7"/>
+<set w="80" r="5"/>
+</exercise>
+<exercise id="seated-db-shoulder" name="Seated DB shoulder press">
+<set w="55" r="7"/>
+<set w="55" r="7"/>
+<set w="55" r="7"/>
+<set w="55" r="7"/>
+</exercise>
+<exercise id="cable-lateral" name="Cable lateral raise">
+<set w="25" r="15"/>
+<set w="25" r="15"/>
+<set w="25" r="15"/>
+</exercise>
+<exercise id="triceps-pushdown" name="Triceps pushdown">
+<set w="70" r="7"/>
+<set w="70" r="6"/>
+<set w="70" r="6"/>
+</exercise>
+</entry>
+<entry id="s_2026-10-06_tue" date="2026-10-06" day="tue" dayName="Pull A + Legs B" programName="Push / Pull / Legs" programId="ppl" loop="13" unit="lb" bw="178.2" savedAt="2026-10-06T13:30:00.000Z">
+<exercise id="lat-pulldown" name="Lat pulldown">
+<set w="145" r="7"/>
+<set w="145" r="7"/>
+<set w="145" r="7"/>
+<set w="145" r="5"/>
+<set w="145" r="5"/>
+</exercise>
+<exercise id="seated-cable-row" name="Seated cable row">
+<set w="140" r="7"/>
+<set w="140" r="7"/>
+<set w="140" r="7"/>
+<set w="140" r="7"/>
+<set w="140" r="6"/>
+</exercise>
+<exercise id="face-pull" name="Face pull">
+<set w="45" r="15"/>
+<set w="45" r="15"/>
+<set w="45" r="15"/>
+</exercise>
+<exercise id="db-curl" name="DB curl">
+<set w="55" r="7"/>
+<set w="55" r="7"/>
+<set w="55" r="7"/>
+</exercise>
+<exercise id="leg-press" name="Leg press">
+<set w="280" r="7"/>
+<set w="280" r="7"/>
+<set w="280" r="6"/>
+</exercise>
+<exercise id="seated-leg-curl" name="Seated leg curl">
+<set w="105" r="7"/>
+<set w="105" r="7"/>
+<set w="105" r="7"/>
+</exercise>
+</entry>
+<entry id="s_2026-10-07_wed" date="2026-10-07" day="wed" dayName="Legs A" programName="Push / Pull / Legs" programId="ppl" loop="13" unit="lb" bw="177.7" savedAt="2026-10-07T13:30:00.000Z">
+<exercise id="smith-squat" name="Smith squat">
+<set w="180" r="7"/>
+<set w="180" r="7"/>
+<set w="180" r="7"/>
+<set w="180" r="7"/>
+<set w="180" r="7"/>
+</exercise>
+<exercise id="db-rdl" name="DB Romanian deadlift">
+<set w="70" r="7"/>
+<set w="70" r="7"/>
+<set w="70" r="7"/>
+<set w="70" r="7"/>
+<set w="70" r="7"/>
+</exercise>
+<exercise id="walking-lunge" name="Walking lunge (each leg)">
+<set w="45" r="7"/>
+<set w="45" r="7"/>
+<set w="45" r="5"/>
+</exercise>
+<exercise id="leg-extension" name="Leg extension">
+<set w="110" r="7"/>
+<set w="110" r="7"/>
+<set w="110" r="7"/>
+</exercise>
+<exercise id="lying-leg-curl" name="Lying leg curl">
+<set w="90" r="7"/>
+<set w="90" r="7"/>
+<set w="90" r="6"/>
+</exercise>
+<exercise id="calf-raise" name="Calf raise">
+<set w="180" r="14"/>
+<set w="180" r="15"/>
+<set w="180" r="15"/>
+<set w="180" r="13"/>
+</exercise>
+</entry>
+<entry id="s_2026-10-08_thu" date="2026-10-08" day="thu" dayName="Push B" programName="Push / Pull / Legs" programId="ppl" loop="13" unit="lb" savedAt="2026-10-08T13:30:00.000Z">
+<note>Gym was packed, swapped order a bit.</note>
+<cardio type="steady" min="15" level="7" hr="132"/>
+<exercise id="machine-chest-press" name="Machine chest press">
+<set w="140" r="7"/>
+<set w="140" r="7"/>
+<set w="140" r="7"/>
+<set w="140" r="6"/>
+<set w="140" r="5"/>
+</exercise>
+<exercise id="incline-smith-press" name="Incline Smith press">
+<set w="145" r="7"/>
+<set w="145" r="7"/>
+<set w="145" r="7"/>
+<set w="145" r="7"/>
+<set w="145" r="7"/>
+</exercise>
+<exercise id="pec-deck" name="Pec deck">
+<set w="115" r="7"/>
+<set w="115" r="6"/>
+<set w="115" r="5"/>
+</exercise>
+<exercise id="machine-shoulder-press" name="Machine shoulder press">
+<set w="105" r="7"/>
+<set w="105" r="7"/>
+<set w="105" r="7"/>
+<set w="105" r="7"/>
+</exercise>
+<exercise id="db-lateral" name="DB lateral raise">
+<set w="27.5" r="13"/>
+<set w="27.5" r="14"/>
+<set w="27.5" r="14"/>
+</exercise>
+<exercise id="oh-db-triceps" name="Overhead DB triceps extension">
+<set w="55" r="7"/>
+<set w="55" r="7"/>
+<set w="55" r="7"/>
+</exercise>
+</entry>
+<entry id="s_2026-10-09_fri" date="2026-10-09" day="fri" dayName="Pull B" programName="Push / Pull / Legs" programId="ppl" loop="13" unit="lb" savedAt="2026-10-09T13:30:00.000Z">
+<exercise id="one-arm-db-row" name="One-arm DB row (each arm)">
+<set w="75" r="7"/>
+<set w="75" r="7"/>
+<set w="75" r="7"/>
+<set w="75" r="6"/>
+<set w="75" r="5"/>
+</exercise>
+<exercise id="close-grip-pulldown" name="Close-grip pulldown">
+<set w="125" r="7"/>
+<set w="125" r="7"/>
+<set w="125" r="7"/>
+<set w="125" r="7"/>
+<set w="125" r="7"/>
+</exercise>
+<exercise id="machine-row" name="Machine row">
+<set w="120" r="7"/>
+<set w="120" r="7"/>
+<set w="120" r="7"/>
+<set w="120" r="7"/>
+</exercise>
+<exercise id="reverse-pec-deck" name="Reverse pec deck">
+<set w="70" r="15"/>
+<set w="70" r="15"/>
+<set w="70" r="13"/>
+</exercise>
+<exercise id="hammer-curl" name="Hammer curl">
+<set w="45" r="7"/>
+<set w="45" r="6"/>
+<set w="45" r="6"/>
+</exercise>
+</entry>
+<entry id="s_2026-10-10_sat" date="2026-10-10" day="sat" dayName="Conditioning" programName="Push / Pull / Legs" programId="ppl" loop="13" unit="lb" savedAt="2026-10-10T13:30:00.000Z">
+<cardio type="intervals" rounds="4" level="11" hr="159"/>
+<exercise id="cable-crunch" name="Cable crunch">
+<set w="75" r="15"/>
+<set w="75" r="15"/>
+<set w="75" r="15"/>
+</exercise>
+<exercise id="plank" name="Plank" unit="sec">
+<set w="0" r="50"/>
+<set w="0" r="48"/>
+<set w="0" r="44"/>
+</exercise>
+</entry>
+<entry id="s_2026-10-11_lib-run" date="2026-10-11" day="lib-run" dayName="Easy run" programName="One-off" loop="13" unit="lb" savedAt="2026-10-11T17:20:00.000Z">
+<exercise id="treadmill-run" name="Treadmill run" unit="sec" distUnit="mi">
+<set w="0" r="1992" d="3.5" p="569"/>
+</exercise>
+</entry>
+<entry id="s_2026-10-12_mon" date="2026-10-12" day="mon" dayName="Push A" programName="Push / Pull / Legs" programId="ppl" loop="14" unit="lb" savedAt="2026-10-12T13:30:00.000Z">
+<value of="bp" sys="122" dia="80"/>
+<value of="rhr" v="59"/>
+<value of="ahi" v="4.6"/>
+<cardio type="steady" min="20" level="7" hr="137"/>
+<exercise id="smith-bench" name="Smith bench press">
+<set w="165" r="7"/>
+<set w="165" r="7"/>
+<set w="165" r="7"/>
+<set w="165" r="6"/>
+<set w="165" r="5"/>
+</exercise>
+<exercise id="incline-db-press" name="Incline DB press">
+<set w="80" r="7"/>
+<set w="80" r="7"/>
+<set w="80" r="7"/>
+<set w="80" r="7"/>
+<set w="80" r="7"/>
+</exercise>
+<exercise id="seated-db-shoulder" name="Seated DB shoulder press">
+<set w="60" r="7"/>
+<set w="60" r="7"/>
+<set w="60" r="6"/>
+<set w="60" r="7"/>
+</exercise>
+<exercise id="cable-lateral" name="Cable lateral raise">
+<set w="27.5" r="14"/>
+<set w="27.5" r="14"/>
+<set w="27.5" r="14"/>
+</exercise>
+<exercise id="triceps-pushdown" name="Triceps pushdown">
+<set w="70" r="7"/>
+<set w="70" r="7"/>
+<set w="70" r="7"/>
+</exercise>
+</entry>
+<entry id="s_2026-10-13_tue" date="2026-10-13" day="tue" dayName="Pull A + Legs B" programName="Push / Pull / Legs" programId="ppl" loop="14" unit="lb" bw="177.2" savedAt="2026-10-13T13:30:00.000Z">
+<exercise id="lat-pulldown" name="Lat pulldown">
+<set w="145" r="7"/>
+<set w="145" r="7"/>
+<set w="145" r="7"/>
+<set w="145" r="7"/>
+<set w="145" r="7"/>
+</exercise>
+<exercise id="seated-cable-row" name="Seated cable row">
+<set w="140" r="7"/>
+<set w="140" r="7"/>
+<set w="140" r="7"/>
+<set w="140" r="7"/>
+<set w="140" r="7"/>
+</exercise>
+<exercise id="face-pull" name="Face pull">
+<set w="50" r="13"/>
+<set w="50" r="15"/>
+<set w="50" r="14"/>
+</exercise>
+<exercise id="db-curl" name="DB curl">
+<set w="60" r="7"/>
+<set w="60" r="7"/>
+<set w="60" r="6"/>
+</exercise>
+<exercise id="leg-press" name="Leg press">
+<set w="280" r="7"/>
+<set w="280" r="7"/>
+<set w="280" r="7"/>
+</exercise>
+<exercise id="seated-leg-curl" name="Seated leg curl">
+<set w="110" r="7"/>
+<set w="110" r="6"/>
+<set w="110" r="6"/>
+</exercise>
+</entry>
+<entry id="s_2026-10-14_wed" date="2026-10-14" day="wed" dayName="Legs A" programName="Push / Pull / Legs" programId="ppl" loop="14" unit="lb" savedAt="2026-10-14T13:30:00.000Z">
+<exercise id="smith-squat" name="Smith squat">
+<set w="185" r="7"/>
+<set w="185" r="7"/>
+<set w="185" r="7"/>
+<set w="185" r="7"/>
+<set w="185" r="7"/>
+</exercise>
+<exercise id="db-rdl" name="DB Romanian deadlift">
+<set w="75" r="7"/>
+<set w="75" r="7"/>
+<set w="75" r="7"/>
+<set w="75" r="7"/>
+<set w="75" r="7"/>
+</exercise>
+<exercise id="walking-lunge" name="Walking lunge (each leg)">
+<set w="45" r="7"/>
+<set w="45" r="7"/>
+<set w="45" r="7"/>
+</exercise>
+<exercise id="leg-extension" name="Leg extension">
+<set w="115" r="7"/>
+<set w="115" r="7"/>
+<set w="115" r="6"/>
+</exercise>
+<exercise id="lying-leg-curl" name="Lying leg curl">
+<set w="90" r="7"/>
+<set w="90" r="7"/>
+<set w="90" r="7"/>
+</exercise>
+<exercise id="calf-raise" name="Calf raise">
+<set w="180" r="15"/>
+<set w="180" r="15"/>
+<set w="180" r="15"/>
+<set w="180" r="15"/>
+</exercise>
+</entry>
+<entry id="s_2026-10-15_thu" date="2026-10-15" day="thu" dayName="Push B" programName="Push / Pull / Legs" programId="ppl" loop="14" unit="lb" savedAt="2026-10-15T13:30:00.000Z">
+<cardio type="steady" min="20" level="7" hr="136"/>
+<exercise id="machine-chest-press" name="Machine chest press">
+<set w="140" r="7"/>
+<set w="140" r="7"/>
+<set w="140" r="7"/>
+<set w="140" r="7"/>
+<set w="140" r="7"/>
+</exercise>
+<exercise id="incline-smith-press" name="Incline Smith press">
+<set w="150" r="7"/>
+<set w="150" r="7"/>
+<set w="150" r="7"/>
+<set w="150" r="6"/>
+<set w="150" r="6"/>
+</exercise>
+<exercise id="pec-deck" name="Pec deck">
+<set w="115" r="7"/>
+<set w="115" r="7"/>
+<set w="115" r="7"/>
+</exercise>
+<exercise id="machine-shoulder-press" name="Machine shoulder press">
+<set w="110" r="7"/>
+<set w="110" r="7"/>
+<set w="110" r="6"/>
+<set w="110" r="7"/>
+</exercise>
+<exercise id="db-lateral" name="DB lateral raise">
+<set w="27.5" r="15"/>
+<set w="27.5" r="15"/>
+<set w="27.5" r="15"/>
+</exercise>
+<exercise id="oh-db-triceps" name="Overhead DB triceps extension">
+<set w="60" r="7"/>
+<set w="60" r="7"/>
+<set w="60" r="7"/>
+</exercise>
+</entry>
+<entry id="s_2026-10-16_fri" date="2026-10-16" day="fri" dayName="Pull B" programName="Push / Pull / Legs" programId="ppl" loop="14" unit="lb" savedAt="2026-10-16T13:30:00.000Z">
+<exercise id="one-arm-db-row" name="One-arm DB row (each arm)">
+<set w="75" r="7"/>
+<set w="75" r="7"/>
+<set w="75" r="7"/>
+<set w="75" r="7"/>
+<set w="75" r="7"/>
+</exercise>
+<exercise id="close-grip-pulldown" name="Close-grip pulldown">
+<set w="130" r="7"/>
+<set w="130" r="7"/>
+<set w="130" r="7"/>
+<set w="130" r="7"/>
+<set w="130" r="6"/>
+</exercise>
+<exercise id="machine-row" name="Machine row">
+<set w="125" r="7"/>
+<set w="125" r="7"/>
+<set w="125" r="6"/>
+<set w="125" r="6"/>
+</exercise>
+<exercise id="reverse-pec-deck" name="Reverse pec deck">
+<set w="70" r="15"/>
+<set w="70" r="15"/>
+<set w="70" r="15"/>
+</exercise>
+<exercise id="hammer-curl" name="Hammer curl">
+<set w="45" r="7"/>
+<set w="45" r="7"/>
+<set w="45" r="7"/>
+</exercise>
+</entry>
+<entry id="s_2026-10-17_sat" date="2026-10-17" day="sat" dayName="Conditioning" programName="Push / Pull / Legs" programId="ppl" loop="14" unit="lb" savedAt="2026-10-17T13:30:00.000Z">
+<cardio type="intervals" rounds="4" level="12" hr="168"/>
+<exercise id="cable-crunch" name="Cable crunch">
+<set w="80" r="15"/>
+<set w="80" r="14"/>
+<set w="80" r="13"/>
+</exercise>
+<exercise id="plank" name="Plank" unit="sec">
+<set w="0" r="49"/>
+<set w="0" r="48"/>
+<set w="0" r="44"/>
+</exercise>
+</entry>
+<entry id="s_2026-10-17_lib-arms" date="2026-10-17" day="lib-arms" dayName="Arm finisher" programName="One-off" loop="14" unit="lb" savedAt="2026-10-17T19:00:00.000Z">
+<note>Extra arm work after conditioning.</note>
+<exercise id="ez-curl" name="EZ-bar curl">
+<set w="60" r="12"/>
+<set w="60" r="11"/>
+<set w="60" r="10"/>
+</exercise>
+<exercise id="rope-pushdown" name="Rope pushdown">
+<set w="50" r="12"/>
+<set w="50" r="12"/>
+<set w="50" r="11"/>
+</exercise>
+</entry>
+<entry id="s_2026-10-18_lib-run" date="2026-10-18" day="lib-run" dayName="Easy run" programName="One-off" loop="14" unit="lb" savedAt="2026-10-18T17:20:00.000Z">
+<exercise id="treadmill-run" name="Treadmill run" unit="sec" distUnit="mi">
+<set w="0" r="2136" d="3.78" p="565"/>
+</exercise>
+</entry>
+<entry id="s_2026-10-19_mon" date="2026-10-19" day="mon" dayName="Push A" programName="Push / Pull / Legs" programId="ppl" loop="15" unit="lb" bw="177.4" savedAt="2026-10-19T13:30:00.000Z">
+<note>Slept badly, kept it smooth.</note>
+<value of="bp" sys="121" dia="78"/>
+<value of="rhr" v="60"/>
+<value of="ahi" v="4.5"/>
+<value of="waist" v="34.75"/>
+<value of="arm-r" v="14.75"/>
+<cardio type="steady" min="15" level="7" hr="131"/>
+<exercise id="smith-bench" name="Smith bench press">
+<set w="165" r="7"/>
+<set w="165" r="7"/>
+<set w="165" r="7"/>
+</exercise>
+<exercise id="incline-db-press" name="Incline DB press">
+<set w="85" r="7"/>
+<set w="85" r="6"/>
+<set w="85" r="7"/>
+</exercise>
+<exercise id="seated-db-shoulder" name="Seated DB shoulder press">
+<set w="60" r="7"/>
+<set w="60" r="7"/>
+<set w="60" r="7"/>
+</exercise>
+<exercise id="cable-lateral" name="Cable lateral raise">
+<set w="27.5" r="15"/>
+<set w="27.5" r="15"/>
+<set w="27.5" r="15"/>
+</exercise>
+<exercise id="triceps-pushdown" name="Triceps pushdown">
+<set w="75" r="7"/>
+<set w="75" r="7"/>
+<set w="75" r="6"/>
+</exercise>
+</entry>
+<entry id="s_2026-10-20_tue" date="2026-10-20" day="tue" dayName="Pull A + Legs B" programName="Push / Pull / Legs" programId="ppl" loop="15" unit="lb" savedAt="2026-10-20T13:30:00.000Z">
+<exercise id="lat-pulldown" name="Lat pulldown">
+<set w="150" r="7"/>
+<set w="150" r="6"/>
+<set w="150" r="7"/>
+</exercise>
+<exercise id="seated-cable-row" name="Seated cable row">
+<set w="145" r="7"/>
+<set w="145" r="5"/>
+<set w="145" r="6"/>
+</exercise>
+<exercise id="face-pull" name="Face pull">
+<set w="50" r="15"/>
+<set w="50" r="15"/>
+<set w="50" r="15"/>
+</exercise>
+<exercise id="db-curl" name="DB curl">
+<set w="60" r="7"/>
+<set w="60" r="7"/>
+<set w="60" r="7"/>
+</exercise>
+<exercise id="leg-press" name="Leg press">
+<set w="290" r="7"/>
+<set w="290" r="7"/>
+<set w="290" r="6"/>
+</exercise>
+<exercise id="seated-leg-curl" name="Seated leg curl">
+<set w="110" r="7"/>
+<set w="110" r="6"/>
+<set w="110" r="7"/>
+</exercise>
+</entry>
+<entry id="s_2026-10-21_wed" date="2026-10-21" day="wed" dayName="Legs A" programName="Push / Pull / Legs" programId="ppl" loop="15" unit="lb" bw="177.6" savedAt="2026-10-21T13:30:00.000Z">
+<note>Felt strong today.</note>
+<exercise id="smith-squat" name="Smith squat">
+<set w="190" r="7"/>
+<set w="190" r="6"/>
+<set w="190" r="7"/>
+</exercise>
+<exercise id="db-rdl" name="DB Romanian deadlift">
+<set w="80" r="7"/>
+<set w="80" r="7"/>
+<set w="80" r="6"/>
+</exercise>
+<exercise id="walking-lunge" name="Walking lunge (each leg)">
+<set w="50" r="7"/>
+<set w="50" r="7"/>
+<set w="50" r="7"/>
+</exercise>
+<exercise id="leg-extension" name="Leg extension">
+<set w="115" r="7"/>
+<set w="115" r="7"/>
+<set w="115" r="7"/>
+</exercise>
+<exercise id="lying-leg-curl" name="Lying leg curl">
+<set w="95" r="7"/>
+<set w="95" r="7"/>
+<set w="95" r="7"/>
+</exercise>
+<exercise id="calf-raise" name="Calf raise">
+<set w="190" r="14"/>
+<set w="190" r="14"/>
+<set w="190" r="13"/>
+</exercise>
+</entry>
+<entry id="s_2026-10-22_thu" date="2026-10-22" day="thu" dayName="Push B" programName="Push / Pull / Legs" programId="ppl" loop="15" unit="lb" bw="177.1" savedAt="2026-10-22T13:30:00.000Z">
+<cardio type="steady" min="15" level="7" hr="135"/>
+<exercise id="machine-chest-press" name="Machine chest press">
+<set w="145" r="7"/>
+<set w="145" r="6"/>
+<set w="145" r="7"/>
+</exercise>
+<exercise id="incline-smith-press" name="Incline Smith press">
+<set w="150" r="7"/>
+<set w="150" r="7"/>
+<set w="150" r="7"/>
+</exercise>
+<exercise id="pec-deck" name="Pec deck">
+<set w="120" r="7"/>
+<set w="120" r="7"/>
+<set w="120" r="6"/>
+</exercise>
+<exercise id="machine-shoulder-press" name="Machine shoulder press">
+<set w="110" r="7"/>
+<set w="110" r="7"/>
+<set w="110" r="7"/>
+</exercise>
+<exercise id="db-lateral" name="DB lateral raise">
+<set w="30" r="13"/>
+<set w="30" r="13"/>
+<set w="30" r="12"/>
+</exercise>
+<exercise id="oh-db-triceps" name="Overhead DB triceps extension">
+<set w="65" r="7"/>
+<set w="65" r="6"/>
+<set w="65" r="7"/>
+</exercise>
+</entry>
+<entry id="s_2026-10-23_fri" date="2026-10-23" day="fri" dayName="Pull B" programName="Push / Pull / Legs" programId="ppl" loop="15" unit="lb" savedAt="2026-10-23T13:30:00.000Z">
+<note>Slept badly, kept it smooth.</note>
+<exercise id="one-arm-db-row" name="One-arm DB row (each arm)">
+<set w="80" r="7"/>
+<set w="80" r="7"/>
+<set w="80" r="7"/>
+</exercise>
+<exercise id="close-grip-pulldown" name="Close-grip pulldown">
+<set w="130" r="7"/>
+<set w="130" r="6"/>
+<set w="130" r="5"/>
+</exercise>
+<exercise id="machine-row" name="Machine row">
+<set w="125" r="7"/>
+<set w="125" r="7"/>
+<set w="125" r="7"/>
+</exercise>
+<exercise id="reverse-pec-deck" name="Reverse pec deck">
+<set w="75" r="14"/>
+<set w="75" r="14"/>
+<set w="75" r="14"/>
+</exercise>
+<exercise id="hammer-curl" name="Hammer curl">
+<set w="50" r="7"/>
+<set w="50" r="6"/>
+<set w="50" r="6"/>
+</exercise>
+</entry>
+<entry id="s_2026-10-25_lib-run" date="2026-10-25" day="lib-run" dayName="Easy run" programName="One-off" loop="15" unit="lb" savedAt="2026-10-25T17:20:00.000Z">
+<note>Kept it conversational.</note>
+<exercise id="treadmill-run" name="Treadmill run" unit="sec" distUnit="mi">
+<set w="0" r="2197" d="3.93" p="559"/>
+</exercise>
+</entry>
+<entry id="s_2026-10-26_mon" date="2026-10-26" day="mon" dayName="Push A" programName="Push / Pull / Legs" programId="ppl" loop="16" unit="lb" bw="177" savedAt="2026-10-26T13:30:00.000Z">
+<value of="bp" sys="122" dia="78"/>
+<value of="rhr" v="59"/>
+<value of="ahi" v="3.1"/>
+<cardio type="steady" min="20" level="7" hr="129"/>
+<exercise id="smith-bench" name="Smith bench press">
+<set w="165" r="7"/>
+<set w="165" r="7"/>
+<set w="165" r="7"/>
+<set w="165" r="7"/>
+<set w="165" r="7"/>
+</exercise>
+<exercise id="incline-db-press" name="Incline DB press">
+<set w="85" r="7"/>
+<set w="85" r="7"/>
+<set w="85" r="7"/>
+<set w="85" r="5"/>
+<set w="85" r="5"/>
+</exercise>
+<exercise id="seated-db-shoulder" name="Seated DB shoulder press">
+<set w="60" r="7"/>
+<set w="60" r="7"/>
+<set w="60" r="7"/>
+<set w="60" r="6"/>
+</exercise>
+<exercise id="cable-lateral" name="Cable lateral raise">
+<set w="27.5" r="14"/>
+<set w="27.5" r="13"/>
+<set w="27.5" r="13"/>
+</exercise>
+<exercise id="triceps-pushdown" name="Triceps pushdown">
+<set w="75" r="7"/>
+<set w="75" r="7"/>
+<set w="75" r="7"/>
+</exercise>
+</entry>
+<entry id="s_2026-10-27_tue" date="2026-10-27" day="tue" dayName="Pull A + Legs B" programName="Push / Pull / Legs" programId="ppl" loop="16" unit="lb" savedAt="2026-10-27T13:30:00.000Z">
+<note>Felt strong today.</note>
+<exercise id="lat-pulldown" name="Lat pulldown">
+<set w="150" r="7"/>
+<set w="150" r="7"/>
+<set w="150" r="7"/>
+<set w="150" r="7"/>
+<set w="150" r="7"/>
+</exercise>
+<exercise id="seated-cable-row" name="Seated cable row">
+<set w="145" r="7"/>
+<set w="145" r="7"/>
+<set w="145" r="7"/>
+<set w="145" r="6"/>
+<set w="145" r="7"/>
+</exercise>
+<exercise id="face-pull" name="Face pull">
+<set w="50" r="15"/>
+<set w="50" r="15"/>
+<set w="50" r="15"/>
+</exercise>
+<exercise id="db-curl" name="DB curl">
+<set w="60" r="7"/>
+<set w="60" r="7"/>
+<set w="60" r="7"/>
+</exercise>
+<exercise id="leg-press" name="Leg press">
+<set w="290" r="7"/>
+<set w="290" r="6"/>
+<set w="290" r="7"/>
+</exercise>
+<exercise id="seated-leg-curl" name="Seated leg curl">
+<set w="110" r="7"/>
+<set w="110" r="7"/>
+<set w="110" r="7"/>
+</exercise>
+</entry>
+<entry id="s_2026-10-28_wed" date="2026-10-28" day="wed" dayName="Legs A" programName="Push / Pull / Legs" programId="ppl" loop="16" unit="lb" savedAt="2026-10-28T13:30:00.000Z">
+<exercise id="smith-squat" name="Smith squat">
+<set w="190" r="7"/>
+<set w="190" r="7"/>
+<set w="190" r="7"/>
+<set w="190" r="7"/>
+<set w="190" r="7"/>
+</exercise>
+<exercise id="db-rdl" name="DB Romanian deadlift">
+<set w="80" r="7"/>
+<set w="80" r="7"/>
+<set w="80" r="7"/>
+<set w="80" r="5"/>
+<set w="80" r="6"/>
+</exercise>
+<exercise id="walking-lunge" name="Walking lunge (each leg)">
+<set w="50" r="7"/>
+<set w="50" r="6"/>
+<set w="50" r="7"/>
+</exercise>
+<exercise id="leg-extension" name="Leg extension">
+<set w="115" r="7"/>
+<set w="115" r="7"/>
+<set w="115" r="7"/>
+</exercise>
+<exercise id="lying-leg-curl" name="Lying leg curl">
+<set w="95" r="7"/>
+<set w="95" r="7"/>
+<set w="95" r="6"/>
+</exercise>
+<exercise id="calf-raise" name="Calf raise">
+<set w="190" r="14"/>
+<set w="190" r="14"/>
+<set w="190" r="13"/>
+<set w="190" r="14"/>
+</exercise>
+</entry>
+<entry id="s_2026-10-29_thu" date="2026-10-29" day="thu" dayName="Push B" programName="Push / Pull / Legs" programId="ppl" loop="16" unit="lb" savedAt="2026-10-29T13:30:00.000Z">
+<cardio type="steady" min="15" level="7" hr="137"/>
+<exercise id="machine-chest-press" name="Machine chest press">
+<set w="145" r="7"/>
+<set w="145" r="7"/>
+<set w="145" r="7"/>
+<set w="145" r="7"/>
+<set w="145" r="5"/>
+</exercise>
+<exercise id="incline-smith-press" name="Incline Smith press">
+<set w="150" r="7"/>
+<set w="150" r="7"/>
+<set w="150" r="7"/>
+<set w="150" r="7"/>
+<set w="150" r="7"/>
+</exercise>
+<exercise id="pec-deck" name="Pec deck">
+<set w="120" r="7"/>
+<set w="120" r="7"/>
+<set w="120" r="6"/>
+</exercise>
+<exercise id="machine-shoulder-press" name="Machine shoulder press">
+<set w="110" r="7"/>
+<set w="110" r="7"/>
+<set w="110" r="7"/>
+<set w="110" r="7"/>
+</exercise>
+<exercise id="db-lateral" name="DB lateral raise">
+<set w="30" r="14"/>
+<set w="30" r="15"/>
+<set w="30" r="12"/>
+</exercise>
+<exercise id="oh-db-triceps" name="Overhead DB triceps extension">
+<set w="65" r="7"/>
+<set w="65" r="6"/>
+<set w="65" r="7"/>
+</exercise>
+</entry>
+<entry id="s_2026-10-31_sat" date="2026-10-31" day="sat" dayName="Conditioning" programName="Push / Pull / Legs" programId="ppl" loop="16" unit="lb" bw="176.1" savedAt="2026-10-31T13:30:00.000Z">
+<cardio type="intervals" rounds="4" level="11" hr="161"/>
+<exercise id="cable-crunch" name="Cable crunch">
+<set w="80" r="15"/>
+<set w="80" r="15"/>
+<set w="80" r="15"/>
+</exercise>
+<exercise id="plank" name="Plank" unit="sec">
+<set w="0" r="53"/>
+<set w="0" r="49"/>
+<set w="0" r="45"/>
+</exercise>
+</entry>
+<entry id="s_2026-11-01_rest" date="2026-11-01" day="rest" dayName="Rest" programName="Push / Pull / Legs" programId="ppl" loop="16" unit="lb" bw="176.1" savedAt="2026-11-01T15:00:00.000Z"/>
+<entry id="s_2026-11-02_mon" date="2026-11-02" day="mon" dayName="Push A" programName="Push / Pull / Legs" programId="ppl" loop="17" unit="lb" savedAt="2026-11-02T13:30:00.000Z">
+<value of="bp" sys="125" dia="79"/>
+<value of="rhr" v="56"/>
+<value of="ahi" v="2.8"/>
+<value of="waist" v="34.25"/>
+<value of="arm-r" v="14.75"/>
+<value of="vo2" v="45.2"/>
+<cardio type="steady" min="20" level="7" hr="134"/>
+<exercise id="smith-bench" name="Smith bench press">
+<set w="170" r="7"/>
+<set w="170" r="7"/>
+<set w="170" r="7"/>
+<set w="170" r="6"/>
+<set w="170" r="5"/>
+</exercise>
+<exercise id="incline-db-press" name="Incline DB press">
+<set w="85" r="7"/>
+<set w="85" r="7"/>
+<set w="85" r="7"/>
+<set w="85" r="7"/>
+<set w="85" r="7"/>
+</exercise>
+<exercise id="seated-db-shoulder" name="Seated DB shoulder press">
+<set w="60" r="7"/>
+<set w="60" r="7"/>
+<set w="60" r="7"/>
+<set w="60" r="7"/>
+</exercise>
+<exercise id="cable-lateral" name="Cable lateral raise">
+<set w="27.5" r="15"/>
+<set w="27.5" r="15"/>
+<set w="27.5" r="15"/>
+</exercise>
+<exercise id="triceps-pushdown" name="Triceps pushdown">
+<set w="80" r="7"/>
+<set w="80" r="5"/>
+<set w="80" r="7"/>
+</exercise>
+</entry>
+<entry id="s_2026-11-03_tue" date="2026-11-03" day="tue" dayName="Pull A + Legs B" programName="Push / Pull / Legs" programId="ppl" loop="17" unit="lb" bw="176.5" savedAt="2026-11-03T13:30:00.000Z">
+<exercise id="lat-pulldown" name="Lat pulldown">
+<set w="155" r="7"/>
+<set w="155" r="7"/>
+<set w="155" r="7"/>
+<set w="155" r="7"/>
+<set w="155" r="6"/>
+</exercise>
+<exercise id="seated-cable-row" name="Seated cable row">
+<set w="145" r="7"/>
+<set w="145" r="7"/>
+<set w="145" r="7"/>
+<set w="145" r="7"/>
+<set w="145" r="7"/>
+</exercise>
+<exercise id="face-pull" name="Face pull">
+<set w="55" r="14"/>
+<set w="55" r="14"/>
+<set w="55" r="13"/>
+</exercise>
+<exercise id="db-curl" name="DB curl">
+<set w="65" r="7"/>
+<set w="65" r="7"/>
+<set w="65" r="6"/>
+</exercise>
+<exercise id="leg-press" name="Leg press">
+<set w="290" r="7"/>
+<set w="290" r="7"/>
+<set w="290" r="7"/>
+</exercise>
+<exercise id="seated-leg-curl" name="Seated leg curl">
+<set w="115" r="7"/>
+<set w="115" r="6"/>
+<set w="115" r="6"/>
+</exercise>
+</entry>
+<entry id="s_2026-11-04_wed" date="2026-11-04" day="wed" dayName="Legs A" programName="Push / Pull / Legs" programId="ppl" loop="17" unit="lb" savedAt="2026-11-04T13:30:00.000Z">
+<exercise id="smith-squat" name="Smith squat">
+<set w="195" r="7"/>
+<set w="195" r="7"/>
+<set w="195" r="7"/>
+<set w="195" r="5"/>
+<set w="195" r="7"/>
+</exercise>
+<exercise id="db-rdl" name="DB Romanian deadlift">
+<set w="80" r="7"/>
+<set w="80" r="7"/>
+<set w="80" r="7"/>
+<set w="80" r="7"/>
+<set w="80" r="7"/>
+</exercise>
+<exercise id="walking-lunge" name="Walking lunge (each leg)">
+<set w="50" r="7"/>
+<set w="50" r="7"/>
+<set w="50" r="7"/>
+</exercise>
+<exercise id="leg-extension" name="Leg extension">
+<set w="120" r="7"/>
+<set w="120" r="6"/>
+<set w="120" r="6"/>
+</exercise>
+<exercise id="lying-leg-curl" name="Lying leg curl">
+<set w="95" r="7"/>
+<set w="95" r="7"/>
+<set w="95" r="7"/>
+</exercise>
+<exercise id="calf-raise" name="Calf raise">
+<set w="190" r="15"/>
+<set w="190" r="15"/>
+<set w="190" r="15"/>
+<set w="190" r="15"/>
+</exercise>
+</entry>
+<entry id="s_2026-11-05_thu" date="2026-11-05" day="thu" dayName="Push B" programName="Push / Pull / Legs" programId="ppl" loop="17" unit="lb" savedAt="2026-11-05T13:30:00.000Z">
+<note>Easy session, felt fresh.</note>
+<cardio type="steady" min="15" level="7" hr="135"/>
+<exercise id="machine-chest-press" name="Machine chest press">
+<set w="145" r="7"/>
+<set w="145" r="7"/>
+<set w="145" r="7"/>
+<set w="145" r="7"/>
+<set w="145" r="7"/>
+</exercise>
+<exercise id="incline-smith-press" name="Incline Smith press">
+<set w="155" r="7"/>
+<set w="155" r="7"/>
+<set w="155" r="7"/>
+<set w="155" r="5"/>
+<set w="155" r="6"/>
+</exercise>
+<exercise id="pec-deck" name="Pec deck">
+<set w="120" r="7"/>
+<set w="120" r="7"/>
+<set w="120" r="7"/>
+</exercise>
+<exercise id="machine-shoulder-press" name="Machine shoulder press">
+<set w="115" r="7"/>
+<set w="115" r="7"/>
+<set w="115" r="6"/>
+<set w="115" r="7"/>
+</exercise>
+<exercise id="db-lateral" name="DB lateral raise">
+<set w="30" r="15"/>
+<set w="30" r="15"/>
+<set w="30" r="15"/>
+</exercise>
+<exercise id="oh-db-triceps" name="Overhead DB triceps extension">
+<set w="65" r="7"/>
+<set w="65" r="7"/>
+<set w="65" r="7"/>
+</exercise>
+</entry>
+<entry id="s_2026-11-06_fri" date="2026-11-06" day="fri" dayName="Pull B" programName="Push / Pull / Legs" programId="ppl" loop="17" unit="lb" bw="175.9" savedAt="2026-11-06T13:30:00.000Z">
+<exercise id="one-arm-db-row" name="One-arm DB row (each arm)">
+<set w="80" r="7"/>
+<set w="80" r="7"/>
+<set w="80" r="7"/>
+<set w="80" r="7"/>
+<set w="80" r="7"/>
+</exercise>
+<exercise id="close-grip-pulldown" name="Close-grip pulldown">
+<set w="130" r="7"/>
+<set w="130" r="7"/>
+<set w="130" r="7"/>
+<set w="130" r="7"/>
+<set w="130" r="7"/>
+</exercise>
+<exercise id="machine-row" name="Machine row">
+<set w="125" r="7"/>
+<set w="125" r="7"/>
+<set w="125" r="7"/>
+<set w="125" r="7"/>
+</exercise>
+<exercise id="reverse-pec-deck" name="Reverse pec deck">
+<set w="75" r="14"/>
+<set w="75" r="15"/>
+<set w="75" r="12"/>
+</exercise>
+<exercise id="hammer-curl" name="Hammer curl">
+<set w="50" r="7"/>
+<set w="50" r="6"/>
+<set w="50" r="6"/>
+</exercise>
+</entry>
+<entry id="s_2026-11-07_sat" date="2026-11-07" day="sat" dayName="Conditioning" programName="Push / Pull / Legs" programId="ppl" loop="17" unit="lb" bw="176.4" savedAt="2026-11-07T13:30:00.000Z">
+<cardio type="intervals" rounds="4" level="13" hr="161"/>
+<exercise id="cable-crunch" name="Cable crunch">
+<set w="85" r="15"/>
+<set w="85" r="14"/>
+<set w="85" r="14"/>
+</exercise>
+<exercise id="plank" name="Plank" unit="sec">
+<set w="0" r="53"/>
+<set w="0" r="51"/>
+<set w="0" r="48"/>
+</exercise>
+</entry>
+</entries>
+</herculean>

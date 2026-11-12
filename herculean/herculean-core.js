@@ -707,12 +707,12 @@ function workoutFileXML(w){
   workoutToXML(doc,doc.documentElement,w);return serializeXML(doc);
 }
 /* expert-library style program: workouts are separate files, referenced by id and path */
-function programRefXML(p,dir){
+function programRefXML(p,dir,files){
   const doc=document.implementation.createDocument(null,"herculean-program",null),r=doc.documentElement;
   r.setAttribute("version","1");
   const e=xel(doc,r,"program",{id:p.id,name:p.name,...authorAttrs(p),deload:p.deload,deloadSets:p.deloadSets});
   const lp=xel(doc,e,"loop",{len:p.loop.len,start:p.loop.start});p.loop.slots.forEach((w,i)=>xel(doc,lp,"slot",{index:i,workout:w}));
-  p.days.forEach(w=>xel(doc,e,"workout",{ref:w.id,src:(dir||"workouts/")+w.id+".xml"}));return serializeXML(doc);
+  p.days.forEach(w=>xel(doc,e,"workout",{ref:w.id,src:(dir||"workouts/")+((files&&files[w.id])||w.id)+".xml"}));return serializeXML(doc);
 }
 function workoutToXML(doc,parent,w){
   const e=xel(doc,parent,"workout",{id:w.id,label:w.label,name:w.name,...authorAttrs(w)});
@@ -916,7 +916,7 @@ function renderLibrary(){
     const dupP=async()=>{if(!needName())return;const c=stampAuthor(clone(p),p);c.id=rid("p");c.name=p.name+(isMine(p)?" copy":" (my copy)");profile.programs.push(c);if(await saveProfile()){toast(isMine(p)?"Duplicated":"Your copy of "+p.name+" is ready to customize");renderLibrary()}};
     if(isMine(p))acts.append(btn("Edit","",()=>openEditor("program",p.id)));else acts.append(btn("View","",()=>openEditor("program",p.id)));
     acts.append(btn(isMine(p)?"Duplicate":"Make my copy","ghost",dupP),
-      btn("Export","ghost",()=>exportText(fileSafe(p.name),programFileXML(p))));
+      exportMenu(p));
     const del=document.createElement("span");
     del.appendChild(btn("Delete","ghost danger",()=>confirmInline(del,"Delete "+p.name+"? Logged days keep its name in the Archive.","Delete",async()=>{
       profile.programs=profile.programs.filter(x=>x.id!==p.id);if(profile.activeId===p.id)profile.activeId=profile.programs[0]?profile.programs[0].id:null;
@@ -955,6 +955,20 @@ function renderProfileReset(){
   const w=$("profResetWrap");w.innerHTML="";
   w.appendChild(btn("Reset user profile","ghost danger",()=>confirmInline(w,"Erase everything in this browser and start over? This can’t be undone.","Reset profile",async()=>{
     if(window.resetUserProfile)await window.resetUserProfile();toast("Profile reset");setView("log")},renderProfileReset)));
+}
+/* program export: one file, or a program file that points to separate workout files (expert-library layout) */
+function exportMenu(p){
+  const sel=document.createElement("select");sel.className="exportpick";sel.setAttribute("aria-label","Export "+p.name);
+  [["","Export…"],["one","Download as one file"],["split","Download with separate workout files"]].forEach(([v,t])=>{const o=document.createElement("option");o.value=v;o.textContent=t;sel.appendChild(o)});
+  sel.onchange=()=>{const v=sel.value;sel.value="";if(v==="one")exportText(fileSafe(p.name),programFileXML(p));if(v==="split")exportProgramSplit(p)};
+  return sel;
+}
+function exportProgramSplit(p){
+  const files={},used=new Set();
+  p.days.forEach(w=>{let base=fileSafe(w.name||w.id).toLowerCase(),n=base,i=2;while(used.has(n))n=base+"-"+i++;used.add(n);files[w.id]=n});
+  const list=[[fileSafe(p.name).toLowerCase(),programRefXML(p,"workouts/",files)],...p.days.map(w=>[files[w.id],workoutFileXML(w)])];
+  list.forEach(([name,text],i)=>setTimeout(()=>blobDownload(name+".xml",text),i*400));
+  toast("Downloading "+list.length+" files. If your browser asks, allow multiple downloads.");
 }
 function renderMetricList(){
   const box=$("metricList");box.innerHTML="";

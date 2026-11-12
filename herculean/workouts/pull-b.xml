@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <herculean-workout version="1" exported="2026-11-09T04:01:53.348Z">
 <workout id="pull-b" label="Fri" name="Pull B" author="Herculean" authorId="ironlog" created="2026-11-08">
-<cardio on="false" type="steady"/>
-<exercise id="one-arm-db-row" name="One-arm DB row (each arm)" sets="5" lo="7" hi="7" unit="reps" weight="true"/>
+<exercise id="one-arm-cable-row" name="One-arm cable row (each arm)" sets="5" lo="7" hi="7" unit="reps" weight="true"/>
 <exercise id="close-grip-pulldown" name="Close-grip pulldown" sets="5" lo="7" hi="7" unit="reps" weight="true"/>
 <exercise id="machine-row" name="Machine row" sets="4" lo="7" hi="7" unit="reps" weight="true"/>
 <exercise id="reverse-pec-deck" name="Reverse pec deck" sets="3" lo="12" hi="15" unit="reps" weight="true"/>
-<exercise id="hammer-curl" name="Hammer curl" sets="3" lo="7" hi="7" unit="reps" weight="true"/>
+<exercise id="rope-hammer-curl" name="Rope hammer curl" sets="3" lo="7" hi="7" unit="reps" weight="true"/>
 </workout>
 </herculean-workout>

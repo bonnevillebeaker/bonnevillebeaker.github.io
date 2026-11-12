@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Rebuild programs/index.xml and workouts/index.xml for the Herculean expert library.
+"""Rebuild programs/index.xml and workouts/index.xml for Herculean user submissions.
 
 Run this after adding, editing or removing files in programs/ or workouts/:
     python3 herculean/build_catalog.py

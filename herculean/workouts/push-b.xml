@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <herculean-workout version="1" exported="2026-11-09T04:01:53.348Z">
 <workout id="push-b" label="Thu" name="Push B" author="Herculean" authorId="ironlog" created="2026-11-08">
-<cardio on="true" type="steady" label="Easy bike" target="15 min, conversational pace"/>
 <exercise id="machine-chest-press" name="Machine chest press" sets="5" lo="7" hi="7" unit="reps" weight="true"/>
 <exercise id="incline-smith-press" name="Incline Smith press" sets="5" lo="7" hi="7" unit="reps" weight="true"/>
 <exercise id="pec-deck" name="Pec deck" sets="3" lo="7" hi="7" unit="reps" weight="true"/>
 <exercise id="machine-shoulder-press" name="Machine shoulder press" sets="4" lo="7" hi="7" unit="reps" weight="true"/>
-<exercise id="db-lateral" name="DB lateral raise" sets="3" lo="12" hi="15" unit="reps" weight="true"/>
-<exercise id="oh-db-triceps" name="Overhead DB triceps extension" sets="3" lo="7" hi="7" unit="reps" weight="true"/>
+<exercise id="machine-lateral" name="Machine lateral raise" sets="3" lo="12" hi="15" unit="reps" weight="true"/>
+<exercise id="oh-cable-triceps" name="Overhead cable triceps extension" sets="3" lo="7" hi="7" unit="reps" weight="true"/>
+<exercise id="easy-bike" name="Easy bike" sets="1" lo="900" hi="900" unit="sec" weight="false"/>
 </workout>
 </herculean-workout>

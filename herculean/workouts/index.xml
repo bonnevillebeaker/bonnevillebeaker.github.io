@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <herculean-catalog kind="workouts" updated="2026-11-11">
-  <item file="workouts/conditioning.xml" id="conditioning" name="Conditioning" author="Herculean" summary="2 exercises" />
+  <item file="workouts/conditioning.xml" id="conditioning" name="Conditioning" author="Herculean" summary="3 exercises" />
   <item file="workouts/legs-a.xml" id="legs-a" name="Legs A" author="Herculean" summary="6 exercises" />
   <item file="workouts/pull-a-legs-b.xml" id="pull-a-legs-b" name="Pull A + Legs B" author="Herculean" summary="6 exercises" />
   <item file="workouts/pull-b.xml" id="pull-b" name="Pull B" author="Herculean" summary="5 exercises" />
-  <item file="workouts/push-a.xml" id="push-a" name="Push A" author="Herculean" summary="5 exercises" />
-  <item file="workouts/push-b.xml" id="push-b" name="Push B" author="Herculean" summary="6 exercises" />
+  <item file="workouts/push-a.xml" id="push-a" name="Push A" author="Herculean" summary="6 exercises" />
+  <item file="workouts/push-b.xml" id="push-b" name="Push B" author="Herculean" summary="7 exercises" />
 </herculean-catalog>

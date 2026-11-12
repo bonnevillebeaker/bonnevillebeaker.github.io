@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <herculean version="4" saved="2026-11-09T04:02:04.418Z">
 <settings unit="lb" inc="5" restA="90" restB="150"/>
-<me id="u-example" name="Alex Example"/>
+<me id="u-example" name="John Smith"/>
 <measurements>
 <measure id="bw" name="Body weight" unit="@w" dir="none" kind="number" on="true"/>
 <measure id="bp" name="Blood pressure" unit="mmHg" dir="down" kind="bp" on="true"/>
@@ -121,11 +121,11 @@
 <exercise id="cable-crunch" name="Cable crunch" sets="3" lo="12" hi="15" unit="reps" weight="true"/>
 <exercise id="plank" name="Plank" sets="3" lo="30" hi="60" unit="sec" weight="false"/>
 </workout>
-<workout id="lib-run" label="Run" name="Easy run" author="Alex Example" authorId="u-example">
+<workout id="lib-run" label="Run" name="Easy run" author="John Smith" authorId="u-example">
 <cardio on="false" type="steady"/>
 <exercise id="treadmill-run" name="Treadmill run" sets="1" lo="1800" hi="2400" unit="sec" weight="false" dist="true" distUnit="mi" pace="true"/>
 </workout>
-<workout id="lib-arms" label="Arms" name="Arm finisher" author="Alex Example" authorId="u-example">
+<workout id="lib-arms" label="Arms" name="Arm finisher" author="John Smith" authorId="u-example">
 <cardio on="false" type="steady"/>
 <exercise id="ez-curl" name="EZ-bar curl" sets="3" lo="10" hi="12" unit="reps" weight="true" group="g1"/>
 <exercise id="rope-pushdown" name="Rope pushdown" sets="3" lo="10" hi="12" unit="reps" weight="true" group="g1"/>

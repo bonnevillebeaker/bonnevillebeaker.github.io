@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <herculean-workout version="1" exported="2026-11-09T04:01:53.347Z">
 <workout id="pull-a-legs-b" label="Tue" name="Pull A + Legs B" author="Herculean" authorId="ironlog" created="2026-11-08">
-<cardio on="false" type="steady"/>
 <exercise id="lat-pulldown" name="Lat pulldown" sets="5" lo="7" hi="7" unit="reps" weight="true"/>
 <exercise id="seated-cable-row" name="Seated cable row" sets="5" lo="7" hi="7" unit="reps" weight="true"/>
 <exercise id="face-pull" name="Face pull" sets="3" lo="12" hi="15" unit="reps" weight="true"/>
-<exercise id="db-curl" name="DB curl" sets="3" lo="7" hi="7" unit="reps" weight="true"/>
+<exercise id="cable-curl" name="Cable curl" sets="3" lo="7" hi="7" unit="reps" weight="true"/>
 <exercise id="leg-press" name="Leg press" sets="3" lo="7" hi="7" unit="reps" weight="true"/>
 <exercise id="seated-leg-curl" name="Seated leg curl" sets="3" lo="7" hi="7" unit="reps" weight="true"/>
 </workout>

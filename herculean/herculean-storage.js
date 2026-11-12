@@ -73,14 +73,14 @@ async function reconnect(){
   }}catch(e){toast("Couldn’t reconnect. Use Open file instead.")}
 }
 function loadProfile(d){
-  profile=d.profile;sessions=d.sessions;
+  profile=d.profile;sessions=d.sessions;moveOldCardio();
   localPut("ironlog.profile",profile);localPut("ironlog.sessions",sessions);localPut("ironlog.savedAt",new Date().toISOString());
   edit=null;derive();if(!$("editView").hidden)showView("lib");goToDate(todayISO(),false);setStatus();renderAll();
   if(profile.me.name)hideWelcome();else showWelcome();
 }
 /* Settings → Reset user profile: wipe this browser, unlink (never delete) the profile file, show the welcome setup */
 window.resetUserProfile=async()=>{
-  ["ironlog.profile","ironlog.sessions","ironlog.savedAt","ironlog.program"].forEach(k=>{try{localStorage.removeItem(k)}catch(e){}});
+  ["ironlog.profile","ironlog.sessions","ironlog.savedAt","ironlog.program","ironlog.free","ironlog.edits","ironlog.rest","ironlog.libOpen"].forEach(k=>{try{localStorage.removeItem(k)}catch(e){}});
   fileHandle=null;await kvSet("handle",null);fileDirty=false;lastSaved=null;
   loadProfile({profile:presetProfile(),sessions:{}});
   localPut("ironlog.savedAt","");renderFileBar();
@@ -121,6 +121,7 @@ function renderFileBar(){
 }
 async function init(){
   sessions=localLoad("ironlog.sessions",{});profile=loadLocalProfile();derive();
+  if(moveOldCardio()){localPut("ironlog.sessions",sessions);localPut("ironlog.profile",profile)}
   goToDate(todayISO());setStatus();
   if(FS_OK)fileHandle=await kvGet("handle");
   renderFileBar();

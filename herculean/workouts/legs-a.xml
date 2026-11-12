@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <herculean-workout version="1" exported="2026-11-09T04:01:53.348Z">
 <workout id="legs-a" label="Wed" name="Legs A" author="Herculean" authorId="ironlog" created="2026-11-08">
-<cardio on="false" type="steady"/>
-<exercise id="smith-squat" name="Smith squat" sets="5" lo="7" hi="7" unit="reps" weight="true"/>
-<exercise id="db-rdl" name="DB Romanian deadlift" sets="5" lo="7" hi="7" unit="reps" weight="true"/>
-<exercise id="walking-lunge" name="Walking lunge (each leg)" sets="3" lo="7" hi="7" unit="reps" weight="true"/>
+<exercise id="leg-press" name="Leg press" sets="5" lo="7" hi="7" unit="reps" weight="true"/>
+<exercise id="lying-leg-curl" name="Lying leg curl" sets="5" lo="7" hi="7" unit="reps" weight="true"/>
 <exercise id="leg-extension" name="Leg extension" sets="3" lo="7" hi="7" unit="reps" weight="true"/>
-<exercise id="lying-leg-curl" name="Lying leg curl" sets="3" lo="7" hi="7" unit="reps" weight="true"/>
-<exercise id="calf-raise" name="Calf raise" sets="4" lo="12" hi="15" unit="reps" weight="true"/>
+<exercise id="hip-abductor" name="Hip abductor" sets="3" lo="12" hi="15" unit="reps" weight="true"/>
+<exercise id="hip-adductor" name="Hip adductor" sets="3" lo="12" hi="15" unit="reps" weight="true"/>
+<exercise id="calf-raise" name="Calf raise machine" sets="4" lo="12" hi="15" unit="reps" weight="true"/>
 </workout>
 </herculean-workout>

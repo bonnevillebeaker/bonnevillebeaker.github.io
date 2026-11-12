@@ -250,3 +250,9 @@ input,select,textarea{border-color:#dccfb6;border-radius:7px}
 .libsec .secbody{display:flex;flex-direction:column;gap:12px;margin-top:8px}
 .libsec .hint{font-size:.82rem}
 #activePick{max-width:13rem;font-weight:700;font-size:.9rem;padding:5px 8px}
+.savelib{gap:10px;border-color:var(--accent);background:var(--accent-soft)}
+.savelib input{min-height:44px;font-size:1rem}
+button.bigbtn{width:100%;min-height:52px;font-size:1.05rem}
+.ex>.exhead>.chip{margin-left:auto}
+.filestate .strong{font-weight:700}
+.filestate .muted{font-size:.82rem;margin-top:2px}

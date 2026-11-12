@@ -278,29 +278,31 @@ function renderFreeTools(list,s,day){
     box.appendChild(sk);
   }
   list.appendChild(box);
-  /* after saving, offer to keep it as a reusable workout */
-  if(day.free&&s&&Object.keys(s.sets||{}).length){
-    const sv=document.createElement("div");sv.className="ex freebox";
-    const h=document.createElement("div");h.className="subhead";h.textContent="Save to your library";
-    const wn=document.createElement("input");wn.type="text";wn.id="freeSaveName";wn.maxLength=50;wn.placeholder="Workout name";
-    const f=document.createElement("label");f.className="field";f.append("Workout name",wn);
-    const a=document.createElement("div");a.className="actions";a.appendChild(btn("Save workout","primary",()=>saveFreeToLibrary(wn.value)));
-    sv.append(h,f,a);list.appendChild(sv);
+  /* log as you go: keep today's workout as a reusable one, any time */
+  if(day.free&&day.ex.length){
+    const sv=document.createElement("div");sv.className="ex savelib";
+    const wn=document.createElement("input");wn.type="text";wn.id="freeSaveName";wn.maxLength=50;wn.placeholder="Name this workout";wn.setAttribute("aria-label","Workout name");
+    wn.onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();saveFreeToLibrary(wn.value)}};
+    const go=btn("Save today’s workout to my library","primary bigbtn",()=>saveFreeToLibrary(wn.value));
+    sv.append(wn,go);list.appendChild(sv);
   }
 }
 async function saveFreeToLibrary(name){
-  name=(name||"").trim();if(!name){toast("Give the workout a name");$("freeSaveName").focus();return}
+  name=(name||"").trim();if(!name){toast("Name the workout first");$("freeSaveName").focus();return}
   if(!needName())return;
-  const [oldId,s]=findSession(date,FREE);if(!s){toast("Save the entry first");return}
-  const ex=currentWorkout().ex.filter(e=>s.sets[e.id]).map(e=>{const arr=s.sets[e.id],v=arr.map(x=>+x.r).filter(x=>x>0);
-    const {extra,...x}=e;return {...x,sets:arr.length,lo:v.length?Math.min(...v):0,hi:v.length?Math.max(...v):0,group:""}});
+  const day=currentWorkout();if(!day||!day.ex.length){toast("Add an exercise first");return}
+  /* anything typed but not saved yet is saved as today's entry first */
+  if(day.ex.some(e=>(draft[e.id]||[]).some(x=>x.w!==""||x.r!==""||x.d!==""||x.p!==""))){await saveSession();if(!findSession(date,FREE)[1])return}
+  const [oldId,s]=findSession(date,FREE);
+  const ex=day.ex.map(e=>{const arr=s&&s.sets&&s.sets[e.id],v=(arr||[]).map(x=>+x.r).filter(x=>x>0);
+    const {extra,...x}=e;return {...x,sets:arr?arr.length:Math.max(1,(draft[e.id]||[]).length),lo:v.length?Math.min(...v):0,hi:v.length?Math.max(...v):0,group:""}});
   const w=sanitizeWorkout(stampAuthor({id:rid("w"),name,label:"",ex}));
   profile.workouts.push(w);
   if(!await saveProfile())return;
   /* the logged session now belongs to the new workout, so its history and progression carry on */
-  const data={...s,day:w.id,dayName:w.name,programName:"One-off",programId:""};
-  delete sessions[oldId];const nid=docId(date,w.id);
-  try{await persistSession(nid,data);sessions[nid]=data}catch(e){sessions[oldId]=s;toast("Saved the workout, but couldn’t move today’s entry.");return}
+  if(s){const data={...s,day:w.id,dayName:w.name,programName:"One-off",programId:""};
+    delete sessions[oldId];const nid=docId(date,w.id);
+    try{await persistSession(nid,data);sessions[nid]=data}catch(e){sessions[oldId]=s;toast("Saved the workout, but couldn’t move today’s entry.");return}}
   dropEdits(date+"|"+FREE);
   dayId=w.id;toast(w.name+" is in your library");renderLog();
 }
@@ -1304,7 +1306,7 @@ $("wForm").addEventListener("submit",async e=>{
   const fill=o=>{if(o.authorId===profile.me.id&&!o.author)o.author=n};
   profile.programs.forEach(p=>{fill(p);p.days.forEach(fill)});profile.workouts.forEach(fill);
   $("wGo").disabled=true;
-  if(await saveProfile()){hideWelcome();toast("Welcome, "+n+". Your profile is ready.");renderAll()}
+  if(await saveProfile()){hideWelcome();toast("Welcome, "+n+". Everything saves automatically in this browser.");renderAll()}
   $("wGo").disabled=false;
 });
 $("wOpen").onclick=()=>{if(window.openProfileFile)window.openProfileFile()};

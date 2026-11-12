@@ -4,15 +4,11 @@ A workout log that runs entirely in your browser. No server, no account. Your wh
 
 ## Start
 
-1. Keep `herculean.html` and the `herculean/` folder side by side and open `herculean.html` in Chrome or Edge on a computer.
-2. Enter your name in the welcome window, then click **Create profile file…** and save `Herculean.xml` (the dialog opens in Documents). If you already have one, choose **Open my Herculean.xml** instead.
-3. Log workouts. Changes are written to the file about every minute, and when you switch tabs or close the page.
+1. Keep `herculean.html` and the `herculean/` folder side by side and open `herculean.html` in any browser.
+2. Enter your name in the welcome window. Everything you log saves automatically in that browser.
+3. To move your log to another device (or keep a backup), click **Download profile** and open `Herculean.xml` there with **Load profile…**. Since your log lives in the browser, download a copy now and then as a backup.
 
-Next visit, open `herculean.html` again and click **Reconnect Herculean.xml** (browsers ask once per visit before a page can write to a file).
-
-### Phones and other browsers
-
-iPhone, Android, Safari and Firefox can't write to a file automatically. The page says so and shows **Download Herculean.xml**. Tap it before you leave to save your log, and use **Load profile…** next time to open it.
+In Chrome or Edge on a computer, **Save to a file…** links `Herculean.xml` so every change is also written to the file. Next visit, click **Reconnect Herculean.xml** (browsers ask once per visit).
 
 ## What's inside
 

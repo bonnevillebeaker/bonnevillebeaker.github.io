@@ -1,0 +1,10 @@
+<!doctype html>
+<!-- Dapper Budget Planner (Dapper Studio Office Tools). Copyright (C) 2026 Coleman Nielsen.
+     SPDX-License-Identifier: GPL-3.0-or-later. See LICENSE and NOTICE. -->
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Dapper Budget Planner</title><link rel="icon" href="dapper_dolphin.svg" type="image/svg+xml"><link rel="stylesheet" href="dapper-studio.css"><link rel="stylesheet" href="dapper-budget.css"></head><body><main><header><div id="mascot" class="logo-slot"><img src="dapper_dolphin.svg" alt="Dapper Studio Office Tools logo" onerror="this.remove()"><span>LOGO</span></div><div><p>DAPPER STUDIO OFFICE TOOLS</p><h1>Dapper Budget Planner</h1><span>Add your income, expenses, debts and savings accounts, then watch where they are headed over time.</span></div></header><div class="filebar"><button id="saveXml" type="button">Save all to .xml</button><button id="loadXml" type="button">Load from .xml</button><input id="xmlIn" type="file" accept=".xml,application/xml,text/xml" hidden><span class="note">Budgets also autosave in this browser. Save a file to keep a copy or move it to another computer.</span></div>
+<div id="budgets"></div>
+<button type="button" class="plus addbudget" id="addBudget">+ Add new budget</button>
+<footer class="credits"><h2>Credits</h2>
+<p>Dapper Budget Planner &copy; 2026 Coleman Nielsen. The code is free software under the <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU GPL v3 or later</a>. The Dapper Studio Office Tools name and dolphin logo are not covered by that license; all rights reserved.</p>
+<p>Your numbers stay in this browser. Nothing is sent anywhere. Projections are estimates, not financial advice.</p>
+</footer></main><script src="dapper-budget.js"></script></body></html>

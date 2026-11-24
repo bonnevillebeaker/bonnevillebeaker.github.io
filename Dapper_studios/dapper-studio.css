@@ -1,0 +1,113 @@
+/* Dapper Studio Office Tools: shared shell (header, cards, forms). Same layout as Smart Turtle, orange/white theme.
+   Copyright (C) 2026 Coleman Nielsen
+   SPDX-License-Identifier: GPL-3.0-or-later  (see LICENSE; name and logo excluded, see NOTICE) */
+*{box-sizing:border-box}
+body{margin:0;background:#fbf6f1;color:#33261c;font-family:Arial,sans-serif}
+main{max-width:1380px;margin:auto;padding:18px}
+
+/* ---- header: identical layout to the Smart Turtle tools ---- */
+header{display:flex;align-items:center;justify-content:center;gap:20px;margin-bottom:16px}
+header h1{margin:2px 0;font-size:clamp(2rem,4vw,3.1rem)}
+header p{margin:0;color:#c25f12;font-size:.85rem;font-weight:700}
+
+/* logo slot: shows the dolphin SVG when present, a dashed placeholder otherwise */
+.logo-slot{flex:0 0 auto;width:110px;height:110px;display:grid;place-items:center;background:#fff;padding:8px;border-radius:24px;box-shadow:0 8px 24px #a84e0c30}
+.logo-slot img{width:100%;height:100%;min-width:0;min-height:0;object-fit:contain;display:block}
+.logo-slot img+span{display:none}
+.logo-slot span{width:100%;height:100%;display:grid;place-items:center;border:2px dashed #f2b98a;border-radius:16px;color:#d07a35;font-size:.72rem;font-weight:700;letter-spacing:.08em}
+.logo-slot.small{width:104px;height:94px;border-radius:0;padding:0;background:transparent;box-shadow:none;opacity:.75}
+.logo-slot.small span{border-radius:12px}
+
+.app{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(330px,.85fr);grid-template-areas:'viewer controls' 'output controls';gap:16px;align-items:start}
+.card{background:#fff;border:1px solid #e8731a2e;border-radius:14px;box-shadow:0 6px 24px #4a260a14;padding:20px}
+.viewer{grid-area:viewer}
+.controls{grid-area:controls;position:sticky;top:14px}
+.output{grid-area:output}
+
+.top,.rowtop{display:flex;justify-content:space-between;align-items:start;gap:10px}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.top h2,.controls h2,.output h2{margin:0}
+.controls h2{margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid #f0dfd0}
+.top p{margin:4px 0;color:#7a6a5e}
+[hidden]{display:none!important}
+
+/* ---- tabs and forms ---- */
+nav{display:flex;flex-wrap:wrap;border-bottom:1px solid #f0dfd0;margin:10px 0 16px}
+button{min-height:38px;padding:8px 13px;border:1px solid #f2c9a5;border-radius:7px;background:#fff3e8;color:#a84e0c;font-weight:700;cursor:pointer}
+button:disabled{opacity:.5;cursor:default}
+nav button{border:0;border-bottom:3px solid transparent;background:transparent;color:#7a6a5e;padding:8px 10px}
+nav button.active{color:#a84e0c;border-bottom-color:#e8731a}
+form footer button{background:#e8731a;border-color:#cf6312;color:#fff}
+form footer button.stop{flex:0 0 auto;background:#fff1ef;border-color:#f0d4cf;color:#963c32}
+label{display:flex;flex-direction:column;gap:5px;font-size:.92rem;font-weight:700;margin-bottom:12px}
+input,select,textarea{width:100%;min-height:43px;padding:9px;border:1px solid #d9c6b6;border-radius:7px;font-size:1rem;background:#fff;color:#33261c}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.note{color:#7f6e62;font-size:.8rem;font-weight:400}
+.check{display:flex;flex-direction:row;align-items:center;gap:8px;margin-top:4px;accent-color:#e8731a}
+.check input{width:18px;min-height:18px}
+.filebox input[type=file]{padding:7px;font-size:.85rem}
+.error{padding:10px;border-left:4px solid #c8483d;background:#fff1ef;color:#7a2822;font-size:.88rem}
+form footer{display:flex;gap:8px;margin-top:14px}
+form footer button{flex:1}
+#fileInfo{margin:-4px 0 12px;padding:8px 10px;border-left:3px solid #e8731a;background:#fff8f1;border-radius:0 6px 6px 0;line-height:1.5}
+#fileInfo b{color:#a84e0c}
+#modelNote,#engineNote{margin:-6px 0 12px}
+
+/* ---- progress ---- */
+.bar{height:10px;border-radius:6px;background:#f6e6d8;overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#f39a4f,#e8731a);transition:width .25s}
+#progText{margin:6px 0 0}
+
+.tips{margin-top:16px;font-size:.84rem;color:#7a6a5e}
+.tips summary{cursor:pointer;color:#a84e0c;font-weight:700}
+
+pre{min-height:120px;max-height:360px;overflow:auto;margin:12px 0 0;padding:14px;border:1px solid #ecdccd;border-radius:9px;background:#fdf9f5;font:.86rem/1.55 monospace;white-space:pre-wrap;word-break:break-word}
+
+/* ---- main viewer ---- */
+.viewbar{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin:12px 0 0}
+.viewbar label{margin-bottom:0;font-size:.82rem}
+nav.sub{border-bottom:0;margin:0;gap:2px}
+nav.sub button{border:1px solid #f0d6bf;border-radius:7px;background:#fdf6ef;color:#7a6a5e;padding:7px 12px;min-height:34px}
+nav.sub button.active{background:#e8731a;border-color:#e8731a;color:#fff}
+#player{width:100%;margin-top:12px}
+#viewport{position:relative;margin-top:12px;border:1px solid #ecdccd;border-radius:10px;background:#fff;min-height:520px;max-height:640px;overflow:auto}
+#viewport.drag{border-color:#e8731a;background:#fff8f1;box-shadow:inset 0 0 0 2px #e8731a55}
+#viewEmpty{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:10px;color:#8a796c}
+#viewNote{margin:8px 0 0}
+
+/* ---- transcript views ---- */
+.doc{padding:18px 20px;font-size:1rem;line-height:1.7}
+.doc p{margin:0 0 14px}
+.seg{cursor:pointer;border-radius:3px}
+.seg:hover{background:#fff3e8}
+.now{background:#ffe2c7!important}
+.line{display:flex;gap:12px;align-items:baseline;padding:4px 0;border-bottom:1px solid #f7eee6}
+.line:last-child{border-bottom:0}
+.ts{flex:0 0 auto;min-height:0;padding:2px 7px;border-radius:5px;font:.78rem monospace;background:#fff3e8;border-color:#f2d6bd;color:#a84e0c}
+.tx{flex:1;min-width:0;outline:none;border-radius:3px;padding:1px 3px}
+.tx[contenteditable=true]:focus{background:#fffaf5;box-shadow:0 0 0 2px #f2b98a}
+#srtBox{margin:0;min-height:516px;max-height:none;border:0;border-radius:10px;background:#fff}
+
+/* ---- trim ---- */
+.trim{margin-top:12px;padding:12px 14px;border:1px solid #ecdccd;border-radius:10px;background:#fdf9f5}
+.trimhead{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:8px}
+.trimhead b{color:#a84e0c}
+.wave{position:relative;height:96px;border:1px solid #ecdccd;border-radius:8px;background:#fff;overflow:hidden}
+.wave canvas{width:100%;height:100%;display:block;cursor:pointer;touch-action:none}
+#waveMsg{position:absolute;inset:0;display:grid;place-content:center;background:#fff}
+.wavehelp{margin:6px 0 0}
+.trimbar{display:flex;flex-wrap:wrap;gap:8px;align-items:end;margin-top:10px}
+.trimbar label{margin:0;font-size:.78rem;gap:3px;color:#7a6a5e}
+.trimbar input{width:104px;min-height:34px;padding:5px 7px;font:.9rem monospace}
+.trimbar button{min-height:34px;padding:5px 10px;font-size:.82rem}
+.trimbar button.pri{background:#e8731a;border-color:#cf6312;color:#fff}
+.trim .check{margin:10px 0 0;font-size:.82rem;font-weight:400}
+
+/* ---- credits ---- */
+.credits{margin-top:16px;padding:16px 20px;border-top:1px solid #f0dfd0;color:#7f6e62;font-size:.82rem;line-height:1.6}
+.credits h2{margin:0 0 6px;font-size:.95rem;color:#a84e0c}
+.credits p{margin:0 0 6px}
+.credits a{color:#c25f12}
+
+@media(max-width:980px){.app{grid-template-columns:1fr;grid-template-areas:'controls' 'viewer' 'output'}.controls{position:static}}
+@media(max-width:640px){header{justify-content:flex-start}.logo-slot{width:74px;height:74px}.fields{grid-template-columns:1fr}#viewport{min-height:380px}}

@@ -1,0 +1,53 @@
+/* Dapper Budget Planner: graph, stats and item cards. Builds on dapper-studio.css.
+   Copyright (C) 2026 Coleman Nielsen
+   SPDX-License-Identifier: GPL-3.0-or-later  (see LICENSE; name and logo excluded, see NOTICE) */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-top:12px}
+.stat{padding:9px 11px;border:1px solid #ecdccd;border-radius:9px;background:#fdf9f5}
+.stat span{display:block;font-size:.74rem;color:#7a6a5e;font-weight:700}
+.stat b{font-size:1.1rem;color:#a84e0c}
+.stat.bad b{color:#963c32}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.chip{min-height:30px;padding:4px 10px;font-size:.8rem;display:flex;align-items:center;gap:6px;background:#fff;color:#33261c;border-color:#ecdccd}
+.chip i{width:10px;height:10px;border-radius:50%;background:var(--c)}
+.chip.off{opacity:.45;text-decoration:line-through}
+.chart{display:grid;grid-template-columns:minmax(0,1fr) 26px;gap:8px;margin-top:12px}
+.plot{position:relative;height:420px;border:1px solid #ecdccd;border-radius:10px;background:#fff;touch-action:pan-y;cursor:grab;user-select:none}
+.plot canvas{width:100%;height:100%;display:block}
+.tip{position:absolute;pointer-events:none;padding:6px 9px;border-radius:7px;background:#33261cee;color:#fff;font-size:.78rem;line-height:1.5;white-space:nowrap;display:none}
+.rs{position:relative;border-radius:8px;background:#f6e6d8;touch-action:none}
+.rs.h{height:26px}
+.rs.v{height:420px}
+.rs>div{position:absolute;background:linear-gradient(90deg,#f39a4f,#e8731a);border-radius:8px;cursor:grab}
+.rs.h>div{top:0;bottom:0;min-width:26px}
+.rs.v>div{left:0;right:0;min-height:26px}
+.rs b{position:absolute;background:#ffffffb0;border-radius:4px}
+.rs.h b{top:5px;bottom:5px;width:8px;cursor:ew-resize}
+.rs.h b.s{left:3px}.rs.h b.e{right:3px}
+.rs.v b{left:5px;right:5px;height:8px;cursor:ns-resize}
+.rs.v b.s{top:3px}.rs.v b.e{bottom:3px}
+.controls{max-height:calc(100vh - 28px);overflow:auto}
+.item{margin:0 0 10px;padding:11px;border:1px solid #ecdccd;border-radius:10px;background:#fdf9f5}
+.item .rowtop{margin-bottom:8px;align-items:center}
+.item .rowtop input{flex:1;font-weight:700}
+.item label{font-size:.78rem;margin-bottom:8px;color:#7a6a5e}
+.item .fields{gap:0 8px}
+.item input,.item select{min-height:36px;padding:6px 8px;font-size:.92rem}
+.x{min-height:36px;background:#fff1ef;border-color:#f0d4cf;color:#963c32}
+.plus{width:100%;min-height:44px;border:2px dashed #f2b98a;background:#fff8f1;font-size:1rem}
+.plus:hover{background:#ffe2c7}
+.sum{margin:0 0 12px;padding:8px 10px;border-left:3px solid #e8731a;background:#fff8f1;border-radius:0 6px 6px 0;font-size:.88rem}
+.warn{margin:0;color:#963c32;font-size:.78rem}
+@media(max-width:640px){.plot,.rs.v{height:320px}}
+.budget{margin-bottom:28px}
+.budgetbar{display:flex;gap:8px;align-items:center;margin-bottom:12px}
+.budgetbar input{flex:1;min-height:46px;font-size:1.3rem;font-weight:700;color:#a84e0c}
+.budgetbar button{min-height:46px}
+.addbudget{margin-bottom:8px}
+.item .check input{width:18px;min-height:18px}
+.item .check{flex-direction:row;font-size:.88rem;color:#33261c;font-weight:400;margin-bottom:6px}
+.filebar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+.filebar .note{margin:0}
+.sheetpanel{margin-bottom:14px}.sheetpanel[hidden]{display:none}
+.sheetpanel .check{display:flex;flex-direction:row;gap:8px;align-items:center;font-weight:400;margin-bottom:6px}
+.sheetpanel .check input{width:18px;min-height:18px}
+.budgetbar{flex-wrap:wrap}

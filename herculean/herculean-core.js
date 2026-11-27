@@ -15,41 +15,15 @@ const wdShort=s=>D(s).toLocaleDateString(undefined,{weekday:"short"});
 /* ---------- model ---------- */
 const E=(id,name,sets,lo,hi,unit,more)=>Object.assign({id,name,sets,lo,hi,unit:unit||"reps",weight:true,dist:false,distUnit:"mi",pace:false,group:""},more||{});
 const C=(on,label,type,target)=>({on:!!on,label:label||"",type:type||"steady",target:target||""});
-function presetDays(pre){return [
-  {id:pre+"mon",label:"Mon",name:"Push A",ex:[
-    E("smith-bench","Smith bench press",5,7,7),E("incline-smith-press","Incline Smith press",5,7,7),
-    E("smith-shoulder-press","Smith shoulder press",4,7,7),E("cable-lateral","Cable lateral raise",3,12,15),
-    E("triceps-pushdown","Triceps pushdown",3,7,7),E("easy-bike","Easy bike",1,900,900,"sec",{weight:false})]},
-  {id:pre+"tue",label:"Tue",name:"Pull A + Legs B",ex:[
-    E("lat-pulldown","Lat pulldown",5,7,7),E("seated-cable-row","Seated cable row",5,7,7),
-    E("face-pull","Face pull",3,12,15),E("cable-curl","Cable curl",3,7,7),
-    E("leg-press","Leg press",3,7,7),E("seated-leg-curl","Seated leg curl",3,7,7)]},
-  {id:pre+"wed",label:"Wed",name:"Legs A",ex:[
-    E("leg-press","Leg press",5,7,7),E("lying-leg-curl","Lying leg curl",5,7,7),
-    E("leg-extension","Leg extension",3,7,7),E("hip-abductor","Hip abductor",3,12,15),
-    E("hip-adductor","Hip adductor",3,12,15),E("calf-raise","Calf raise machine",4,12,15)]},
-  {id:pre+"thu",label:"Thu",name:"Push B",ex:[
-    E("machine-chest-press","Machine chest press",5,7,7),E("incline-smith-press","Incline Smith press",5,7,7),
-    E("pec-deck","Pec deck",3,7,7),E("machine-shoulder-press","Machine shoulder press",4,7,7),
-    E("machine-lateral","Machine lateral raise",3,12,15),E("oh-cable-triceps","Overhead cable triceps extension",3,7,7),E("easy-bike","Easy bike",1,900,900,"sec",{weight:false})]},
-  {id:pre+"fri",label:"Fri",name:"Pull B",ex:[
-    E("one-arm-cable-row","One-arm cable row (each arm)",5,7,7),E("close-grip-pulldown","Close-grip pulldown",5,7,7),
-    E("machine-row","Machine row",4,7,7),E("reverse-pec-deck","Reverse pec deck",3,12,15),
-    E("rope-hammer-curl","Rope hammer curl",3,7,7)]},
-  {id:pre+"sat",label:"Sat",name:"Conditioning",ex:[
-    E("bike-intervals","Bike intervals (4 min hard, 3 min easy)",4,240,240,"sec",{weight:false}),E("cable-crunch","Cable crunch",3,12,15),E("plank","Plank",3,30,60,"sec",{weight:false})]}
-]}
-function presetProgram(){return {...STARTER,id:"ppl",name:"Push / Pull / Legs",deload:5,deloadSets:3,
-  loop:{len:7,start:mondayOf(todayISO()),slots:["mon","tue","wed","thu","fri","sat",""]},days:presetDays("").map(d=>({...STARTER,...d}))}}
 function presetProfile(){return {kind:"profile",v:3,settings:{unit:"lb",inc:5,restA:90,restB:150},
-  activeId:null,programs:[presetProgram()],workouts:presetDays("lib-").map(d=>({...STARTER,...d})),metrics:sanitizeMetrics([]),me:{id:rid("u"),name:""}}}
+  activeId:null,programs:[],workouts:[],metrics:sanitizeMetrics([]),me:{id:rid("u"),name:""}}}
 
 /* authorship: stamped once when an item is made, never edited in the app */
 const AUTH_KEYS=["author","authorId","created","basedOn"];
 function keepAuthor(o){AUTH_KEYS.forEach(k=>{o[k]=o[k]==null?"":String(o[k])});return o}
 const STARTER={author:"Herculean",authorId:"ironlog",created:"2026-11-08"};
 /* items that ship with Herculean can be copied but not deleted */
-const builtIn=o=>o.authorId===STARTER.authorId;
+const builtIn=()=>false;
 const isMine=o=>!o.authorId||o.authorId===profile.me.id;
 const authorName=o=>o.authorId===profile.me.id?(profile.me.name||o.author||"You"):(o.author||"Unknown author");
 function stampAuthor(o,from){
@@ -1061,7 +1035,7 @@ function renderSettings(){
   const st=profile.settings;
   $("sUnit").value=st.unit;$("sInc").value=st.inc;
   $("meName").textContent=profile.me.name||"Not set yet";
-  renderReset();renderProfileReset();
+  renderProfileReset();
 }
 function renderProfileReset(){
   const w=$("profResetWrap");w.innerHTML="";
@@ -1116,13 +1090,6 @@ $("addCustom").onclick=async()=>{const n=$("cmName").value.trim();if(!n){toast("
   if(await saveProfile()){$("cmName").value="";$("cmUnit").value="";toast("Now tracking "+n);renderMetricList();renderLog(true)}};
 $("mPick").onchange=renderMetricChart;
 const fileSafe=s=>(s||"program").replace(/[^\w\- ]+/g,"").trim().replace(/\s+/g,"-")||"program";
-function renderReset(){
-  const w=$("resetWrap");w.innerHTML="";
-  w.appendChild(btn("Restore preset program and workouts","ghost",()=>confirmInline(w,"Add the original Push / Pull / Legs program and its six workouts back to your library? Nothing is deleted.","Restore",async()=>{
-    const pp=presetProgram();if(profile.programs.some(p=>p.id===pp.id))pp.id=rid("p");if(profile.programs.some(p=>p.name===pp.name))pp.name+=" (preset)";profile.programs.push(pp);
-    presetDays("lib-").forEach(d=>{if(!profile.workouts.some(x=>x.id===d.id))profile.workouts.push(d)});
-    if(await saveProfile()){toast("Preset restored");renderSettings()}},renderReset)));
-}
 ["sUnit","sInc"].forEach(id=>{
   const el=$(id),key={sUnit:"unit",sInc:"inc"}[id];
   el.onchange=async()=>{profile.settings[key]=id==="sUnit"?el.value:(el.value===""?0:+el.value);if(await saveProfile())toast("Settings saved")};

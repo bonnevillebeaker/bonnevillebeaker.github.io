@@ -64,6 +64,12 @@
       defaultWidth: 1200,
       defaultHeight: 820
     },
+    
+    "herculean": {
+      templateId: "herculean-pane-template",
+      defaultWidth: 1180,
+      defaultHeight: 820
+    },
 
     "pubchem-periodic-table": {
       templateId: "pubchem-periodic-table-pane-template",
